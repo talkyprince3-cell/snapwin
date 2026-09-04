@@ -136,11 +136,22 @@ export const tickerItems = [
 ];
 
 export const promos = [
-  { tone: "gold",    eyebrow: "⚡ Welcome Bonus",    title: "100% Match Bonus",      sub: "Up to GH₵ 500 on your first deposit.", cta: "Claim Now",  href: "/account" },
+  { tone: "gold",    eyebrow: "⚡ Welcome Bonus",    title: "100% Match Bonus",      sub: "Up to GH₵ 500 on your first deposit.", cta: "Claim Now",  href: "/account", image: "/won_trophy_image.png" },
   { tone: "amber",   eyebrow: "🛡️ Acca Insurance",   title: "One Leg Down? Refund.", sub: "5+ selection accumulators covered.",   cta: "Learn More", href: "/account" },
-  { tone: "emerald", eyebrow: "🎯 Same Game Parlay", title: "Build From One Match",  sub: "Combine markets into one slip.",       cta: "Build Bet",  href: "/" },
+  { tone: "emerald", eyebrow: "🎯 Same Game Parlay", title: "Build From One Match",  sub: "Combine markets into one slip.",       cta: "Build Bet",  href: "/", image: "/photo_2026-07-09_12-07-16-removebg-preview.png" },
   { tone: "sky",     eyebrow: "📊 Daily Boost",      title: "Enhanced Odds",         sub: "Selected markets boosted ×2 today.",   cta: "View All",   href: "/" },
-];
+] satisfies {
+  tone: string;
+  eyebrow: string;
+  title: string;
+  sub: string;
+  cta: string;
+  href: string;
+  /** Optional art, shown on the right of the banner. Drop files in
+   *  public/promos/ and reference them as "/promos/<name>.png". Transparent
+   *  PNGs sit best on the gradient. Slides without one just run text-only. */
+  image?: string;
+}[];
 
 /**
  * Quick-action tiles under the hero — the icon grid a sportsbook home page uses

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
@@ -29,6 +30,7 @@ export function HeroCarousel() {
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
+  const settleRef = useRef<number | null>(null);
 
   // Auto-advance, paused while the pointer is over the banner so a reader
   // never has a promo yanked out from under them mid-sentence.
@@ -43,8 +45,46 @@ export function HeroCarousel() {
   useEffect(() => {
     const el = trackRef.current;
     if (!el) return;
-    el.scrollTo({ left: idx * el.clientWidth, behavior: "smooth" });
+    // The global reduced-motion rule sets scroll-behavior in CSS, which does
+    // not reach this option — so honour the preference explicitly.
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollTo({ left: idx * el.clientWidth, behavior: reduce ? "auto" : "smooth" });
   }, [idx]);
+
+  // Keep the active slide aligned when the track is resized.
+  useEffect(() => {
+    const onResize = () => {
+      const el = trackRef.current;
+      if (el) el.scrollTo({ left: idx * el.clientWidth, behavior: "auto" });
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [idx]);
+
+  useEffect(() => () => {
+    if (settleRef.current !== null) window.clearTimeout(settleRef.current);
+  }, []);
+
+  /**
+   * Adopt the scrolled-to slide, but only once scrolling has actually stopped.
+   *
+   * Reading the offset on every scroll event would fight the programmatic
+   * scroll above: mid-animation the track still sits nearer the previous
+   * slide, so it rounds back to the old index, resets `idx`, and re-triggers
+   * the effect — which snaps the carousel home and stops it advancing at all.
+   * Waiting for the track to settle makes this a no-op for our own scrolls
+   * and correct for a user swipe.
+   */
+  const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    if (settleRef.current !== null) window.clearTimeout(settleRef.current);
+    settleRef.current = window.setTimeout(() => {
+      settleRef.current = null;
+      if (!el.clientWidth) return;
+      const i = Math.round(el.scrollLeft / el.clientWidth);
+      setIdx((cur) => (i === cur ? cur : i));
+    }, 140);
+  };
 
   const go = (d: number) => setIdx((i) => (i + d + promos.length) % promos.length);
 
@@ -58,11 +98,7 @@ export function HeroCarousel() {
     >
       <div
         ref={trackRef}
-        onScroll={(e) => {
-          const el = e.currentTarget;
-          const i = Math.round(el.scrollLeft / el.clientWidth);
-          if (i !== idx) setIdx(i);
-        }}
+        onScroll={onScroll}
         className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory sm:rounded-[10px]"
       >
         {promos.map((p, i) => (
@@ -76,6 +112,22 @@ export function HeroCarousel() {
             )}
           >
             <div className="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-[var(--color-brand)]/10 blur-3xl" />
+
+            {/* Slide art. Sits behind the copy and is clipped by the banner, so
+                a slide without an image simply runs text-only. aria-hidden and
+                empty alt: it is decoration, the title already says the offer. */}
+            {p.image && (
+              <Image
+                src={p.image}
+                alt=""
+                aria-hidden
+                width={320}
+                height={320}
+                priority={i === 0}
+                className="pointer-events-none select-none absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 h-[125%] w-auto max-w-[42%] object-contain opacity-90 drop-shadow-[0_10px_30px_rgba(0,0,0,.55)]"
+              />
+            )}
+
             <div className="relative max-w-[64%] sm:max-w-[70%]">
               <div className="text-[11px] font-semibold text-[var(--color-brand-hi)]">{p.eyebrow}</div>
               <h2 className="font-display font-extrabold text-[22px] sm:text-[30px] leading-[1.1] mt-1.5 tracking-tight">
