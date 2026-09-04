@@ -37,7 +37,7 @@ async function notifyWithdrawalRequested(
     if (!recipient) return
 
     const money = formatMoneyWithCurrency(amount, currency)
-    const message = `Plusebet: We've received your withdrawal request of ${money}. It's being processed and we'll notify you once it's approved.`
+    const message = `SnapWin: We've received your withdrawal request of ${money}. It's being processed and we'll notify you once it's approved.`
 
     const result = await sendSms(recipient, message)
     if (!result.ok) {

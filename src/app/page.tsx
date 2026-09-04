@@ -2,26 +2,13 @@
 
 import { useState } from "react";
 import { AppShell } from "@/components/app-shell";
-import { MatchCard, SectionHead } from "@/components/match-card";
+import { FixtureList, SectionHead } from "@/components/match-card";
 import { PromoStrip, StatRibbon, FeaturedMatch } from "@/components/home-sections";
 import { WinnersTicker } from "@/components/winners-ticker";
 import { competitions } from "@/lib/data";
 import { useMatches } from "@/lib/use-matches";
 
 const FILTERS = ["All", "Football", "Top Leagues", "Boosted", "Ghana 🇬🇭"];
-
-function MatchGrid({ matches, empty }: { matches: ReturnType<typeof useMatches>["all"]; empty: string }) {
-  if (matches.length === 0) {
-    return <p className="text-[13px] text-[var(--color-ink-faint)] py-2">{empty}</p>;
-  }
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-      {matches.map((m) => (
-        <MatchCard key={m.id} m={m} />
-      ))}
-    </div>
-  );
-}
 
 export default function Home() {
   const [filter, setFilter] = useState("All");
@@ -55,16 +42,16 @@ export default function Home() {
       ) : (
         <>
           <SectionHead title="Live In-Play" more="View All" href="/live" accent="linear-gradient(180deg,#f43f5e,#dc2626)" />
-          <MatchGrid matches={live} empty="No live matches right now." />
+          <FixtureList matches={live} empty="No live matches right now." />
 
           <SectionHead title="Today" more={`${today.length} matches`} />
-          <MatchGrid matches={today} empty="No more matches today." />
+          <FixtureList matches={today} empty="No more matches today." />
 
           <SectionHead title="Tomorrow" more={`${tomorrow.length} matches`} />
-          <MatchGrid matches={tomorrow} empty="No fixtures listed for tomorrow yet." />
+          <FixtureList matches={tomorrow} empty="No fixtures listed for tomorrow yet." />
 
           <SectionHead title="This Week" more="All" />
-          <MatchGrid matches={week} empty="No upcoming fixtures this week yet." />
+          <FixtureList matches={week} empty="No upcoming fixtures this week yet." />
         </>
       )}
 

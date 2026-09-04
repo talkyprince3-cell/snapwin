@@ -1,31 +1,38 @@
 @import "tailwindcss";
 
 /* ============================================================
-   PLUSEBET — Design System
-   Premium dark sports-betting aesthetic
+   SNAPWIN — Design System
+   Dense sportsbook layout on a warm near-black ground.
+   Brand: electric orange -> magenta.
    ============================================================ */
 
 @theme {
-  /* Surfaces */
-  --color-bg: #05060e;
-  --color-bg-2: #080a16;
-  --color-surface: #0c0f1f;
-  --color-surface-2: #11152a;
-  --color-surface-3: #161b35;
-  --color-elevated: #1a2040;
+  /* Surfaces — warm near-black, tuned for the orange/magenta brand */
+  --color-bg: #0a0608;
+  --color-bg-2: #100a0d;
+  --color-surface: #160f12;
+  --color-surface-2: #1e151a;
+  --color-surface-3: #281c22;
+  --color-elevated: #33242b;
 
   /* Borders */
-  --color-line: rgba(255, 255, 255, 0.08);
-  --color-line-2: rgba(255, 255, 255, 0.12);
+  --color-line: rgba(255, 255, 255, 0.09);
+  --color-line-2: rgba(255, 255, 255, 0.15);
 
   /* Text */
-  --color-ink: #f8fafc;
-  --color-ink-dim: #94a3b8;
-  --color-ink-faint: #64748b;
+  --color-ink: #fdf7f5;
+  --color-ink-dim: #b2a2a6;
+  --color-ink-faint: #7d6d72;
 
-  /* Brand */
-  --color-violet: #8b5cf6;
-  --color-pink: #ec4899;
+  /* Brand — SnapWin: electric orange → magenta */
+  --color-brand: #f97316;
+  --color-brand-hi: #fb923c;
+  --color-brand-deep: #c2410c;
+  --color-brand-2: #e11d48;
+  --color-brand-2-hi: #f43f5e;
+  --color-brand-2-deep: #9f1239;
+
+  /* Support */
   --color-cyan: #22d3ee;
   --color-amber: #fbbf24;
   --color-emerald: #34d399;
@@ -37,8 +44,45 @@
   --font-body: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono), ui-monospace, monospace;
 
-  /* Radii */
-  --radius-card: 14px;
+  /* ------------------------------------------------------------
+     Admin / sub-admin console vocabulary.
+     Those screens are written against shadcn-style semantic names
+     (bg-card, text-muted-foreground, bg-primary …). Mapping them
+     onto the SnapWin palette here is what gives Tailwind something
+     to emit for them.
+     ------------------------------------------------------------ */
+  --color-background: #0a0608;
+  --color-foreground: #fdf7f5;
+  --color-card: #160f12;
+  --color-card-foreground: #fdf7f5;
+  --color-popover: #1e151a;
+  --color-popover-foreground: #fdf7f5;
+  --color-primary: #f97316;
+  --color-primary-foreground: #1a0c04;
+  --color-secondary: #1e151a;
+  --color-secondary-foreground: #fdf7f5;
+  --color-muted: #1e151a;
+  --color-muted-foreground: #b2a2a6;
+  --color-accent: #281c22;
+  --color-accent-foreground: #fdf7f5;
+  --color-destructive: #f43f5e;
+  --color-destructive-foreground: #ffffff;
+  --color-border: rgba(255, 255, 255, 0.09);
+  --color-input: #1e151a;
+  --color-ring: #f97316;
+
+  /* Console eyebrow label + card elevation */
+  --text-eyebrow: 10px;
+  --text-eyebrow--line-height: 1.4;
+  --text-eyebrow--letter-spacing: 0.14em;
+  --text-eyebrow--font-weight: 700;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.45), 0 8px 24px -16px rgba(0, 0, 0, 0.8);
+  --shadow-card-hover: 0 2px 6px rgba(0, 0, 0, 0.5), 0 14px 34px -18px rgba(0, 0, 0, 0.85);
+  --shadow-card-pressed: inset 0 1px 3px rgba(0, 0, 0, 0.55);
+
+  /* Radii — tighter, sportsbook-flat */
+  --radius-card: 8px;
+  --radius-ctl: 6px;
 
   /* Animations */
   --animate-shimmer: shimmer 2.4s linear infinite;
@@ -86,7 +130,7 @@
 html {
   scroll-behavior: smooth;
   /* Native form controls (checkboxes, range) pick up the brand colour. */
-  accent-color: var(--color-violet);
+  accent-color: var(--color-brand);
   /* Keep sticky headers from covering anchored content. */
   scroll-padding-top: 80px;
   text-size-adjust: 100%;
@@ -95,8 +139,8 @@ html {
 
 body {
   background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(139, 92, 246, 0.12), transparent 60%),
-    radial-gradient(900px 500px at 0% 10%, rgba(34, 211, 238, 0.08), transparent 55%),
+    radial-gradient(1100px 560px at 84% -12%, rgba(249, 115, 22, 0.13), transparent 62%),
+    radial-gradient(900px 500px at 2% 6%, rgba(225, 29, 72, 0.10), transparent 58%),
     var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-body);
@@ -107,13 +151,13 @@ body {
 }
 
 ::selection {
-  background: rgba(139, 92, 246, 0.35);
+  background: rgba(249, 115, 22, 0.35);
   color: #fff;
 }
 
-/* Accessible keyboard focus — uses the brand violet, no new colours. */
+/* Accessible keyboard focus — uses the brand orange, no new colours. */
 :focus-visible {
-  outline: 2px solid rgba(139, 92, 246, 0.75);
+  outline: 2px solid rgba(249, 115, 22, 0.75);
   outline-offset: 2px;
   border-radius: 8px;
 }
@@ -165,14 +209,18 @@ img, svg { user-select: none; -webkit-user-drag: none; }
 
 /* Brand gradient text */
 .grad-text {
-  background: linear-gradient(135deg, #a78bfa, #ec4899 55%, #fb923c);
+  background: linear-gradient(100deg, #fbbf24, #f97316 42%, #e11d48);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-.grad-violet-pink {
-  background: linear-gradient(135deg, var(--color-violet), var(--color-pink));
+.grad-brand {
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-2));
+}
+/* Deeper sweep for large filled surfaces (the masthead band) so white text stays legible. */
+.grad-brand-deep {
+  background: linear-gradient(100deg, var(--color-brand-deep), var(--color-brand-2-deep));
 }
 .grad-cyan {
   background: linear-gradient(135deg, #06b6d4, #22d3ee);
@@ -186,7 +234,7 @@ img, svg { user-select: none; -webkit-user-drag: none; }
 
 /* Card */
 .card {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)) , var(--color-surface);
+  background: var(--color-surface);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-card);
 }
@@ -195,20 +243,20 @@ img, svg { user-select: none; -webkit-user-drag: none; }
   transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 .card-hover:hover {
-  border-color: rgba(139, 92, 246, 0.4);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px -12px rgba(139, 92, 246, 0.35);
+  border-color: rgba(249, 115, 22, 0.45);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 30px -14px rgba(249, 115, 22, 0.45);
 }
 
 /* Glow ring around focus / active */
-.glow-violet { box-shadow: 0 0 0 1px rgba(139,92,246,.5), 0 8px 30px -8px rgba(139,92,246,.5); }
+.glow-brand { box-shadow: 0 0 0 1px rgba(249, 115, 22,.5), 0 8px 30px -8px rgba(249, 115, 22,.5); }
 
 /* Section title bar */
 .title-bar {
-  width: 4px;
-  height: 18px;
-  border-radius: 99px;
-  background: linear-gradient(180deg, var(--color-violet), var(--color-pink));
+  width: 3px;
+  height: 16px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--color-brand), var(--color-brand-2));
 }
 
 /* Odds button */
@@ -217,28 +265,29 @@ img, svg { user-select: none; -webkit-user-drag: none; }
   font-weight: 700;
   background: var(--color-surface-2);
   border: 1px solid var(--color-line);
-  border-radius: 9px;
+  border-radius: var(--radius-ctl);
   color: var(--color-ink);
-  transition: all 0.15s;
+  transition: background-color .14s, border-color .14s, color .14s, transform .1s;
   position: relative;
   overflow: hidden;
 }
 .odds-btn:hover {
-  border-color: rgba(139, 92, 246, 0.5);
+  border-color: rgba(249, 115, 22, 0.5);
   background: var(--color-surface-3);
 }
 .odds-btn:active { transform: scale(0.96); }
 .odds-btn[data-active="true"] {
-  background: linear-gradient(135deg, var(--color-violet), var(--color-pink));
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-2));
   border-color: transparent;
   color: #fff;
-  box-shadow: 0 6px 20px -6px rgba(236, 72, 153, 0.6);
+  box-shadow: 0 6px 18px -8px rgba(249, 115, 22, 0.75);
 }
 
 /* Pill / chip */
 .chip {
   font-family: var(--font-mono);
   font-size: 11px;
+  white-space: nowrap;
   letter-spacing: 0.04em;
   font-weight: 600;
   border-radius: 99px;
@@ -252,9 +301,52 @@ img, svg { user-select: none; -webkit-user-drag: none; }
   color: var(--color-ink);
 }
 .chip[data-active="true"] {
-  background: linear-gradient(135deg, var(--color-violet), var(--color-pink));
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-2));
   color: #fff;
   border-color: transparent;
+}
+
+/* ============================================================
+   Sportsbook surfaces — the dense fixture-list layout
+   ============================================================ */
+
+/* League grouping header that caps a run of fixtures. */
+.league-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-line);
+  border-bottom: 0;
+  border-left: 2px solid var(--color-brand);
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+}
+
+/* The "1 X 2" column captions above an odds grid. */
+.market-head {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  color: var(--color-ink-faint);
+  text-transform: uppercase;
+}
+
+/* A fixture row inside a league group: flat, hairline-separated, no card chrome. */
+.fixture-row {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-top-width: 0;
+  transition: background-color .14s;
+}
+.fixture-row:last-child { border-radius: 0 0 var(--radius-card) var(--radius-card); }
+.fixture-row:hover { background: var(--color-surface-2); }
+
+/* Hairline brand rule under sticky bars. */
+.brand-rule {
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-brand), var(--color-brand-2) 55%, transparent);
 }
 
 /* Mono number */
@@ -275,7 +367,7 @@ img, svg { user-select: none; -webkit-user-drag: none; }
 
 /* Glass top bar */
 .glass {
-  background: rgba(8, 10, 22, 0.72);
+  background: rgba(16, 10, 13, 0.82);
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
 }
@@ -299,7 +391,7 @@ img, svg { user-select: none; -webkit-user-drag: none; }
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(139,92,246,.6), rgba(236,72,153,.3), rgba(34,211,238,.5));
+  background: linear-gradient(135deg, rgba(249,115,22,.7), rgba(225,29,72,.45), rgba(251,191,36,.5));
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;

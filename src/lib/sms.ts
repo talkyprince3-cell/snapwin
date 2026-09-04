@@ -7,7 +7,7 @@
 //   ARKESEL_SENDER_ID — approved sender name, max 11 chars (defaults below)
 
 const ARKESEL_SEND_URL = 'https://sms.arkesel.com/api/v2/sms/send'
-const DEFAULT_SENDER = 'Plusebet'
+const DEFAULT_SENDER = 'SnapWin'
 
 export interface SmsResult {
   ok: boolean

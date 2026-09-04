@@ -93,7 +93,7 @@ export default function BookingPage() {
   return (
     <div className="relative min-h-dvh overflow-hidden grid place-items-center px-4 py-10">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-[-10%] left-[10%] w-[420px] h-[420px] rounded-full bg-[var(--color-violet)]/20 blur-[100px]" />
+        <div className="absolute top-[-10%] left-[10%] w-[420px] h-[420px] rounded-full bg-[var(--color-brand)]/20 blur-[100px]" />
         <div className="absolute bottom-[-10%] right-[5%] w-[380px] h-[380px] rounded-full bg-[var(--color-cyan)]/15 blur-[100px]" />
       </div>
 
@@ -106,7 +106,7 @@ export default function BookingPage() {
           <div className="relative p-7 sm:p-9">
             {!data ? (
               <div className="text-center">
-                <div className="mx-auto w-16 h-16 mb-5 grid place-items-center rounded-2xl bg-[var(--color-violet)]/12 text-[var(--color-violet)]">
+                <div className="mx-auto w-16 h-16 mb-5 grid place-items-center rounded-2xl bg-[var(--color-brand)]/12 text-[var(--color-brand)]">
                   <Ticket size={30} strokeWidth={1.6} />
                 </div>
 
@@ -121,7 +121,7 @@ export default function BookingPage() {
                     "relative mt-6 flex items-center rounded-2xl border bg-[var(--color-surface)] transition",
                     error
                       ? "border-[var(--color-rose)]/60"
-                      : "border-[var(--color-line)] focus-within:border-[var(--color-violet)]/60",
+                      : "border-[var(--color-line)] focus-within:border-[var(--color-brand)]/60",
                   )}
                 >
                   <Lock size={16} className="ml-4 text-[var(--color-ink-faint)]" />
@@ -138,7 +138,7 @@ export default function BookingPage() {
                   <button
                     onClick={load}
                     disabled={loading}
-                    className="m-1.5 flex items-center gap-1.5 rounded-xl grad-violet-pink text-white px-4 py-2.5 font-display font-bold text-[13px] active:scale-95 transition disabled:opacity-60"
+                    className="m-1.5 flex items-center gap-1.5 rounded-xl grad-brand text-white px-4 py-2.5 font-display font-bold text-[13px] active:scale-95 transition disabled:opacity-60"
                   >
                     {loading ? (
                       <Loader2 size={16} className="animate-spin" />
@@ -222,7 +222,7 @@ export default function BookingPage() {
                   {data.playable ? (
                     <button
                       onClick={loadIntoSlip}
-                      className="flex-1 flex items-center justify-center gap-1.5 rounded-xl grad-violet-pink text-white px-4 py-3 font-display font-bold text-[13px] active:scale-95 transition"
+                      className="flex-1 flex items-center justify-center gap-1.5 rounded-xl grad-brand text-white px-4 py-3 font-display font-bold text-[13px] active:scale-95 transition"
                     >
                       Load into slip <ArrowRight size={15} />
                     </button>

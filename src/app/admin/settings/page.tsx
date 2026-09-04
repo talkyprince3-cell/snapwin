@@ -274,7 +274,7 @@ function DepositAccountCard() {
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Plusebet"
+                  placeholder="SnapWin"
                   className="w-full h-10 px-3 rounded-md bg-secondary border border-border text-sm"
                 />
               </div>

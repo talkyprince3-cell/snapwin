@@ -16,8 +16,8 @@ export function AuthShell({
       {/* left brand panel (desktop) */}
       <div className="relative hidden lg:flex flex-col justify-between p-12 overflow-hidden border-r border-[var(--color-line)]">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-10%] left-[-5%] w-[400px] h-[400px] rounded-full bg-[var(--color-violet)]/25 blur-[110px] animate-[orb_18s_ease-in-out_infinite]" />
-          <div className="absolute bottom-[5%] right-[-5%] w-[360px] h-[360px] rounded-full bg-[var(--color-pink)]/18 blur-[110px] animate-[orb_22s_ease-in-out_infinite]" />
+          <div className="absolute top-[-10%] left-[-5%] w-[400px] h-[400px] rounded-full bg-[var(--color-brand)]/25 blur-[110px] animate-[orb_18s_ease-in-out_infinite]" />
+          <div className="absolute bottom-[5%] right-[-5%] w-[360px] h-[360px] rounded-full bg-[var(--color-brand-2)]/18 blur-[110px] animate-[orb_22s_ease-in-out_infinite]" />
         </div>
         <Brand size={34} />
         <div className="relative">
@@ -33,13 +33,13 @@ export function AuthShell({
             <Stat val="<10m" label="Payouts" />
           </div>
         </div>
-        <p className="relative text-[11px] text-[var(--color-ink-faint)]">© 2026 Plusebet. 18+ · Play responsibly.</p>
+        <p className="relative text-[11px] text-[var(--color-ink-faint)]">© 2026 SnapWin. 18+ · Play responsibly.</p>
       </div>
 
       {/* right form panel */}
       <div className="relative grid place-items-center px-5 py-10">
         <div className="absolute inset-0 lg:hidden pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-[300px] h-[300px] rounded-full bg-[var(--color-violet)]/18 blur-[90px]" />
+          <div className="absolute top-0 left-1/4 w-[300px] h-[300px] rounded-full bg-[var(--color-brand)]/18 blur-[90px]" />
         </div>
         <div className="relative w-full max-w-[400px]">
           <Link href="/" className="inline-flex items-center gap-1 text-[12.5px] text-[var(--color-ink-dim)] hover:text-white mb-6 transition">
@@ -82,7 +82,7 @@ export function Field({
         <input
           type={type}
           placeholder={placeholder}
-          className="w-full bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl px-3.5 py-3 text-[14px] outline-none focus:border-[var(--color-violet)]/60 focus:glow-violet transition placeholder:text-[var(--color-ink-faint)]"
+          className="w-full bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl px-3.5 py-3 text-[14px] outline-none focus:border-[var(--color-brand)]/60 focus:glow-brand transition placeholder:text-[var(--color-ink-faint)]"
         />
       )}
     </div>

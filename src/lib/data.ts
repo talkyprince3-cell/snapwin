@@ -109,7 +109,7 @@ export const matches: Match[] = [
   {
     id: "m12", league: "Premier League", leagueFlag: "🏴", country: "England", sport: "football",
     home: "Newcastle", away: "Aston Villa", homeShort: "NEW", awayShort: "AVL",
-    homeColor: "#f8fafc", awayColor: "#7c3aed",
+    homeColor: "#f8fafc", awayColor: "#c2410c",
     kickoff: "Sun · 16:30", live: false,
     markets: mk(2.0, 3.4, 3.7), marketCount: 102,
   },
@@ -136,8 +136,8 @@ export const tickerItems = [
 ];
 
 export const promos = [
-  { tone: "violet", eyebrow: "⚡ Welcome Bonus", title: "100% Match Bonus", sub: "Up to GH₵ 500 on your first deposit." , cta: "Claim Now"},
-  { tone: "cyan", eyebrow: "🛡️ Acca Insurance", title: "One Leg Down? Refund.", sub: "5+ selection accumulators covered.", cta: "Learn More" },
+  { tone: "brand", eyebrow: "⚡ Welcome Bonus", title: "100% Match Bonus", sub: "Up to GH₵ 500 on your first deposit." , cta: "Claim Now"},
+  { tone: "magenta", eyebrow: "🛡️ Acca Insurance", title: "One Leg Down? Refund.", sub: "5+ selection accumulators covered.", cta: "Learn More" },
   { tone: "emerald", eyebrow: "🎯 Same Game Parlay", title: "Build From One Match", sub: "Combine markets into one slip.", cta: "Build Bet" },
   { tone: "gold", eyebrow: "📊 Daily Boost", title: "Enhanced Odds", sub: "Selected markets boosted ×2 today.", cta: "View All" },
 ];

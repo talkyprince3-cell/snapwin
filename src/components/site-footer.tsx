@@ -30,7 +30,7 @@ const COLUMNS: { title: string; links: FooterLink[] }[] = [
   {
     title: "Company",
     links: [
-      { label: "About Plusebet", href: "#" },
+      { label: "About SnapWin", href: "#" },
       { label: "Careers", href: "#" },
       { label: "Press", href: "#" },
       { label: "Affiliates", href: "#" },
@@ -56,16 +56,16 @@ export function SiteFooter() {
         <div className="grid grid-cols-2 lg:grid-cols-6 gap-8">
           {/* Brand block */}
           <div className="col-span-2 lg:col-span-2">
-            <Brand size={34} href="/" pro={false} />
+            <Brand size={34} href="/" />
             <p className="text-[13px] text-[var(--color-ink-dim)] leading-relaxed mt-4 max-w-[280px]">
               Premium international sports betting. Live odds, instant payouts, verified tickets.
             </p>
             <div className="mt-5 space-y-2.5">
               <span className="flex items-center gap-2 text-[12px] font-mono text-[var(--color-ink-dim)]">
-                <Lock size={14} className="text-[var(--color-violet)]" /> SSL Secured
+                <Lock size={14} className="text-[var(--color-brand)]" /> SSL Secured
               </span>
               <span className="flex items-center gap-2 text-[12px] font-mono text-[var(--color-ink-dim)]">
-                <Clock size={14} className="text-[var(--color-violet)]" /> 24/7 Support
+                <Clock size={14} className="text-[var(--color-brand)]" /> 24/7 Support
               </span>
             </div>
           </div>
@@ -94,7 +94,7 @@ export function SiteFooter() {
 
         <div className="mt-10 pt-6 border-t border-[var(--color-line)] flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-[12px] text-[var(--color-ink-faint)]">
-            © {new Date().getFullYear()} Plusebet. All rights reserved.
+            © {new Date().getFullYear()} SnapWin. All rights reserved.
           </p>
           <p className="text-[12px] text-[var(--color-ink-faint)] flex items-center gap-2">
             <span className="font-bold text-[var(--color-amber)] border border-[var(--color-amber)]/40 rounded px-1.5 py-0.5">

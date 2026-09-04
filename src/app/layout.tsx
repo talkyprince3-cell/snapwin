@@ -22,14 +22,14 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Plusebet — Premium Sports Betting",
+  title: "SnapWin — Premium Sports Betting",
   description:
-    "Plusebet — premium international sports betting. Live odds, mobile-money payouts, verified tickets.",
+    "SnapWin — premium international sports betting. Live odds, mobile-money payouts, verified tickets.",
   manifest: "/manifest.webmanifest",
-  applicationName: "Plusebet",
+  applicationName: "SnapWin",
   appleWebApp: {
     capable: true,
-    title: "Plusebet",
+    title: "SnapWin",
     statusBarStyle: "black-translucent",
   },
   icons: {
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#05060e",
+  themeColor: "#0a0608",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",

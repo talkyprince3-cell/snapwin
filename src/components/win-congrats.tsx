@@ -24,8 +24,8 @@ export function WinCongrats({ open, onClose, amount, currency = "GHS", verifyCod
 
   const shareWin = () => {
     void navigator.share?.({
-      title: "Plusebet — Won!",
-      text: `Just won ${formatMoneyWithCurrency(amount, currency)} on Plusebet (ticket ${ticketId})`,
+      title: "SnapWin — Won!",
+      text: `Just won ${formatMoneyWithCurrency(amount, currency)} on SnapWin (ticket ${ticketId})`,
     }).catch(() => {});
   };
 

@@ -23,7 +23,7 @@ const LOCK_LABEL: Record<string, string> = {
 // we approximate by hashing the name into the palette).
 const BADGE_COLORS = [
   '#ef4444', '#3b82f6', '#a855f7', '#f97316', '#16a34a',
-  '#facc15', '#06b6d4', '#dc2626', '#60a5fa', '#7c3aed',
+  '#facc15', '#06b6d4', '#dc2626', '#60a5fa', '#c2410c',
   '#f8fafc', '#38bdf8',
 ]
 

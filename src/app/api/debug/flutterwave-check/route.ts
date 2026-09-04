@@ -36,7 +36,7 @@ export async function GET(request: Request) {
   let hostedInit: { ok: boolean; gotLink?: boolean; error?: string }
   try {
     const r = await initialisePayment({
-      email: 'debug@pluse.app',
+      email: 'debug@snapwin.app',
       name: 'Debug Check',
       amount: 10,
       currency: 'GHS',
@@ -61,7 +61,7 @@ export async function GET(request: Request) {
         const charge = await chargeMobileMoneyGhana({
           txRef: `DEBUG-MOMO-${Date.now()}`,
           amount: 1,
-          email: 'debug@pluse.app',
+          email: 'debug@snapwin.app',
           phone,
           network,
           fullname: 'Debug Check',

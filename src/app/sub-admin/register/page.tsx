@@ -47,7 +47,7 @@ export default function SubAdminRegisterPage() {
             <ArrowLeft className="w-5 h-5" />
             <span>Back</span>
           </Link>
-          <Brand href="/" pro={false} size={24} />
+          <Brand href="/" size={24} />
         </div>
       </header>
 

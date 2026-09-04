@@ -6,14 +6,14 @@ const META = {
   deposit: { icon: ArrowDownLeft, tone: "emerald", label: "Deposit" },
   withdrawal: { icon: ArrowUpRight, tone: "rose", label: "Withdrawal" },
   winning: { icon: Trophy, tone: "amber", label: "Winnings" },
-  bet: { icon: Ticket, tone: "violet", label: "Bet Placed" },
+  bet: { icon: Ticket, tone: "brand", label: "Bet Placed" },
 } as const;
 
 const TONE_BG: Record<string, string> = {
   emerald: "bg-[var(--color-emerald)]/12 text-[var(--color-emerald)]",
   rose: "bg-[var(--color-rose)]/12 text-[var(--color-rose)]",
   amber: "bg-[var(--color-amber)]/12 text-[var(--color-amber)]",
-  violet: "bg-[var(--color-violet)]/12 text-[var(--color-violet)]",
+  brand: "bg-[var(--color-brand)]/12 text-[var(--color-brand)]",
 };
 
 const STATUS: Record<string, string> = {

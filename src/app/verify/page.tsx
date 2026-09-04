@@ -92,9 +92,9 @@ export default function VerifyPage() {
     <div className="relative min-h-dvh overflow-hidden grid place-items-center px-4 py-10">
       {/* animated background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-[-10%] left-[10%] w-[420px] h-[420px] rounded-full bg-[var(--color-violet)]/20 blur-[100px] animate-[orb_16s_ease-in-out_infinite]" />
+        <div className="absolute top-[-10%] left-[10%] w-[420px] h-[420px] rounded-full bg-[var(--color-brand)]/20 blur-[100px] animate-[orb_16s_ease-in-out_infinite]" />
         <div className="absolute bottom-[-10%] right-[5%] w-[380px] h-[380px] rounded-full bg-[var(--color-cyan)]/15 blur-[100px] animate-[orb_20s_ease-in-out_infinite]" />
-        <div className="absolute top-[40%] left-[55%] w-[300px] h-[300px] rounded-full bg-[var(--color-pink)]/12 blur-[100px] animate-[orb_24s_ease-in-out_infinite]" />
+        <div className="absolute top-[40%] left-[55%] w-[300px] h-[300px] rounded-full bg-[var(--color-brand-2)]/12 blur-[100px] animate-[orb_24s_ease-in-out_infinite]" />
       </div>
 
       <Link href="/" className="absolute top-5 left-5 z-10">
@@ -107,10 +107,10 @@ export default function VerifyPage() {
             <div className="relative p-7 sm:p-9 text-center">
               {/* shield */}
               <div className="relative mx-auto w-20 h-20 mb-6">
-                <span className="absolute inset-0 rounded-full border border-[var(--color-violet)]/30 animate-ping" />
+                <span className="absolute inset-0 rounded-full border border-[var(--color-brand)]/30 animate-ping" />
                 <span className="absolute inset-2 rounded-full border border-[var(--color-cyan)]/20" />
                 <span className="absolute inset-0 grid place-items-center">
-                  <Shield size={44} className="text-[var(--color-violet)]" strokeWidth={1.5} />
+                  <Shield size={44} className="text-[var(--color-brand)]" strokeWidth={1.5} />
                   <Check size={18} className="absolute text-[var(--color-emerald)]" strokeWidth={3} />
                 </span>
               </div>
@@ -120,7 +120,7 @@ export default function VerifyPage() {
                 Enter your verification code to confirm authenticity and check results in real time.
               </p>
 
-              <div className={cn("relative mt-6 flex items-center rounded-2xl border bg-[var(--color-surface)] transition", error ? "border-[var(--color-rose)]/60" : "border-[var(--color-line)] focus-within:border-[var(--color-violet)]/60 focus-within:glow-violet")}>
+              <div className={cn("relative mt-6 flex items-center rounded-2xl border bg-[var(--color-surface)] transition", error ? "border-[var(--color-rose)]/60" : "border-[var(--color-line)] focus-within:border-[var(--color-brand)]/60 focus-within:glow-brand")}>
                 <Lock size={16} className="ml-4 text-[var(--color-ink-faint)]" />
                 <input
                   value={code}
@@ -132,7 +132,7 @@ export default function VerifyPage() {
                 <button
                   onClick={verify}
                   disabled={loading}
-                  className="m-1.5 flex items-center gap-1.5 rounded-xl grad-violet-pink text-white px-4 py-2.5 font-display font-bold text-[13px] active:scale-95 transition disabled:opacity-60"
+                  className="m-1.5 flex items-center gap-1.5 rounded-xl grad-brand text-white px-4 py-2.5 font-display font-bold text-[13px] active:scale-95 transition disabled:opacity-60"
                 >
                   {loading ? (
                     <span className="inline-block w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-[spin_0.8s_linear_infinite]" />
@@ -162,7 +162,7 @@ export default function VerifyPage() {
 function Feature({ icon, title, sub }: { icon: React.ReactNode; title: string; sub: string }) {
   return (
     <div className="flex flex-col items-center gap-1.5">
-      <span className="text-[var(--color-violet)]">{icon}</span>
+      <span className="text-[var(--color-brand)]">{icon}</span>
       <span className="font-display font-bold text-[12px]">{title}</span>
       <span className="text-[10px] text-[var(--color-ink-faint)]">{sub}</span>
     </div>

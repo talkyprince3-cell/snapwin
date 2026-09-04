@@ -88,7 +88,7 @@ export function MatchAdvert() {
       onClick={close}
       className="fixed inset-0 z-[80] grid place-items-center p-4 bg-black/80 backdrop-blur-sm"
     >
-      <div className="relative w-full max-w-[440px] overflow-hidden rounded-3xl border border-[var(--color-violet)]/30 shadow-[0_0_60px_-10px_rgba(139,92,246,.4)] animate-rise">
+      <div className="relative w-full max-w-[440px] overflow-hidden rounded-3xl border border-[var(--color-brand)]/30 shadow-[0_0_60px_-10px_rgba(249, 115, 22,.4)] animate-rise">
         {/* Pitch backdrop */}
         <div className="absolute inset-0 bg-[var(--color-bg-2)]" />
         <div className="absolute inset-x-0 top-0 h-[55%] bg-[radial-gradient(circle_at_50%_120%,rgba(16,185,129,.5),rgba(16,185,129,.1)_55%,transparent_75%)]" />
@@ -98,7 +98,7 @@ export function MatchAdvert() {
         <div className="relative flex items-center justify-between px-4 pt-4">
           <span className="flex items-center gap-1.5 rounded-lg border border-[var(--color-amber)]/40 bg-black/40 px-2.5 py-1">
             <span className="font-display font-extrabold text-[13px] tracking-tight">
-              PLUSE<span className="grad-text">BET</span>
+              SNAP<span className="grad-text">WIN</span>
             </span>
           </span>
           <button

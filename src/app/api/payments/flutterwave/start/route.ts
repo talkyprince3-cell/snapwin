@@ -94,7 +94,7 @@ export async function POST(request: Request) {
 
   // Show the real customer on the Flutterwave account; fall back to a neutral
   // placeholder only if a user has no email on file.
-  const customerEmail = user.email?.trim() || `customer+${userId}@pluse.app`
+  const customerEmail = user.email?.trim() || `customer+${userId}@snapwin.app`
 
   // Ghana → open the checkout straight on Mobile Money. Nigeria has no
   // Ghana-style MoMo, so leave all methods (card / bank transfer / USSD).

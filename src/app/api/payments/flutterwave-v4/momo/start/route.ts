@@ -58,7 +58,7 @@ export async function POST(request: Request) {
   const txRef = `FW4-DEP-${userId.slice(0, 8)}-${Date.now()}`
   const [firstName, ...rest] = (user.name || 'Customer').trim().split(/\s+/)
   const lastName = rest.join(' ')
-  const email = user.email?.trim() || `customer+${userId}@pluse.app`
+  const email = user.email?.trim() || `customer+${userId}@snapwin.app`
 
   let charge
   try {

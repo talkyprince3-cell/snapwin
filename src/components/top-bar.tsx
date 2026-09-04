@@ -76,7 +76,7 @@ export function TopBar({ onMenu }: { onMenu?: () => void }) {
 
   return (
     <>
-      <header className="sticky top-0 z-40 glass border-b border-[var(--color-line)]">
+      <header className="sticky top-0 z-40 glass">
         <div className="mx-auto max-w-[1600px] flex items-center gap-3 px-3 sm:px-5 h-[60px]">
           {/* mobile menu */}
           <button onClick={onMenu} className="lg:hidden text-[var(--color-ink-dim)] hover:text-white p-1 -ml-1">
@@ -94,19 +94,19 @@ export function TopBar({ onMenu }: { onMenu?: () => void }) {
                 className={cn(
                   "relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-semibold transition-colors",
                   isActive(n.href)
-                    ? "text-white bg-[var(--color-surface-2)]"
+                    ? "text-white"
                     : "text-[var(--color-ink-dim)] hover:text-white hover:bg-white/5",
                 )}
               >
                 <span className="text-[13px]">{n.icon}</span>
                 {n.label}
                 {n.badge && (
-                  <span className="num text-[9px] font-bold grad-violet-pink text-white rounded-full min-w-[16px] h-4 grid place-items-center px-1">
+                  <span className="num text-[9px] font-bold grad-brand text-white rounded-full min-w-[16px] h-4 grid place-items-center px-1">
                     {n.badge}
                   </span>
                 )}
                 {isActive(n.href) && (
-                  <span className="absolute -bottom-[1px] left-3 right-3 h-[2px] rounded-full grad-violet-pink" />
+                  <span className="absolute -bottom-[2px] left-2.5 right-2.5 h-[2.5px] rounded-t-sm grad-brand" />
                 )}
               </Link>
             ))}
@@ -129,7 +129,7 @@ export function TopBar({ onMenu }: { onMenu?: () => void }) {
               {/* deposit */}
               <Link
                 href="/account"
-                className="hidden sm:flex items-center gap-1.5 rounded-lg grad-violet-pink text-white px-3.5 py-2 font-display font-bold text-[13px] shadow-[0_6px_20px_-8px_rgba(236,72,153,.6)] hover:brightness-110 transition"
+                className="hidden sm:flex items-center gap-1.5 rounded-lg grad-brand text-white px-3.5 py-2 font-display font-bold text-[13px] shadow-[0_6px_18px_-8px_rgba(249,115,22,.7)] hover:brightness-110 transition"
               >
                 <Plus size={15} /> Deposit
               </Link>
@@ -154,7 +154,7 @@ export function TopBar({ onMenu }: { onMenu?: () => void }) {
                   onClick={() => setProfileOpen((v) => !v)}
                   className="flex items-center gap-1 rounded-lg border border-[var(--color-line)] bg-[var(--color-surface)] p-1.5 pr-2 hover:border-[var(--color-line-2)] transition-colors"
                 >
-                  <span className="grid place-items-center w-7 h-7 rounded-md grad-violet-pink text-white font-display font-bold text-[12px]">
+                  <span className="grid place-items-center w-7 h-7 rounded-md grad-brand text-white font-display font-bold text-[12px]">
                     {initials(userName)}
                   </span>
                   <ChevronDown size={14} className="text-[var(--color-ink-faint)]" />
@@ -191,13 +191,15 @@ export function TopBar({ onMenu }: { onMenu?: () => void }) {
               </Link>
               <Link
                 href="/register"
-                className="rounded-lg grad-violet-pink text-white px-3.5 py-2 font-display font-bold text-[13px] shadow-[0_6px_20px_-8px_rgba(236,72,153,.6)] hover:brightness-110 transition"
+                className="rounded-lg grad-brand text-white px-3.5 py-2 font-display font-bold text-[13px] shadow-[0_6px_18px_-8px_rgba(249,115,22,.7)] hover:brightness-110 transition"
               >
                 Sign up
               </Link>
             </div>
           )}
         </div>
+        {/* brand rule — the masthead's only chrome, in place of a grey hairline */}
+        <div className="brand-rule" />
       </header>
 
       <GlobalSearch open={searchOpen} onClose={() => setSearchOpen(false)} />

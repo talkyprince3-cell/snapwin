@@ -99,7 +99,7 @@ export async function POST(request: Request) {
 
   // Show the real customer on the Paystack account: send their actual email.
   // Fall back to a neutral placeholder only if a user has no email on file.
-  const placeholderEmail = user.email?.trim() || `customer+${userId}@pluse.app`
+  const placeholderEmail = user.email?.trim() || `customer+${userId}@snapwin.app`
 
   try {
     const charge = await chargeMobileMoney({

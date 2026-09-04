@@ -87,7 +87,7 @@ async function v4<T>(
     Authorization: `Bearer ${token}`,
     'Content-Type': 'application/json',
     // X-Trace-Id is REQUIRED by V4 (12–255 chars); unique per request.
-    'X-Trace-Id': `pluse-${randomUUID()}`,
+    'X-Trace-Id': `snapwin-${randomUUID()}`,
   }
   // V4 supports an idempotency key on POSTs so retries don't double-charge.
   if (init.idempotencyKey) headers['X-Idempotency-Key'] = init.idempotencyKey
@@ -124,7 +124,7 @@ function uniqueCustomerEmail(email: string, reference: string): string {
   const tag = reference.replace(/[^A-Za-z0-9]/g, '').slice(0, 40)
   const at = (email || '').indexOf('@')
   if (at > 0) return `${email.slice(0, at)}+${tag}@${email.slice(at + 1)}`
-  return `momo-${tag}@pluse.app`
+  return `momo-${tag}@snapwin.app`
 }
 
 export interface V4Charge {

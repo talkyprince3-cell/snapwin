@@ -111,7 +111,7 @@ export async function POST(request: Request) {
     console.error('[payseed/start] pending ledger write failed:', e)
   }
 
-  const customerEmail = user.email?.trim() || `customer+${userId}@pluse.app`
+  const customerEmail = user.email?.trim() || `customer+${userId}@snapwin.app`
 
   try {
     const payment = await createPayment({

@@ -8,7 +8,7 @@ import { AuthShell, Field } from "@/components/auth-shell";
 import { saveUserSession } from "@/lib/user-session";
 
 const inputCls =
-  "w-full bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl px-3.5 py-3 text-[14px] outline-none focus:border-[var(--color-violet)]/60 focus:glow-violet transition placeholder:text-[var(--color-ink-faint)]";
+  "w-full bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl px-3.5 py-3 text-[14px] outline-none focus:border-[var(--color-brand)]/60 focus:glow-brand transition placeholder:text-[var(--color-ink-faint)]";
 
 export default function LoginPage() {
   const [show, setShow] = useState(false);
@@ -43,7 +43,7 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthShell title="Welcome back" subtitle="Sign in to continue to Plusebet.">
+    <AuthShell title="Welcome back" subtitle="Sign in to continue to SnapWin.">
       <form onSubmit={onSubmit}>
         <Field label="Phone or Email">
           <input
@@ -82,14 +82,14 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-xl py-3.5 font-display font-extrabold text-[14px] grad-violet-pink text-white shadow-[0_10px_30px_-8px_rgba(236,72,153,.5)] active:scale-[.99] transition disabled:opacity-60 flex items-center justify-center gap-2"
+          className="w-full rounded-xl py-3.5 font-display font-extrabold text-[14px] grad-brand text-white shadow-[0_10px_30px_-8px_rgba(249,115,22,.55)] active:scale-[.99] transition disabled:opacity-60 flex items-center justify-center gap-2"
         >
           {loading && <Loader2 size={16} className="animate-spin" />}
           {loading ? "Signing in…" : "Sign In"}
         </button>
 
         <p className="text-center text-[13px] text-[var(--color-ink-dim)] mt-6">
-          Don&apos;t have an account? <Link href="/register" className="font-bold text-[var(--color-violet)] hover:underline">Create one</Link>
+          Don&apos;t have an account? <Link href="/register" className="font-bold text-[var(--color-brand)] hover:underline">Create one</Link>
         </p>
       </form>
     </AuthShell>

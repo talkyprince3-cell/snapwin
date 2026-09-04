@@ -59,7 +59,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </button>
             <Link href="/admin" className="flex items-center" aria-label="Admin home">
               <span className="font-display font-extrabold tracking-tight text-lg leading-none">
-                Pluse<span className="text-primary">bet</span>
+                Snap<span className="text-primary">Win</span>
               </span>
             </Link>
             <span className="text-eyebrow text-primary border border-primary/30 bg-primary/10 rounded-full px-2 py-0.5">
@@ -81,7 +81,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="px-5 py-5 border-b border-border flex items-center gap-3">
           <Link href="/admin" className="flex items-center" aria-label="Admin home">
             <span className="font-display font-extrabold tracking-tight text-lg leading-none">
-              Pluse<span className="text-primary">bet</span>
+              Snap<span className="text-primary">Win</span>
             </span>
           </Link>
           <span className="text-eyebrow text-primary border border-primary/30 bg-primary/10 rounded-full px-2 py-0.5">
@@ -117,7 +117,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className="px-5 py-5 border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-2 min-w-0">
                 <span className="font-display font-extrabold tracking-tight text-lg leading-none">
-                  Pluse<span className="text-primary">bet</span>
+                  Snap<span className="text-primary">Win</span>
                 </span>
                 <span className="text-eyebrow text-primary border border-primary/30 bg-primary/10 rounded-full px-2 py-0.5">
                   Admin

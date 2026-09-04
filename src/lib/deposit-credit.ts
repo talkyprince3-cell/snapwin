@@ -44,7 +44,7 @@ export interface ApplyDepositResult {
 /**
  * Fire-and-forget: text the user a "payment received" confirmation styled like
  * a mobile-money transaction alert (amount, available balance, reference).
- * Sent from the approved Plusebet sender ID — NOT impersonating any telco.
+ * Sent from the approved SnapWin sender ID — NOT impersonating any telco.
  * Best-effort: any failure (no phone, SMS error, unsupported country) is
  * logged and swallowed so it never affects the credited deposit.
  */
@@ -61,9 +61,9 @@ async function notifyDepositReceived(
     const received = formatMoneyWithCurrency(amount, user.currency)
     const balance = formatMoneyWithCurrency(user.balance ?? 0, user.currency)
     const message =
-      `Plusebet: Payment received. Amount: ${received}. ` +
+      `SnapWin: Payment received. Amount: ${received}. ` +
       `Available Balance: ${balance}. Ref: ${reference}. ` +
-      `Thank you for playing with Plusebet.`
+      `Thank you for playing with SnapWin.`
 
     const result = await sendSms(recipient, message)
     if (!result.ok) {

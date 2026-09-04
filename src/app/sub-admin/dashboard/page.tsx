@@ -183,7 +183,7 @@ export default function SubAdminDashboardPage() {
       <header className="bg-card border-b border-border sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <Brand href="/" pro={false} size={24} />
+            <Brand href="/" size={24} />
             <span className="text-[10px] uppercase tracking-wider text-muted-foreground border border-border rounded-full px-2 py-0.5 shrink-0">
               Partner
             </span>

@@ -137,8 +137,8 @@ export async function requestToPay(input: RequestToPayInput): Promise<void> {
       currency: input.currency,
       externalId: input.externalId,
       payer: { partyIdType: 'MSISDN', partyId: input.msisdn },
-      payerMessage: input.payerMessage ?? 'Plusebet deposit',
-      payeeNote: input.payeeNote ?? 'Plusebet deposit',
+      payerMessage: input.payerMessage ?? 'SnapWin deposit',
+      payeeNote: input.payeeNote ?? 'SnapWin deposit',
     }),
   })
   if (res.status !== 202) {

@@ -1,6 +1,6 @@
 // Backend / server domain model (ported from the PrimeBet reference).
 // Kept separate from the UI-facing types in `@/lib/types` so the existing
-// nextwin frontend (which has its own Match/Sport shapes) is untouched.
+// snapwin frontend (which has its own Match/Sport shapes) is untouched.
 // The ported lib stores, API routes, and admin pages all import from here.
 
 import type { CountryCode, CurrencyCode } from '@/lib/countries'

@@ -105,7 +105,7 @@ export async function POST(request: Request) {
       currency: momoCurrency(user.currency),
       msisdn,
       externalId,
-      payerMessage: 'Plusebet deposit',
+      payerMessage: 'SnapWin deposit',
       payeeNote: `Deposit ${user.currency} ${amount}`,
     })
   } catch (e) {

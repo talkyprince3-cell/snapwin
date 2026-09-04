@@ -5,20 +5,16 @@ export function LogoMark({ size = 32, id = "main" }: { size?: number; id?: strin
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true">
       <defs>
-        <linearGradient id={`logoGrad-${id}`} x1="0" y1="0" x2="32" y2="32">
-          <stop stopColor="#8b5cf6" />
-          <stop offset="1" stopColor="#ec4899" />
+        <linearGradient id={`logoGrad-${id}`} x1="4" y1="2" x2="28" y2="30">
+          <stop stopColor="#fbbf24" />
+          <stop offset="0.45" stopColor="#f97316" />
+          <stop offset="1" stopColor="#e11d48" />
         </linearGradient>
       </defs>
-      <rect width="32" height="32" rx="9" fill="#0c0f1f" stroke={`url(#logoGrad-${id})`} strokeWidth="1.5" />
-      <path
-        d="M8 22L13 10L16 18L19 10L24 22"
-        stroke={`url(#logoGrad-${id})`}
-        strokeWidth="2.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle cx="24" cy="22" r="2.3" fill="#fbbf24" />
+      {/* Tile */}
+      <rect width="32" height="32" rx="8" fill={`url(#logoGrad-${id})`} />
+      {/* Snap bolt, knocked out of the tile */}
+      <path d="M18.4 4L9 17.6h5.4L13.6 28 23 14.4h-5.4L18.4 4z" fill="#140b0e" />
     </svg>
   );
 }
@@ -27,26 +23,19 @@ export function Brand({
   size = 32,
   className,
   id = "main",
-  pro = true,
   href = "/",
 }: {
   size?: number;
   className?: string;
   id?: string;
-  pro?: boolean;
   href?: string | null;
 }) {
   const inner = (
     <span className={cn("flex items-center gap-2 select-none", className)}>
       <LogoMark size={size} id={id} />
       <span className="font-display font-extrabold tracking-tight text-[19px] leading-none">
-        PLUSE<span className="grad-text">BET</span>
+        SNAP<span className="grad-text">WIN</span>
       </span>
-      {pro && (
-        <span className="font-mono text-[9px] font-bold tracking-[0.18em] text-amber px-1.5 py-0.5 rounded bg-amber/10 border border-amber/30 text-[var(--color-amber)]">
-          PRO
-        </span>
-      )}
     </span>
   );
   if (href === null) return inner;

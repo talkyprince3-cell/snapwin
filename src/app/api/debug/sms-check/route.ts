@@ -17,7 +17,7 @@ export async function GET() {
   return NextResponse.json({
     hasApiKey: apiKey.length > 0,
     apiKeyLength: apiKey.length, // 27 for the current key — 0 means "not set"
-    senderId: senderId || null, // should read "PluseAlerts"
+    senderId: senderId || null, // the approved Arkesel sender ID (ARKESEL_SENDER_ID), max 11 chars
     ready: apiKey.length > 0 && senderId.length > 0,
   })
 }

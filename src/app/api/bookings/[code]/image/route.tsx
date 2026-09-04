@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 
 type Params = { params: Promise<{ code: string }> }
 
-// A shareable PNG of a booked slip — big code, the teams, the odds, Plusebet
+// A shareable PNG of a booked slip — big code, the teams, the odds, SnapWin
 // branding. Punters share this straight to WhatsApp / status.
 export async function GET(_req: Request, { params }: Params) {
   const { code } = await params
@@ -29,7 +29,7 @@ export async function GET(_req: Request, { params }: Params) {
           flexDirection: 'column',
           backgroundColor: '#0b0b14',
           backgroundImage:
-            'radial-gradient(circle at 18% 8%, rgba(139,92,246,0.35), transparent 45%), radial-gradient(circle at 88% 92%, rgba(236,72,153,0.30), transparent 45%)',
+            'radial-gradient(circle at 18% 8%, rgba(249, 115, 22,0.35), transparent 45%), radial-gradient(circle at 88% 92%, rgba(225, 29, 72,0.30), transparent 45%)',
           padding: '56px',
           fontFamily: 'sans-serif',
           color: '#ffffff',
@@ -38,8 +38,8 @@ export async function GET(_req: Request, { params }: Params) {
         {/* brand */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 46, fontWeight: 800 }}>
-            <span>Pluse</span>
-            <span style={{ color: '#a78bfa' }}>bet</span>
+            <span>Snap</span>
+            <span style={{ color: '#fb923c' }}>Win</span>
           </div>
           <div
             style={{
@@ -69,7 +69,7 @@ export async function GET(_req: Request, { params }: Params) {
               fontWeight: 800,
               letterSpacing: 8,
               lineHeight: 1.05,
-              backgroundImage: 'linear-gradient(90deg, #a78bfa, #ec4899)',
+              backgroundImage: 'linear-gradient(90deg, #fb923c, #e11d48)',
               backgroundClip: 'text',
               color: 'transparent',
             }}
@@ -130,7 +130,7 @@ export async function GET(_req: Request, { params }: Params) {
             </div>
           </div>
           <div style={{ display: 'flex', fontSize: 26, color: '#e5e7eb', maxWidth: 420, textAlign: 'right' }}>
-            Load this code on Plusebet to play
+            Load this code on SnapWin to play
           </div>
         </div>
       </div>
