@@ -7,30 +7,33 @@
    ============================================================ */
 
 @theme {
-  /* Surfaces — warm near-black, tuned for the orange/magenta brand */
-  --color-bg: #0a0608;
-  --color-bg-2: #100a0d;
-  --color-surface: #160f12;
-  --color-surface-2: #1e151a;
-  --color-surface-3: #281c22;
-  --color-elevated: #33242b;
+  /* Surfaces — neutral near-black, so gold reads as the only chroma */
+  --color-bg: #0b0b0c;
+  --color-bg-2: #121214;
+  --color-surface: #17181a;
+  --color-surface-2: #1f2023;
+  --color-surface-3: #292a2e;
+  --color-elevated: #34353a;
 
   /* Borders */
   --color-line: rgba(255, 255, 255, 0.09);
   --color-line-2: rgba(255, 255, 255, 0.15);
 
   /* Text */
-  --color-ink: #fdf7f5;
-  --color-ink-dim: #b2a2a6;
-  --color-ink-faint: #7d6d72;
+  --color-ink: #f7f7f8;
+  --color-ink-dim: #a3a4a9;
+  --color-ink-faint: #74757b;
 
-  /* Brand — SnapWin: electric orange → magenta */
-  --color-brand: #f97316;
-  --color-brand-hi: #fb923c;
-  --color-brand-deep: #c2410c;
-  --color-brand-2: #e11d48;
-  --color-brand-2-hi: #f43f5e;
-  --color-brand-2-deep: #9f1239;
+  /* Brand — SnapWin: gold on black */
+  --color-brand: #ffc800;
+  --color-brand-hi: #ffd84d;
+  --color-brand-deep: #c79a00;
+  --color-brand-2: #ff9f0a;
+  --color-brand-2-hi: #ffb340;
+  --color-brand-2-deep: #b36f00;
+  /* Foreground for anything sitting ON a gold fill. White on gold is ~1.6:1
+     and unreadable; this near-black is ~13:1. Never use text-white on gold. */
+  --color-on-brand: #141003;
 
   /* Support */
   --color-cyan: #22d3ee;
@@ -51,25 +54,25 @@
      onto the SnapWin palette here is what gives Tailwind something
      to emit for them.
      ------------------------------------------------------------ */
-  --color-background: #0a0608;
-  --color-foreground: #fdf7f5;
-  --color-card: #160f12;
-  --color-card-foreground: #fdf7f5;
-  --color-popover: #1e151a;
-  --color-popover-foreground: #fdf7f5;
-  --color-primary: #f97316;
-  --color-primary-foreground: #1a0c04;
-  --color-secondary: #1e151a;
-  --color-secondary-foreground: #fdf7f5;
-  --color-muted: #1e151a;
-  --color-muted-foreground: #b2a2a6;
-  --color-accent: #281c22;
-  --color-accent-foreground: #fdf7f5;
+  --color-background: #0b0b0c;
+  --color-foreground: #f7f7f8;
+  --color-card: #17181a;
+  --color-card-foreground: #f7f7f8;
+  --color-popover: #1f2023;
+  --color-popover-foreground: #f7f7f8;
+  --color-primary: #ffc800;
+  --color-primary-foreground: #141003;
+  --color-secondary: #1f2023;
+  --color-secondary-foreground: #f7f7f8;
+  --color-muted: #1f2023;
+  --color-muted-foreground: #a3a4a9;
+  --color-accent: #292a2e;
+  --color-accent-foreground: #f7f7f8;
   --color-destructive: #f43f5e;
   --color-destructive-foreground: #ffffff;
   --color-border: rgba(255, 255, 255, 0.09);
-  --color-input: #1e151a;
-  --color-ring: #f97316;
+  --color-input: #1f2023;
+  --color-ring: #ffc800;
 
   /* Console eyebrow label + card elevation */
   --text-eyebrow: 10px;
@@ -139,8 +142,8 @@ html {
 
 body {
   background:
-    radial-gradient(1100px 560px at 84% -12%, rgba(249, 115, 22, 0.13), transparent 62%),
-    radial-gradient(900px 500px at 2% 6%, rgba(225, 29, 72, 0.10), transparent 58%),
+    radial-gradient(1100px 560px at 84% -12%, rgba(255, 200, 0, 0.13), transparent 62%),
+    radial-gradient(900px 500px at 2% 6%, rgba(255, 159, 10, 0.10), transparent 58%),
     var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-body);
@@ -151,13 +154,13 @@ body {
 }
 
 ::selection {
-  background: rgba(249, 115, 22, 0.35);
+  background: rgba(255, 200, 0, 0.35);
   color: #fff;
 }
 
 /* Accessible keyboard focus — uses the brand orange, no new colours. */
 :focus-visible {
-  outline: 2px solid rgba(249, 115, 22, 0.75);
+  outline: 2px solid rgba(255, 200, 0, 0.75);
   outline-offset: 2px;
   border-radius: 8px;
 }
@@ -209,7 +212,7 @@ img, svg { user-select: none; -webkit-user-drag: none; }
 
 /* Brand gradient text */
 .grad-text {
-  background: linear-gradient(100deg, #fbbf24, #f97316 42%, #e11d48);
+  background: linear-gradient(100deg, #ffe9a3, #ffc800 45%, #ff9f0a);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -243,13 +246,13 @@ img, svg { user-select: none; -webkit-user-drag: none; }
   transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 .card-hover:hover {
-  border-color: rgba(249, 115, 22, 0.45);
+  border-color: rgba(255, 200, 0, 0.45);
   transform: translateY(-1px);
-  box-shadow: 0 10px 30px -14px rgba(249, 115, 22, 0.45);
+  box-shadow: 0 10px 30px -14px rgba(255, 200, 0, 0.45);
 }
 
 /* Glow ring around focus / active */
-.glow-brand { box-shadow: 0 0 0 1px rgba(249, 115, 22,.5), 0 8px 30px -8px rgba(249, 115, 22,.5); }
+.glow-brand { box-shadow: 0 0 0 1px rgba(255, 200, 0,.5), 0 8px 30px -8px rgba(255, 200, 0,.5); }
 
 /* Section title bar */
 .title-bar {
@@ -272,15 +275,15 @@ img, svg { user-select: none; -webkit-user-drag: none; }
   overflow: hidden;
 }
 .odds-btn:hover {
-  border-color: rgba(249, 115, 22, 0.5);
+  border-color: rgba(255, 200, 0, 0.5);
   background: var(--color-surface-3);
 }
 .odds-btn:active { transform: scale(0.96); }
 .odds-btn[data-active="true"] {
   background: linear-gradient(135deg, var(--color-brand), var(--color-brand-2));
   border-color: transparent;
-  color: #fff;
-  box-shadow: 0 6px 18px -8px rgba(249, 115, 22, 0.75);
+  color: var(--color-on-brand);
+  box-shadow: 0 6px 18px -8px rgba(255, 200, 0, 0.75);
 }
 
 /* Pill / chip */
@@ -302,7 +305,7 @@ img, svg { user-select: none; -webkit-user-drag: none; }
 }
 .chip[data-active="true"] {
   background: linear-gradient(135deg, var(--color-brand), var(--color-brand-2));
-  color: #fff;
+  color: var(--color-on-brand);
   border-color: transparent;
 }
 
@@ -391,7 +394,7 @@ img, svg { user-select: none; -webkit-user-drag: none; }
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(249,115,22,.7), rgba(225,29,72,.45), rgba(251,191,36,.5));
+  background: linear-gradient(135deg, rgba(255, 200, 0,.7), rgba(255, 159, 10,.45), rgba(251,191,36,.5));
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;

@@ -18,7 +18,7 @@ export default function LivePage() {
         <div className="flex items-center gap-2.5">
           <span className="title-bar" style={{ background: "linear-gradient(180deg,#f43f5e,#dc2626)" }} />
           <h1 className="font-display font-extrabold text-[18px]">Live In-Play</h1>
-          <span className="flex items-center gap-1.5 num text-[10px] font-bold grad-brand text-white px-2 py-1 rounded-md tracking-wide">
+          <span className="flex items-center gap-1.5 num text-[10px] font-bold grad-brand text-[var(--color-on-brand)] px-2 py-1 rounded-md tracking-wide">
             <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> {live.length} LIVE
           </span>
         </div>

@@ -34,7 +34,7 @@ export function MobileNav() {
                 <span className="relative">
                   <Icon size={20} className={cn(active ? "text-[var(--color-brand-hi)]" : "text-[var(--color-ink-faint)]")} strokeWidth={active ? 2.4 : 2} />
                   {it.badge && (
-                    <span className="absolute -top-1.5 -right-2 num text-[8px] font-bold grad-brand text-white rounded-full min-w-[14px] h-[14px] grid place-items-center px-0.5">
+                    <span className="absolute -top-1.5 -right-2 num text-[8px] font-bold grad-brand text-[var(--color-on-brand)] rounded-full min-w-[14px] h-[14px] grid place-items-center px-0.5">
                       {it.badge}
                     </span>
                   )}

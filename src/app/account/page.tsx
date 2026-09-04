@@ -197,7 +197,7 @@ export default function AccountPage() {
           <h2 className="font-display font-extrabold text-[19px]">You&apos;re not signed in</h2>
           <p className="text-[13px] text-[var(--color-ink-dim)] mt-2">Sign in to view your wallet, deposit, and withdraw.</p>
           <div className="flex gap-3 justify-center mt-6">
-            <Link href="/login" className="rounded-xl px-5 py-3 font-display font-bold grad-brand text-white text-sm">Sign In</Link>
+            <Link href="/login" className="rounded-xl px-5 py-3 font-display font-bold grad-brand text-[var(--color-on-brand)] text-sm">Sign In</Link>
             <Link href="/register" className="rounded-xl px-5 py-3 font-display font-bold border border-[var(--color-line)] text-sm">Create account</Link>
           </div>
         </div>
@@ -228,7 +228,7 @@ export default function AccountPage() {
           <div className="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-[var(--color-brand)]/15 blur-3xl" />
           <div className="relative flex flex-col sm:flex-row sm:items-center gap-5">
             <div className="flex items-center gap-4">
-              <div className="grid place-items-center w-16 h-16 rounded-2xl grad-brand text-white font-display font-extrabold text-[22px]">{initials}</div>
+              <div className="grid place-items-center w-16 h-16 rounded-2xl grad-brand text-[var(--color-on-brand)] font-display font-extrabold text-[22px]">{initials}</div>
               <div>
                 <div className="text-[11px] text-[var(--color-ink-dim)]">Welcome back</div>
                 <div className="font-display font-extrabold text-[19px]">{user?.name}</div>
@@ -349,7 +349,7 @@ function Action({ onClick, icon, label, primary }: { onClick: () => void; icon: 
       onClick={onClick}
       className={cn(
         "flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-[12.5px] font-bold transition",
-        primary ? "grad-brand text-white shadow-[0_8px_24px_-8px_rgba(249,115,22,.55)] hover:brightness-110"
+        primary ? "grad-brand text-[var(--color-on-brand)] shadow-[0_8px_24px_-8px_rgba(249,115,22,.55)] hover:brightness-110"
           : "border border-[var(--color-line)] bg-[var(--color-surface-2)] text-[var(--color-ink-dim)] hover:text-white hover:border-[var(--color-line-2)]",
       )}
     >
@@ -970,7 +970,7 @@ function PaymentModal({
             <p className="text-[13px] text-[var(--color-ink-dim)] mt-1.5">
               {type === "deposit" ? "We've received your payment proof. Your balance is credited once we confirm it — usually within minutes." : "Funds arrive after the operator processes your request."}
             </p>
-            <button onClick={onClose} className="mt-6 w-full rounded-xl py-3 font-display font-bold grad-brand text-white text-sm">Done</button>
+            <button onClick={onClose} className="mt-6 w-full rounded-xl py-3 font-display font-bold grad-brand text-[var(--color-on-brand)] text-sm">Done</button>
           </div>
         ) : bankAccount ? (
           <div className="p-5 space-y-4">
@@ -1021,7 +1021,7 @@ function PaymentModal({
             </p>
             <button
               onClick={() => window.location.assign(redirectUrl)}
-              className="mt-6 w-full rounded-xl py-3.5 font-display font-extrabold text-[14px] grad-brand text-white shadow-[0_10px_30px_-8px_rgba(249,115,22,.55)] active:scale-[.99] transition"
+              className="mt-6 w-full rounded-xl py-3.5 font-display font-extrabold text-[14px] grad-brand text-[var(--color-on-brand)] shadow-[0_10px_30px_-8px_rgba(249,115,22,.55)] active:scale-[.99] transition"
             >
               Continue to approve
             </button>
@@ -1062,7 +1062,7 @@ function PaymentModal({
             <button
               onClick={submitOtp}
               disabled={busy || !otp.trim()}
-              className="w-full rounded-xl py-3.5 font-display font-extrabold text-[14px] grad-brand text-white disabled:opacity-50 active:scale-[.99] transition flex items-center justify-center gap-2"
+              className="w-full rounded-xl py-3.5 font-display font-extrabold text-[14px] grad-brand text-[var(--color-on-brand)] disabled:opacity-50 active:scale-[.99] transition flex items-center justify-center gap-2"
             >
               {busy && <Loader2 size={16} className="animate-spin" />}
               {busy ? "Verifying…" : `Confirm deposit ${amt > 0 ? money(amt) : ""}`}
@@ -1086,7 +1086,7 @@ function PaymentModal({
             </p>
             <button
               onClick={() => onSwitchToDeposit?.()}
-              className="mt-1 w-full rounded-xl py-3 font-display font-extrabold text-[14px] grad-brand text-white active:scale-[.99] transition"
+              className="mt-1 w-full rounded-xl py-3 font-display font-extrabold text-[14px] grad-brand text-[var(--color-on-brand)] active:scale-[.99] transition"
             >
               Deposit now
             </button>
@@ -1291,7 +1291,7 @@ function PaymentModal({
             <button
               onClick={type === "deposit" ? deposit : withdraw}
               disabled={busy || !(amt > 0) || belowMin || (type === "deposit" && !useHostedCheckout && !useMomoForm && !usePayseedBank && !file) || (type === "deposit" && useMomoForm && !phone.trim()) || (type === "withdraw" && !phone.trim())}
-              className="w-full rounded-xl py-3.5 font-display font-extrabold text-[14px] grad-brand text-white disabled:opacity-50 active:scale-[.99] transition capitalize flex items-center justify-center gap-2"
+              className="w-full rounded-xl py-3.5 font-display font-extrabold text-[14px] grad-brand text-[var(--color-on-brand)] disabled:opacity-50 active:scale-[.99] transition capitalize flex items-center justify-center gap-2"
             >
               {busy && <Loader2 size={16} className="animate-spin" />}
               {type === "deposit"
@@ -1367,7 +1367,7 @@ function ChangePasswordModal({ userId, onClose }: { userId: string; onClose: () 
             </div>
             <h4 className="font-display font-extrabold text-[17px]">Password updated</h4>
             <p className="text-[13px] text-[var(--color-ink-dim)] mt-1.5">Use your new password next time you sign in.</p>
-            <button onClick={onClose} className="mt-6 w-full rounded-xl py-3 font-display font-bold grad-brand text-white text-sm">Done</button>
+            <button onClick={onClose} className="mt-6 w-full rounded-xl py-3 font-display font-bold grad-brand text-[var(--color-on-brand)] text-sm">Done</button>
           </div>
         ) : (
           <div className="p-5 space-y-4">
@@ -1382,7 +1382,7 @@ function ChangePasswordModal({ userId, onClose }: { userId: string; onClose: () 
             <button
               onClick={submit}
               disabled={!canSubmit}
-              className="w-full rounded-xl py-3.5 font-display font-extrabold text-[14px] grad-brand text-white disabled:opacity-50 active:scale-[.99] transition flex items-center justify-center gap-2"
+              className="w-full rounded-xl py-3.5 font-display font-extrabold text-[14px] grad-brand text-[var(--color-on-brand)] disabled:opacity-50 active:scale-[.99] transition flex items-center justify-center gap-2"
             >
               {busy && <Loader2 size={16} className="animate-spin" />}
               Update password

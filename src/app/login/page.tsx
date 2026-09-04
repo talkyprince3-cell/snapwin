@@ -82,7 +82,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-xl py-3.5 font-display font-extrabold text-[14px] grad-brand text-white shadow-[0_10px_30px_-8px_rgba(249,115,22,.55)] active:scale-[.99] transition disabled:opacity-60 flex items-center justify-center gap-2"
+          className="w-full rounded-xl py-3.5 font-display font-extrabold text-[14px] grad-brand text-[var(--color-on-brand)] shadow-[0_10px_30px_-8px_rgba(249,115,22,.55)] active:scale-[.99] transition disabled:opacity-60 flex items-center justify-center gap-2"
         >
           {loading && <Loader2 size={16} className="animate-spin" />}
           {loading ? "Signing in…" : "Sign In"}

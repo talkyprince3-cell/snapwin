@@ -27,7 +27,7 @@ export async function GET(_req: Request, { params }: Params) {
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          backgroundColor: '#0b0b14',
+          backgroundColor: '#0b0b0c',
           backgroundImage:
             'radial-gradient(circle at 18% 8%, rgba(249, 115, 22,0.35), transparent 45%), radial-gradient(circle at 88% 92%, rgba(225, 29, 72,0.30), transparent 45%)',
           padding: '56px',
@@ -38,8 +38,8 @@ export async function GET(_req: Request, { params }: Params) {
         {/* brand */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 46, fontWeight: 800 }}>
-            <span>Snap</span>
-            <span style={{ color: '#fb923c' }}>Win</span>
+            <span style={{ color: '#f7f7f8' }}>SNAP</span>
+            <span style={{ color: '#ffc800' }}>WIN</span>
           </div>
           <div
             style={{
@@ -69,7 +69,7 @@ export async function GET(_req: Request, { params }: Params) {
               fontWeight: 800,
               letterSpacing: 8,
               lineHeight: 1.05,
-              backgroundImage: 'linear-gradient(90deg, #fb923c, #e11d48)',
+              backgroundImage: 'linear-gradient(90deg, #ffc800, #ff9f0a)',
               backgroundClip: 'text',
               color: 'transparent',
             }}

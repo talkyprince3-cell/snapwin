@@ -223,7 +223,7 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
         </p>
         <button
           onClick={goLogin}
-          className="mt-5 w-full rounded-xl py-3 font-display font-bold grad-brand text-white text-sm"
+          className="mt-5 w-full rounded-xl py-3 font-display font-bold grad-brand text-[var(--color-on-brand)] text-sm"
         >
           Log in / Sign up
         </button>
@@ -261,7 +261,7 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
         <button
           onClick={shareImage}
           disabled={sharing}
-          className="mt-4 w-full flex items-center justify-center gap-2 rounded-xl py-3.5 font-display font-extrabold text-[14px] grad-brand text-white shadow-[0_10px_30px_-8px_rgba(249,115,22,.55)] disabled:opacity-60 active:scale-[.99] transition"
+          className="mt-4 w-full flex items-center justify-center gap-2 rounded-xl py-3.5 font-display font-extrabold text-[14px] grad-brand text-[var(--color-on-brand)] shadow-[0_10px_30px_-8px_rgba(249,115,22,.55)] disabled:opacity-60 active:scale-[.99] transition"
         >
           {sharing ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
           {sharing ? "Preparing…" : "Share image"}
@@ -299,7 +299,7 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
         </p>
         <button
           onClick={() => { setPlaced(false); setCode(null); clear(); onPlaced?.(); }}
-          className="mt-5 w-full rounded-xl py-3 font-display font-bold grad-brand text-white text-sm"
+          className="mt-5 w-full rounded-xl py-3 font-display font-bold grad-brand text-[var(--color-on-brand)] text-sm"
         >
           Place Another
         </button>
@@ -332,7 +332,7 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
             <button
               onClick={loadBookingCode}
               disabled={loadingCode}
-              className="rounded-xl px-4 grad-brand text-white font-display font-bold text-[13px] disabled:opacity-50 flex items-center gap-1.5"
+              className="rounded-xl px-4 grad-brand text-[var(--color-on-brand)] font-display font-bold text-[13px] disabled:opacity-50 flex items-center gap-1.5"
             >
               {loadingCode ? <Loader2 size={15} className="animate-spin" /> : "Load"}
             </button>
@@ -379,7 +379,7 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
               className={cn(
                 "flex-1 num text-[11px] font-bold rounded-lg py-1.5 border transition-colors",
                 stake === q
-                  ? "grad-brand text-white border-transparent"
+                  ? "grad-brand text-[var(--color-on-brand)] border-transparent"
                   : "bg-[var(--color-surface-2)] border-[var(--color-line)] text-[var(--color-ink-dim)] hover:text-white",
               )}
             >
@@ -421,7 +421,7 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
         <button
           onClick={placeBet}
           disabled={stake <= 0 || busy || booking}
-          className="w-full flex items-center justify-center gap-2 rounded-xl py-3.5 font-display font-extrabold text-[14px] grad-brand text-white shadow-[0_10px_30px_-8px_rgba(249,115,22,.55)] disabled:opacity-50 disabled:shadow-none active:scale-[.99] transition"
+          className="w-full flex items-center justify-center gap-2 rounded-xl py-3.5 font-display font-extrabold text-[14px] grad-brand text-[var(--color-on-brand)] shadow-[0_10px_30px_-8px_rgba(249,115,22,.55)] disabled:opacity-50 disabled:shadow-none active:scale-[.99] transition"
         >
           {busy && <Loader2 size={16} className="animate-spin" />}
           {busy ? "Placing…" : `Place Bet · ${money(stake)}`}
@@ -460,7 +460,7 @@ export function DesktopBetSlip() {
             <Ticket size={16} className="text-[var(--color-brand)]" />
             <span className="font-display font-extrabold text-[14px]">Bet Slip</span>
           </div>
-          <span className="num text-[11px] font-bold grad-brand text-white rounded-full min-w-[22px] h-[22px] grid place-items-center px-1.5">
+          <span className="num text-[11px] font-bold grad-brand text-[var(--color-on-brand)] rounded-full min-w-[22px] h-[22px] grid place-items-center px-1.5">
             {count}
           </span>
         </div>
@@ -482,7 +482,7 @@ export function MobileBetSlip() {
       {count > 0 && !mobileOpen && (
         <button
           onClick={() => setMobileOpen(true)}
-          className="xl:hidden fixed bottom-[68px] left-3 right-3 z-40 flex items-center justify-between rounded-2xl px-4 py-3 grad-brand text-white shadow-[0_12px_40px_-10px_rgba(249,115,22,.7)] animate-rise"
+          className="xl:hidden fixed bottom-[68px] left-3 right-3 z-40 flex items-center justify-between rounded-2xl px-4 py-3 grad-brand text-[var(--color-on-brand)] shadow-[0_12px_40px_-10px_rgba(249,115,22,.7)] animate-rise"
         >
           <span className="flex items-center gap-2 font-display font-bold text-[13px]">
             <span className="num bg-white/25 rounded-full min-w-[20px] h-5 grid place-items-center px-1.5 text-[11px]">{count}</span>

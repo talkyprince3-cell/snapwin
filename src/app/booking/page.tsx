@@ -138,7 +138,7 @@ export default function BookingPage() {
                   <button
                     onClick={load}
                     disabled={loading}
-                    className="m-1.5 flex items-center gap-1.5 rounded-xl grad-brand text-white px-4 py-2.5 font-display font-bold text-[13px] active:scale-95 transition disabled:opacity-60"
+                    className="m-1.5 flex items-center gap-1.5 rounded-xl grad-brand text-[var(--color-on-brand)] px-4 py-2.5 font-display font-bold text-[13px] active:scale-95 transition disabled:opacity-60"
                   >
                     {loading ? (
                       <Loader2 size={16} className="animate-spin" />
@@ -222,7 +222,7 @@ export default function BookingPage() {
                   {data.playable ? (
                     <button
                       onClick={loadIntoSlip}
-                      className="flex-1 flex items-center justify-center gap-1.5 rounded-xl grad-brand text-white px-4 py-3 font-display font-bold text-[13px] active:scale-95 transition"
+                      className="flex-1 flex items-center justify-center gap-1.5 rounded-xl grad-brand text-[var(--color-on-brand)] px-4 py-3 font-display font-bold text-[13px] active:scale-95 transition"
                     >
                       Load into slip <ArrowRight size={15} />
                     </button>

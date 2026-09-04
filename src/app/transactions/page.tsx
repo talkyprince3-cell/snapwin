@@ -67,7 +67,7 @@ export default function TransactionsPage() {
       {noSession ? (
         <div className="card p-10 text-center">
           <p className="text-[14px] text-[var(--color-ink-dim)]">Sign in to view your transactions.</p>
-          <Link href="/login" className="inline-block mt-4 rounded-xl px-5 py-2.5 font-display font-bold grad-brand text-white text-sm">Sign In</Link>
+          <Link href="/login" className="inline-block mt-4 rounded-xl px-5 py-2.5 font-display font-bold grad-brand text-[var(--color-on-brand)] text-sm">Sign In</Link>
         </div>
       ) : (
         <>

@@ -136,10 +136,23 @@ export const tickerItems = [
 ];
 
 export const promos = [
-  { tone: "brand", eyebrow: "⚡ Welcome Bonus", title: "100% Match Bonus", sub: "Up to GH₵ 500 on your first deposit." , cta: "Claim Now"},
-  { tone: "magenta", eyebrow: "🛡️ Acca Insurance", title: "One Leg Down? Refund.", sub: "5+ selection accumulators covered.", cta: "Learn More" },
-  { tone: "emerald", eyebrow: "🎯 Same Game Parlay", title: "Build From One Match", sub: "Combine markets into one slip.", cta: "Build Bet" },
-  { tone: "gold", eyebrow: "📊 Daily Boost", title: "Enhanced Odds", sub: "Selected markets boosted ×2 today.", cta: "View All" },
+  { tone: "gold",    eyebrow: "⚡ Welcome Bonus",    title: "100% Match Bonus",      sub: "Up to GH₵ 500 on your first deposit.", cta: "Claim Now",  href: "/account" },
+  { tone: "amber",   eyebrow: "🛡️ Acca Insurance",   title: "One Leg Down? Refund.", sub: "5+ selection accumulators covered.",   cta: "Learn More", href: "/account" },
+  { tone: "emerald", eyebrow: "🎯 Same Game Parlay", title: "Build From One Match",  sub: "Combine markets into one slip.",       cta: "Build Bet",  href: "/" },
+  { tone: "sky",     eyebrow: "📊 Daily Boost",      title: "Enhanced Odds",         sub: "Selected markets boosted ×2 today.",   cta: "View All",   href: "/" },
+];
+
+/**
+ * Quick-action tiles under the hero — the icon grid a sportsbook home page uses
+ * to fan players out to its main surfaces in a single tap.
+ */
+export const quickActions = [
+  { id: "sports",  label: "Sports",    icon: "⚽", href: "/" },
+  { id: "live",    label: "Live",      icon: "📡", href: "/live", live: true },
+  { id: "booking", label: "Load Code", icon: "📥", href: "/booking" },
+  { id: "verify",  label: "Verify",    icon: "🎟️", href: "/verify" },
+  { id: "mybets",  label: "My Bets",   icon: "🎫", href: "/my-bets" },
+  { id: "wallet",  label: "Deposit",   icon: "💰", href: "/account" },
 ];
 
 export const stats = [

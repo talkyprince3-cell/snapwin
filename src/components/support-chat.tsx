@@ -40,7 +40,7 @@ export function SupportChat() {
     <>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-[76px] xl:bottom-6 right-4 xl:right-6 z-40 grid place-items-center w-[52px] h-[52px] rounded-full grad-brand text-white shadow-[0_12px_36px_-8px_rgba(249,115,22,.7)] hover:scale-105 active:scale-95 transition"
+        className="fixed bottom-[76px] xl:bottom-6 right-4 xl:right-6 z-40 grid place-items-center w-[52px] h-[52px] rounded-full grad-brand text-[var(--color-on-brand)] shadow-[0_12px_36px_-8px_rgba(249,115,22,.7)] hover:scale-105 active:scale-95 transition"
         aria-label="Support chat"
       >
         <span className="absolute inset-0 rounded-full grad-brand animate-ping opacity-20" />
@@ -51,7 +51,7 @@ export function SupportChat() {
         <div className="fixed bottom-[140px] xl:bottom-[88px] right-4 xl:right-6 z-40 w-[min(370px,calc(100vw-2rem))] h-[min(540px,70dvh)] card flex flex-col overflow-hidden animate-rise shadow-2xl">
           {/* header */}
           <div className="flex items-center gap-3 px-4 py-3.5 bg-[var(--color-bg-2)] border-b border-[var(--color-line)]">
-            <div className="relative grid place-items-center w-9 h-9 rounded-full grad-brand text-white">
+            <div className="relative grid place-items-center w-9 h-9 rounded-full grad-brand text-[var(--color-on-brand)]">
               <MessageCircle size={18} />
               <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[var(--color-emerald)] border-2 border-[var(--color-bg-2)]" />
             </div>
@@ -73,7 +73,7 @@ export function SupportChat() {
                 <div
                   className={
                     m.from === "me"
-                      ? "grad-brand text-white rounded-2xl rounded-br-md px-3.5 py-2.5 text-[13px] max-w-[80%]"
+                      ? "grad-brand text-[var(--color-on-brand)] rounded-2xl rounded-br-md px-3.5 py-2.5 text-[13px] max-w-[80%]"
                       : "bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-2xl rounded-bl-md px-3.5 py-2.5 text-[13px] max-w-[85%] text-[var(--color-ink)]"
                   }
                 >
@@ -104,7 +104,7 @@ export function SupportChat() {
             />
             <button
               onClick={() => send(input)}
-              className="grid place-items-center w-10 h-10 rounded-xl grad-brand text-white shrink-0 active:scale-95 transition"
+              className="grid place-items-center w-10 h-10 rounded-xl grad-brand text-[var(--color-on-brand)] shrink-0 active:scale-95 transition"
             >
               <Send size={16} />
             </button>

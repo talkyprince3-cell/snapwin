@@ -20,7 +20,7 @@ export default function MyBetsPage() {
       <div className="flex items-center gap-2.5 mb-5">
         <span className="title-bar" />
         <h1 className="font-display font-extrabold text-[18px]">My Bets</h1>
-        <span className="num text-[10px] font-bold grad-brand text-white px-2 py-1 rounded-md">{open.length} OPEN</span>
+        <span className="num text-[10px] font-bold grad-brand text-[var(--color-on-brand)] px-2 py-1 rounded-md">{open.length} OPEN</span>
       </div>
 
       {!loggedIn ? (
@@ -77,7 +77,7 @@ function EmptyState({ title, body, cta }: { title: string; body: string; cta: { 
       </div>
       <h3 className="font-display font-bold text-[15px]">{title}</h3>
       <p className="text-[12.5px] text-[var(--color-ink-faint)] mt-1.5">{body}</p>
-      <Link href={cta.href} className="mt-5 rounded-xl px-5 py-2.5 font-display font-bold grad-brand text-white text-[13px]">{cta.label}</Link>
+      <Link href={cta.href} className="mt-5 rounded-xl px-5 py-2.5 font-display font-bold grad-brand text-[var(--color-on-brand)] text-[13px]">{cta.label}</Link>
     </div>
   );
 }

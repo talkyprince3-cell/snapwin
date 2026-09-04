@@ -30,7 +30,7 @@ export default function BetHistoryPage() {
       {!loggedIn ? (
         <div className="card py-12 text-center">
           <p className="text-[13px] text-[var(--color-ink-dim)]">Sign in to view your bet history.</p>
-          <Link href="/login" className="inline-block mt-4 rounded-xl px-5 py-2.5 font-display font-bold grad-brand text-white text-[13px]">Log in</Link>
+          <Link href="/login" className="inline-block mt-4 rounded-xl px-5 py-2.5 font-display font-bold grad-brand text-[var(--color-on-brand)] text-[13px]">Log in</Link>
         </div>
       ) : loading ? (
         <p className="text-[13px] text-[var(--color-ink-faint)] py-10 text-center">Loading your history…</p>

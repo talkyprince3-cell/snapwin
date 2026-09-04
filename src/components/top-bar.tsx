@@ -83,7 +83,7 @@ export function TopBar({ onMenu }: { onMenu?: () => void }) {
             <Menu size={22} />
           </button>
 
-          <Brand />
+          <Brand priority />
 
           {/* desktop nav */}
           <nav className="hidden lg:flex items-center gap-1 ml-4">
@@ -101,7 +101,7 @@ export function TopBar({ onMenu }: { onMenu?: () => void }) {
                 <span className="text-[13px]">{n.icon}</span>
                 {n.label}
                 {n.badge && (
-                  <span className="num text-[9px] font-bold grad-brand text-white rounded-full min-w-[16px] h-4 grid place-items-center px-1">
+                  <span className="num text-[9px] font-bold grad-brand text-[var(--color-on-brand)] rounded-full min-w-[16px] h-4 grid place-items-center px-1">
                     {n.badge}
                   </span>
                 )}
@@ -129,7 +129,7 @@ export function TopBar({ onMenu }: { onMenu?: () => void }) {
               {/* deposit */}
               <Link
                 href="/account"
-                className="hidden sm:flex items-center gap-1.5 rounded-lg grad-brand text-white px-3.5 py-2 font-display font-bold text-[13px] shadow-[0_6px_18px_-8px_rgba(249,115,22,.7)] hover:brightness-110 transition"
+                className="hidden sm:flex items-center gap-1.5 rounded-lg grad-brand text-[var(--color-on-brand)] px-3.5 py-2 font-display font-bold text-[13px] shadow-[0_6px_18px_-8px_rgba(249,115,22,.7)] hover:brightness-110 transition"
               >
                 <Plus size={15} /> Deposit
               </Link>
@@ -154,7 +154,7 @@ export function TopBar({ onMenu }: { onMenu?: () => void }) {
                   onClick={() => setProfileOpen((v) => !v)}
                   className="flex items-center gap-1 rounded-lg border border-[var(--color-line)] bg-[var(--color-surface)] p-1.5 pr-2 hover:border-[var(--color-line-2)] transition-colors"
                 >
-                  <span className="grid place-items-center w-7 h-7 rounded-md grad-brand text-white font-display font-bold text-[12px]">
+                  <span className="grid place-items-center w-7 h-7 rounded-md grad-brand text-[var(--color-on-brand)] font-display font-bold text-[12px]">
                     {initials(userName)}
                   </span>
                   <ChevronDown size={14} className="text-[var(--color-ink-faint)]" />
@@ -191,7 +191,7 @@ export function TopBar({ onMenu }: { onMenu?: () => void }) {
               </Link>
               <Link
                 href="/register"
-                className="rounded-lg grad-brand text-white px-3.5 py-2 font-display font-bold text-[13px] shadow-[0_6px_18px_-8px_rgba(249,115,22,.7)] hover:brightness-110 transition"
+                className="rounded-lg grad-brand text-[var(--color-on-brand)] px-3.5 py-2 font-display font-bold text-[13px] shadow-[0_6px_18px_-8px_rgba(249,115,22,.7)] hover:brightness-110 transition"
               >
                 Sign up
               </Link>

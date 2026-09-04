@@ -132,7 +132,7 @@ export default function VerifyPage() {
                 <button
                   onClick={verify}
                   disabled={loading}
-                  className="m-1.5 flex items-center gap-1.5 rounded-xl grad-brand text-white px-4 py-2.5 font-display font-bold text-[13px] active:scale-95 transition disabled:opacity-60"
+                  className="m-1.5 flex items-center gap-1.5 rounded-xl grad-brand text-[var(--color-on-brand)] px-4 py-2.5 font-display font-bold text-[13px] active:scale-95 transition disabled:opacity-60"
                 >
                   {loading ? (
                     <span className="inline-block w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-[spin_0.8s_linear_infinite]" />
