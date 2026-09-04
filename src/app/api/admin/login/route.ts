@@ -5,8 +5,16 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(request: Request) {
   if (!process.env.ADMIN_PASSWORD) {
+    // Point at the right place. On Vercel there is no .env.local to edit —
+    // the variable lives in the project's Environment Variables, and a fresh
+    // project (or the Preview scope) starts with none, which is the usual
+    // reason this fires on a deployment that works fine locally.
+    const onVercel = !!process.env.VERCEL
+    const where = onVercel
+      ? `this deployment. Add it to the Vercel project's Environment Variables (${process.env.VERCEL_ENV ?? 'production'} scope) and redeploy`
+      : '.env.local, then restart the dev server'
     return NextResponse.json(
-      { error: 'admin disabled — set ADMIN_PASSWORD in .env.local' },
+      { error: `admin disabled — ADMIN_PASSWORD is not set in ${where}` },
       { status: 503 },
     )
   }

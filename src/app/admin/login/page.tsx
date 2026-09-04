@@ -20,7 +20,9 @@ function LoginForm() {
   useEffect(() => {
     if (disabled) {
       setError(
-        'Admin is disabled — set ADMIN_PASSWORD in .env.local and restart the dev server.',
+        'Admin is disabled — ADMIN_PASSWORD is not set for this environment. ' +
+          'Locally: add it to .env.local and restart. On Vercel: add it to the ' +
+          "project's Environment Variables and redeploy.",
       )
     }
   }, [disabled])
@@ -130,7 +132,8 @@ function LoginForm() {
 
           <p className="relative text-center text-xs text-muted-foreground mt-4">
             This area is gated by a single shared password. Rotate it by changing
-            ADMIN_PASSWORD in .env.local.
+            ADMIN_PASSWORD — in .env.local for local work, and in the hosting
+            project&apos;s environment variables for a deployment.
           </p>
         </div>
       </main>
