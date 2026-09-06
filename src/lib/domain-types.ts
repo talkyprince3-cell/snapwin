@@ -140,7 +140,16 @@ export interface Commission {
   createdAt: string
 }
 
-export const COMMISSION_RATE = 0.6 // 60% of every deposit from a referred user
+/**
+ * Sub-admin share of every deposit made by a user they referred: a 70/30 split
+ * in the sub-admin's favour.
+ *
+ * Changing this only affects commissions earned from here on. Rows already in
+ * `commissions` carry the rate they were written with, so historic payouts stay
+ * auditable at the rate that actually applied. Every percentage shown in the UI
+ * is derived from this constant, so there is one place to edit.
+ */
+export const COMMISSION_RATE = 0.7 // 70% sub-admin / 30% platform
 
 export interface SubAdmin {
   id: string
