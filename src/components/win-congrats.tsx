@@ -41,25 +41,32 @@ export function WinCongrats({ open, onClose, amount, currency = "GHS", verifyCod
         <X className="w-6 h-6" strokeWidth={2.5} />
       </button>
 
-      {/* Headline */}
-      <div className="mt-16 sm:mt-20 text-center">
-        <p className="text-5xl sm:text-6xl font-display font-extrabold text-white tracking-tight drop-shadow-lg">
-          YOU WON
-        </p>
-        <p className="mt-2 num text-3xl sm:text-4xl font-bold text-white drop-shadow-md">
-          {formatMoneyWithCurrency(amount, currency)}
-        </p>
-      </div>
+      {/*
+        Headline and trophy are one centred group rather than the headline
+        being pinned to the top and the trophy floating in the leftover space.
+        Previously the trophy sat in a flex-1 box and object-contain centred it
+        inside that tall box, opening a large gap under the amount; grouping
+        them keeps the copy sitting right on top of the cup at any height.
+      */}
+      <div className="flex-1 min-h-0 w-full flex flex-col items-center justify-center">
+        <div className="text-center">
+          <p className="text-5xl sm:text-6xl font-display font-extrabold text-white tracking-tight drop-shadow-lg">
+            YOU WON
+          </p>
+          <p className="mt-2 num text-3xl sm:text-4xl font-bold text-white drop-shadow-md">
+            {formatMoneyWithCurrency(amount, currency)}
+          </p>
+        </div>
 
-      {/* Trophy */}
-      <div className="relative flex-1 w-full mt-1 sm:mt-2 min-h-0">
-        <Image
-          src="/won_trophy_image.png"
-          alt="Trophy"
-          fill
-          priority
-          className="object-contain drop-shadow-[0_0_50px_rgba(255,200,0,0.55)]"
-        />
+        <div className="relative w-full h-[34vh] max-h-[320px] mt-3">
+          <Image
+            src="/won_trophy_image.png"
+            alt="Trophy"
+            fill
+            priority
+            className="object-contain drop-shadow-[0_0_50px_rgba(255,200,0,0.55)]"
+          />
+        </div>
       </div>
 
       {/* Verify code */}

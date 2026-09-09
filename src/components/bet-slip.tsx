@@ -136,6 +136,22 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
     }
   }
 
+  // Copy / share for the PLACED ticket code. Kept separate from the booking
+  // code helpers below: a booking is a saved slip, this is a real ticket.
+  function copyTicket(value: string) {
+    navigator.clipboard?.writeText(value).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    }).catch(() => {});
+  }
+
+  function shareTicket(value: string) {
+    void navigator.share?.({
+      title: "SnapWin ticket",
+      text: `My SnapWin ticket: ${value}`,
+    }).catch(() => {});
+  }
+
   function copyCode() {
     if (!bookedCode) return;
     navigator.clipboard?.writeText(bookedCode).then(() => {
@@ -289,18 +305,47 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
   }
 
   if (placed) {
+    // The slip is deliberately not cleared on success, only on dismiss: `stake`
+    // and `potential` are derived from it, so clearing early would collapse the
+    // receipt's figures to zero while the user is still reading them.
+    const done = () => { setPlaced(false); setCode(null); clear(); onPlaced?.(); };
     return (
-      <div className="flex flex-col items-center text-center px-5 py-10 animate-rise">
-        <div className="grid place-items-center w-16 h-16 rounded-full grad-emerald mb-4 shadow-[0_10px_40px_-8px_rgba(52,211,153,.6)]">
-          <ShieldCheck className="text-white" size={30} />
+      <div className="px-4 py-6 animate-rise">
+        <div className="flex items-center justify-center gap-2.5">
+          <span className="grid place-items-center w-9 h-9 rounded-full grad-emerald shrink-0">
+            <ShieldCheck className="text-white" size={19} />
+          </span>
+          <h3 className="font-display font-extrabold text-[20px]">Bet Successful</h3>
         </div>
-        <h3 className="font-display font-extrabold text-lg">Bet Placed!</h3>
-        <p className="text-[13px] text-[var(--color-ink-dim)] mt-1">
-          Ticket <span className="num text-[var(--color-cyan)]">{code ?? "confirmed"}</span> confirmed.
-        </p>
+
+        <dl className="mt-5 space-y-0.5">
+          <ReceiptRow label="Total Stake" value={money(stake)} />
+          <ReceiptRow label="Potential Win" value={money(potential)} strong />
+          {bonus > 0 && <ReceiptRow label="Max. Bonus" value={money(bonus)} />}
+        </dl>
+
+        {code && (
+          <div className="mt-4 flex items-center justify-between gap-3 border-y border-[var(--color-line)] py-3">
+            <span className="num text-[16px] font-extrabold tracking-wider truncate">{code}</span>
+            <div className="flex items-center gap-3 shrink-0">
+              <button onClick={() => shareTicket(code)} aria-label="Share ticket code" className="text-[var(--color-ink-faint)] hover:text-white transition-colors">
+                <Share2 size={17} />
+              </button>
+              <button onClick={() => copyTicket(code)} aria-label="Copy ticket code" className="text-[var(--color-ink-faint)] hover:text-white transition-colors">
+                {copied ? <Check size={17} className="text-[var(--color-emerald)]" /> : <Copy size={17} />}
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="mt-1">
+          <ReceiptLink label="View Ticket" href={code ? `/my-bets/${encodeURIComponent(code)}` : "/my-bets"} onGo={done} />
+          <ReceiptLink label="Open Bets" href="/my-bets" onGo={done} />
+        </div>
+
         <button
-          onClick={() => { setPlaced(false); setCode(null); clear(); onPlaced?.(); }}
-          className="mt-5 w-full rounded-xl py-3 font-display font-bold grad-brand text-[var(--color-on-brand)] text-sm"
+          onClick={done}
+          className="mt-5 w-full rounded-[var(--radius-ctl)] py-3 font-display font-bold grad-brand text-[var(--color-on-brand)] text-sm"
         >
           Place Another
         </button>
@@ -456,6 +501,28 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
         </button>
       </div>
     </div>
+  );
+}
+
+function ReceiptRow({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
+  return (
+    <div className="flex items-center justify-between gap-3 py-1.5">
+      <dt className="text-[13px] text-[var(--color-ink-dim)]">{label}</dt>
+      <dd className={cn("num text-[15px]", strong ? "font-extrabold text-[var(--color-brand)]" : "font-bold")}>{value}</dd>
+    </div>
+  );
+}
+
+function ReceiptLink({ label, href, onGo }: { label: string; href: string; onGo: () => void }) {
+  return (
+    <Link
+      href={href}
+      onClick={onGo}
+      className="flex items-center justify-between gap-3 py-2.5 border-b border-[var(--color-line)] last:border-b-0"
+    >
+      <span className="text-[13px] text-[var(--color-ink-dim)]">{label}</span>
+      <span className="text-[13px] font-bold text-[var(--color-emerald)]">View</span>
+    </Link>
   );
 }
 
