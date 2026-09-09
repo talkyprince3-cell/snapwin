@@ -35,9 +35,17 @@ function verifyCodeFor(id: string, code: string): string {
 }
 
 export function placedBetToUi(b: PlacedBet): Bet {
+  // Carry the teams, league and market through as well as the joined label.
+  // The compact card only needs `match`, but the ticket page lays the leg out
+  // itself and cannot recover these once they are flattened into one string.
   const legs = (b.selections ?? []).map((s) => ({
     matchId: s.matchId ?? '',
     match: matchLabel(s),
+    home: s.match?.homeTeam || undefined,
+    away: s.match?.awayTeam || undefined,
+    league: s.match?.league || undefined,
+    country: s.match?.country || undefined,
+    market: s.marketLabel || undefined,
     pick: s.outcomeLabel ?? s.marketLabel ?? '—',
     odds: Number(s.odds) || 0,
     result: (s.status ?? 'pending') as 'won' | 'lost' | 'pending',

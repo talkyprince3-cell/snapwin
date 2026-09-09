@@ -367,6 +367,8 @@ export function FeaturedMatch({ m }: { m: Match }) {
                       id,
                       matchId: m.id,
                       match: `${m.home} v ${m.away}`,
+                      league: m.league,
+                      country: m.country,
                       market: "Match Result",
                       pick: p.name,
                       odds: p.odds,

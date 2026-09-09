@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { X, Trash2, Ticket, Zap, ShieldCheck, ChevronUp, Loader2, LogIn, BookmarkPlus, Copy, Check, Share2 } from "lucide-react";
+import { X, Trash2, Ticket, Zap, ShieldCheck, ChevronUp, ChevronRight, Loader2, LogIn, BookmarkPlus, Copy, Check, Share2 } from "lucide-react";
 import { useSlip, totalOdds } from "@/lib/store";
 import type { Selection } from "@/lib/types";
 import { getUserId } from "@/lib/user-session";
@@ -13,7 +14,7 @@ import { cn } from "@/lib/utils";
 const QUICK = [20, 50, 100, 500];
 
 function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
-  const { selections, stake, remove, clear, setStake, add } = useSlip();
+  const { selections, stake, remove, clear, setStake, add, setMobileOpen } = useSlip();
   const router = useRouter();
   const [placed, setPlaced] = useState(false);
   const [code, setCode] = useState<string | null>(null);
@@ -72,8 +73,8 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
           matchId: s.matchId,
           match: {
             id: s.matchId,
-            league: "",
-            country: "",
+            league: s.league ?? "",
+            country: s.country ?? "",
             homeTeam: (home ?? s.match).trim(),
             awayTeam: (away ?? "").trim(),
             isLive: false,
@@ -350,14 +351,32 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
         {selections.map((s) => (
           <div key={s.id} className="card p-3 animate-rise">
             <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <div className="text-[11px] text-[var(--color-ink-faint)] truncate">{s.match}</div>
-                <div className="font-display font-bold text-[13.5px] mt-0.5 truncate">{s.pick}</div>
-                <div className="text-[10.5px] text-[var(--color-ink-dim)] mt-0.5">{s.market}</div>
-              </div>
+              {/* Tapping the selection opens the fixture it came from, so a
+                  punter can check the game before staking. The remove button
+                  sits outside the link so it stays its own hit target. */}
+              <Link
+                href={s.matchId ? `/match/${s.matchId}` : "#"}
+                onClick={() => setMobileOpen(false)}
+                className="min-w-0 group/sel"
+              >
+                <div className="font-display font-bold text-[13.5px] truncate group-hover/sel:text-[var(--color-brand-hi)] transition-colors">
+                  {s.pick}
+                </div>
+                <div className="text-[11.5px] text-[var(--color-ink-dim)] truncate mt-0.5">{s.match}</div>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="text-[10px] font-semibold text-[var(--color-ink-faint)] uppercase tracking-wide">
+                    {s.market}
+                  </span>
+                  <ChevronRight size={11} className="text-[var(--color-ink-faint)] group-hover/sel:text-[var(--color-brand-hi)] transition-colors" />
+                </div>
+              </Link>
               <div className="flex flex-col items-end gap-1.5 shrink-0">
-                <span className="num text-[13px] font-bold text-[var(--color-cyan)]">{s.odds.toFixed(2)}</span>
-                <button onClick={() => remove(s.id)} className="text-[var(--color-ink-faint)] hover:text-[var(--color-rose)] transition-colors">
+                <span className="num text-[13px] font-bold text-[var(--color-brand)]">{s.odds.toFixed(2)}</span>
+                <button
+                  onClick={() => remove(s.id)}
+                  aria-label={`Remove ${s.pick}`}
+                  className="text-[var(--color-ink-faint)] hover:text-[var(--color-rose)] transition-colors"
+                >
                   <X size={15} />
                 </button>
               </div>

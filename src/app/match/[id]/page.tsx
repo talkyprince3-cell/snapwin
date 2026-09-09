@@ -170,7 +170,7 @@ export default function MatchDetail({ params }: { params: Promise<{ id: string }
                     disabled={m.locked}
                     onClick={() => {
                       if (m.locked) return;
-                      toggle({ id: sid, matchId: m.id, match: `${m.home} v ${m.away}`, market: g.title, pick: p.label, odds: p.odds });
+                      toggle({ id: sid, matchId: m.id, match: `${m.home} v ${m.away}`, league: m.league, country: m.country, market: g.title, pick: p.label, odds: p.odds });
                     }}
                     className="odds-btn group/o flex items-center justify-between gap-2 px-3 py-2.5 disabled:opacity-40 disabled:cursor-not-allowed"
                   >

@@ -46,6 +46,10 @@ export type Selection = {
   market: string; // "Match Result"
   pick: string; // "Arsenal" / "Draw"
   odds: number;
+  /** Competition the fixture belongs to. Persisted with the bet so a ticket
+   *  can still name it long after the match has left the live feed. */
+  league?: string;
+  country?: string;
 };
 
 export type Txn = {
@@ -57,10 +61,27 @@ export type Txn = {
   date: string;
 };
 
+export type BetLeg = {
+  matchId?: string;
+  /** "Home v Away", pre-joined for the compact card. */
+  match: string;
+  /** Teams kept apart as well, so the ticket page can lay them out itself. */
+  home?: string;
+  away?: string;
+  league?: string;
+  country?: string;
+  /** e.g. "Match Result" — which market the pick was made in. */
+  market?: string;
+  /** The chosen outcome, e.g. "Draw" or a team name. */
+  pick: string;
+  odds: number;
+  result: "won" | "lost" | "pending";
+};
+
 export type Bet = {
   id: string;
   type: "single" | "multi";
-  legs: { matchId?: string; match: string; pick: string; odds: number; result: "won" | "lost" | "pending" }[];
+  legs: BetLeg[];
   stake: number;
   totalOdds: number;
   potential: number;

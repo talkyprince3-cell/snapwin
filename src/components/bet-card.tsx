@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
-import { ChevronDown, Check, X, Clock, Banknote, Trophy, Radio, Lock } from "lucide-react";
+import { ChevronDown, Check, X, Clock, Banknote, Trophy, Radio, Lock, Receipt } from "lucide-react";
 import type { Bet } from "@/lib/types";
 import { WinCongrats } from "./win-congrats";
 import { cn } from "@/lib/utils";
@@ -101,6 +102,12 @@ export function BetCard({ b, liveMatchIds }: { b: Bet; liveMatchIds?: Set<string
             <span className="num font-bold">{formatMoneyWithCurrency(b.stake, b.currency)}</span>
           </div>
           <div className="flex items-center gap-2 pt-1">
+            <Link
+              href={`/my-bets/${encodeURIComponent(b.id)}`}
+              className="flex items-center gap-1.5 chip px-3 py-1.5 hover:border-[var(--color-brand)]/50"
+            >
+              <Receipt size={12} /> View ticket
+            </Link>
             {isWon && (
               <button
                 onClick={() => setCelebrate(true)}
