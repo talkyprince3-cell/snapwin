@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { MessageCircle, X, Send } from "lucide-react";
+import { useSupport } from "@/lib/store";
 
 type Msg = { from: "bot" | "me"; text: string };
 
@@ -15,7 +17,13 @@ const REPLIES: Record<string, string> = {
 };
 
 export function SupportChat() {
-  const [open, setOpen] = useState(false);
+  const open = useSupport((s) => s.open);
+  const setOpen = useSupport((s) => s.setOpen);
+  const toggleOpen = useSupport((s) => s.toggle);
+  // Home already offers Support as a quick-action tile, and the floating
+  // launcher was covering the winners ticker there. Keep it on every other
+  // page, where nothing else reaches support.
+  const onHome = usePathname() === "/";
   const [msgs, setMsgs] = useState<Msg[]>([
     { from: "bot", text: "👋 Hi, I'm the SnapWin assistant. How can I help you win today?" },
   ]);
@@ -38,14 +46,16 @@ export function SupportChat() {
 
   return (
     <>
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-[76px] xl:bottom-6 right-4 xl:right-6 z-40 grid place-items-center w-[52px] h-[52px] rounded-full grad-brand text-[var(--color-on-brand)] shadow-[0_12px_36px_-8px_rgba(249,115,22,.7)] hover:scale-105 active:scale-95 transition"
-        aria-label="Support chat"
-      >
-        <span className="absolute inset-0 rounded-full grad-brand animate-ping opacity-20" />
-        {open ? <X size={22} /> : <MessageCircle size={22} />}
-      </button>
+      {(!onHome || open) && (
+        <button
+          onClick={toggleOpen}
+          className="fixed bottom-[76px] xl:bottom-6 right-4 xl:right-6 z-40 grid place-items-center w-[52px] h-[52px] rounded-full grad-brand text-[var(--color-on-brand)] shadow-[0_12px_36px_-8px_rgba(255,200,0,.55)] hover:scale-105 active:scale-95 transition"
+          aria-label={open ? "Close support chat" : "Open support chat"}
+        >
+          <span className="absolute inset-0 rounded-full grad-brand animate-ping opacity-20" />
+          {open ? <X size={22} /> : <MessageCircle size={22} />}
+        </button>
+      )}
 
       {open && (
         <div className="fixed bottom-[140px] xl:bottom-[88px] right-4 xl:right-6 z-40 w-[min(370px,calc(100vw-2rem))] h-[min(540px,70dvh)] card flex flex-col overflow-hidden animate-rise shadow-2xl">

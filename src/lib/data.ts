@@ -160,7 +160,7 @@ export const promos = [
 export const quickActions = [
   { id: "sports",  label: "Sports",    icon: "⚽", href: "/" },
   { id: "live",    label: "Live",      icon: "📡", href: "/live", live: true },
-  { id: "booking", label: "Load Code", icon: "📥", href: "/booking" },
+  { id: "support", label: "Support",   icon: "💬", action: "support" as const },
   { id: "verify",  label: "Verify",    icon: "🎟️", href: "/verify" },
   { id: "mybets",  label: "My Bets",   icon: "🎫", href: "/my-bets" },
   { id: "wallet",  label: "Deposit",   icon: "💰", href: "/account" },

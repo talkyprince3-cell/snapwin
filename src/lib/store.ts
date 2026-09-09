@@ -40,3 +40,20 @@ export const useSlip = create<SlipState>((set, get) => ({
 
 export const totalOdds = (sels: Selection[]) =>
   sels.reduce((acc, s) => acc * s.odds, 1);
+
+/**
+ * Support-chat visibility. Lives in a store rather than inside SupportChat so
+ * the home quick-action tile can open the same panel the floating launcher
+ * does, instead of the two keeping rival copies of "is the chat open".
+ */
+type SupportState = {
+  open: boolean;
+  setOpen: (b: boolean) => void;
+  toggle: () => void;
+};
+
+export const useSupport = create<SupportState>((set) => ({
+  open: false,
+  setOpen: (b) => set({ open: b }),
+  toggle: () => set((st) => ({ open: !st.open })),
+}));

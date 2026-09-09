@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { promos, quickActions, competitions } from "@/lib/data";
 import type { Match } from "@/lib/types";
-import { useSlip } from "@/lib/store";
+import { useSlip, useSupport } from "@/lib/store";
 import { useMatches } from "@/lib/use-matches";
 import { TeamBadge, CountryFlag } from "./brand";
 import { LiveClock } from "./live-clock";
@@ -181,27 +181,41 @@ export function HeroCarousel() {
    main surfaces in a single tap.
    ============================================================ */
 
+const TILE =
+  "group relative flex flex-col items-center justify-center gap-1.5 rounded-[10px] border border-[var(--color-line)] bg-[var(--color-surface)] py-3.5 hover:border-[var(--color-brand)]/50 hover:bg-[var(--color-surface-2)] transition-colors";
+
 export function QuickActions() {
   const { live } = useMatches();
+  const openSupport = useSupport((s) => s.setOpen);
+
   return (
     <nav aria-label="Quick actions" className="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-3">
-      {quickActions.map((a) => (
-        <Link
-          key={a.id}
-          href={a.href}
-          className="group relative flex flex-col items-center justify-center gap-1.5 rounded-[10px] border border-[var(--color-line)] bg-[var(--color-surface)] py-3.5 hover:border-[var(--color-brand)]/50 hover:bg-[var(--color-surface-2)] transition-colors"
-        >
-          <span className="text-[20px] leading-none">{a.icon}</span>
-          <span className="text-[11px] font-semibold text-[var(--color-ink-dim)] group-hover:text-white transition-colors">
-            {a.label}
-          </span>
-          {a.live && live.length > 0 && (
-            <span className="absolute top-1.5 right-1.5 num text-[9px] font-bold grad-brand text-[var(--color-on-brand)] rounded-full min-w-[16px] h-4 grid place-items-center px-1">
-              {live.length}
+      {quickActions.map((a) => {
+        const inner = (
+          <>
+            <span className="text-[20px] leading-none">{a.icon}</span>
+            <span className="text-[11px] font-semibold text-[var(--color-ink-dim)] group-hover:text-white transition-colors">
+              {a.label}
             </span>
-          )}
-        </Link>
-      ))}
+            {a.live && live.length > 0 && (
+              <span className="absolute top-1.5 right-1.5 num text-[9px] font-bold grad-brand text-[var(--color-on-brand)] rounded-full min-w-[16px] h-4 grid place-items-center px-1">
+                {live.length}
+              </span>
+            )}
+          </>
+        );
+
+        // Support opens the chat panel in place rather than routing anywhere.
+        return a.action === "support" ? (
+          <button key={a.id} onClick={() => openSupport(true)} className={TILE}>
+            {inner}
+          </button>
+        ) : (
+          <Link key={a.id} href={a.href} className={TILE}>
+            {inner}
+          </Link>
+        );
+      })}
     </nav>
   );
 }
