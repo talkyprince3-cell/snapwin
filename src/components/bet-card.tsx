@@ -49,36 +49,52 @@ export function BetCard({ b, liveMatchIds }: { b: Bet; liveMatchIds?: Set<string
           ticketId={b.id}
         />
       )}
-      <button
-        onClick={() => {
-          // Opening a won ticket pops the celebration first (reference behaviour).
-          if (isWon && !open) setCelebrate(true);
-          setOpen((v) => !v);
-        }}
-        className="w-full flex items-center gap-3 p-4 text-left"
-      >
-        <span className={cn("grid place-items-center w-10 h-10 rounded-xl border shrink-0", s.cls)}>
-          <Icon size={18} />
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <span className="font-display font-bold text-[13.5px]">{b.type === "multi" ? `${b.legs.length}-Fold Acca` : "Single"}</span>
-            <span className={cn("text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded border", s.cls)}>{s.label}</span>
+      {/*
+        Opening a bet goes straight to its full ticket, which is what "open the
+        bet" should mean. It used to only toggle this summary open, and on a won
+        ticket it fired the celebration first — so the one tap that was supposed
+        to reveal the details covered them with a splash instead. The
+        celebration is still there, from Show Off on the ticket page.
+      */}
+      <div className="flex items-center gap-3 p-4">
+        <Link
+          href={`/my-bets/${encodeURIComponent(b.id)}`}
+          className="flex items-center gap-3 min-w-0 flex-1 text-left group/open"
+        >
+          <span className={cn("grid place-items-center w-10 h-10 rounded-xl border shrink-0", s.cls)}>
+            <Icon size={18} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <span className="font-display font-bold text-[13.5px] group-hover/open:text-[var(--color-brand-hi)] transition-colors">
+                {b.type === "multi" ? `${b.legs.length}-Fold Acca` : "Single"}
+              </span>
+              <span className={cn("text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded border", s.cls)}>{s.label}</span>
+            </div>
+            <div className="num text-[11px] text-[var(--color-ink-faint)] mt-0.5 flex items-center gap-1.5">
+              {b.id} · {b.date}
+            </div>
           </div>
-          <div className="num text-[11px] text-[var(--color-ink-faint)] mt-0.5 flex items-center gap-1.5">
-            {b.id} · {b.date}
-          </div>
-        </div>
-        <div className="flex items-center gap-3 shrink-0">
-          <div className="text-right">
+          <div className="text-right shrink-0">
             <div className={cn("num text-[14px] font-bold", b.status === "won" ? "text-[var(--color-emerald)]" : b.status === "lost" ? "text-[var(--color-ink-faint)] line-through" : "grad-text")}>
               {formatMoneyWithCurrency(b.potential, b.currency)}
             </div>
             <div className="num text-[10px] text-[var(--color-ink-faint)]">@ {b.totalOdds.toFixed(2)}</div>
           </div>
-          <ChevronDown size={16} className={cn("text-[var(--color-ink-faint)] transition-transform", open && "rotate-180")} />
-        </div>
-      </button>
+        </Link>
+
+        {/* The peek toggle is its own control, outside the link — a button
+            nested in an anchor is invalid and the two taps mean different
+            things: open the ticket, or glance at the legs in place. */}
+        <button
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-label={open ? "Hide selections" : "Show selections"}
+          className="shrink-0 grid place-items-center w-8 h-8 rounded-[var(--radius-ctl)] text-[var(--color-ink-faint)] hover:text-white hover:bg-white/5 transition-colors"
+        >
+          <ChevronDown size={16} className={cn("transition-transform", open && "rotate-180")} />
+        </button>
+      </div>
 
       {open && (
         <div className="border-t border-[var(--color-line)] px-4 py-3 space-y-2.5 bg-[var(--color-bg-2)]/50 animate-rise">

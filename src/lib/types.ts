@@ -84,7 +84,14 @@ export type Bet = {
   legs: BetLeg[];
   stake: number;
   totalOdds: number;
+  /** Payout if it lands when open; what it actually paid once settled. Kept
+   *  for the compact card, which only has room for one figure. */
   potential: number;
+  /** Always the if-it-lands figure, even after settlement. Optional so the
+   *  static mock fixtures in data.ts stay valid. */
+  toReturn?: number;
+  /** Actually paid out. Undefined while the bet is still open. */
+  payout?: number;
   status: "won" | "lost" | "pending" | "cashout";
   date: string;
   currency?: string;

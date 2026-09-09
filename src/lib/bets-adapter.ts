@@ -58,6 +58,8 @@ export function placedBetToUi(b: PlacedBet): Bet {
     stake: b.stake,
     totalOdds: b.totalOdds,
     potential: b.payout ?? b.potentialWin,
+    toReturn: b.potentialWin,
+    payout: b.payout,
     // PlacedBet status is 'pending' | 'won' | 'lost'; the UI also models
     // 'cashout' but the API never emits it, so this maps 1:1.
     status: b.status,
