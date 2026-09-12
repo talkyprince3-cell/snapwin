@@ -10,6 +10,7 @@ const BROWSE: { href: string; icon: string; label: string; active?: boolean; cou
   { href: "/", icon: "🏠", label: "Sports", active: true },
   { href: "/live", icon: "🔴", label: "Live Now" },
   { href: "/my-bets", icon: "🎫", label: "My Bets" },
+  { href: "/booking", icon: "📥", label: "Booking Code" },
   { href: "/account", icon: "⭐", label: "Favourites" },
   { href: "/account", icon: "🎁", label: "Promotions" },
 ];

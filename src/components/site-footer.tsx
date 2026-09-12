@@ -25,6 +25,7 @@ const COLUMNS: { title: string; links: FooterLink[] }[] = [
       { label: "Deposit", href: "/account" },
       { label: "Withdraw", href: "/account" },
       { label: "Verify Ticket", href: "/verify" },
+      { label: "Load Booking Code", href: "/booking" },
     ],
   },
   {

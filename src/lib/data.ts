@@ -158,7 +158,7 @@ export const promos = [
  * to fan players out to its main surfaces in a single tap.
  */
 export const quickActions = [
-  { id: "sports",  label: "Sports",    icon: "⚽", href: "/" },
+  { id: "booking", label: "Load Code", icon: "📥", href: "/booking" },
   { id: "live",    label: "Live",      icon: "📡", href: "/live", live: true },
   { id: "support", label: "Support",   icon: "💬", action: "support" as const },
   { id: "verify",  label: "Verify",    icon: "🎟️", href: "/verify" },
