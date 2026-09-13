@@ -13,8 +13,7 @@ import {
   Settings,
   LogOut,
   Menu,
-  X,
-} from 'lucide-react'
+  X, Banknote } from 'lucide-react'
 import { useState } from 'react'
 
 const NAV = [
@@ -25,6 +24,7 @@ const NAV = [
   { href: '/admin/deposits', label: 'Payments', icon: Wallet },
   { href: '/admin/users', label: 'Players', icon: UserCheck },
   { href: '/admin/sub-admins', label: 'Partners', icon: Users2 },
+  { href: '/admin/sa-withdrawals', label: 'Agent payouts', icon: Banknote },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ]
 
