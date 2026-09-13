@@ -170,6 +170,10 @@ export interface SubAdmin {
   commissionBalances: Partial<Record<CurrencyCode, number>>
   /** Per-currency lifetime totals. */
   totalCommissionEarnedBy: Partial<Record<CurrencyCode, number>>
+  /** Per-partner rate override as a percentage 0-100. Undefined = global default. */
+  commissionPct?: number
+  /** Keeps earning while the programme is globally paused. */
+  commissionPauseExempt?: boolean
 }
 
 export interface PlacedBet {

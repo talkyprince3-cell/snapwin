@@ -31,6 +31,9 @@ export async function PATCH(request: Request, { params }: Params) {
     approved?: boolean
     clearCommissionBalance?: boolean
     currency?: string
+    /** Per-partner rate override, 0-100. Send null to fall back to the default. */
+    commissionPct?: number | null
+    commissionPauseExempt?: boolean
   }
   try {
     body = (await request.json()) as typeof body
@@ -41,6 +44,27 @@ export async function PATCH(request: Request, { params }: Params) {
   let updated = null as Awaited<ReturnType<typeof updateSubAdmin>>
   if (typeof body.approved === 'boolean') {
     updated = await updateSubAdmin(id, { approved: body.approved })
+  }
+
+  // Per-partner commission overrides. `null` clears the override, which is
+  // why this tests for the key rather than for a truthy value.
+  if ('commissionPct' in body) {
+    const raw = body.commissionPct
+    if (raw !== null && raw !== undefined) {
+      const n = Number(raw)
+      if (!Number.isFinite(n) || n < 0 || n > 100) {
+        return NextResponse.json(
+          { error: 'Commission must be between 0 and 100.' },
+          { status: 400 },
+        )
+      }
+      updated = await updateSubAdmin(id, { commissionPct: +n.toFixed(2) })
+    } else {
+      updated = await updateSubAdmin(id, { commissionPct: undefined })
+    }
+  }
+  if (typeof body.commissionPauseExempt === 'boolean') {
+    updated = await updateSubAdmin(id, { commissionPauseExempt: body.commissionPauseExempt })
   }
 
   // Clear the unpaid balance for one currency once the admin has paid out.
@@ -62,6 +86,8 @@ export async function PATCH(request: Request, { params }: Params) {
       totalCommissionEarned: updated.totalCommissionEarned,
       commissionBalances: updated.commissionBalances,
       totalCommissionEarnedBy: updated.totalCommissionEarnedBy,
+      commissionPct: updated.commissionPct,
+      commissionPauseExempt: updated.commissionPauseExempt,
     },
   })
 }

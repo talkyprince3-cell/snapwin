@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { formatMoney } from '@/lib/format-money'
 import { COMMISSION_RATE } from '@/lib/domain-types'
+import { AdminCommissionConfig } from '@/components/admin-commission-config'
 
 interface SubAdminRow {
   id: string
@@ -200,6 +201,8 @@ export default function AdminSubAdminsPage() {
           every deposit from each referred user.
         </p>
       </div>
+
+      <AdminCommissionConfig />
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <Tile label="Partners" value={rows.length.toString()} />

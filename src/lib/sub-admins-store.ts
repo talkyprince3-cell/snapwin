@@ -14,6 +14,8 @@ interface SubAdminRow {
   total_commission_earned: number
   commission_balances: Record<string, number> | null
   total_commission_earned_by: Record<string, number> | null
+  commission_pct: number | null
+  commission_pause_exempt: boolean | null
   created_at: string
 }
 
@@ -44,6 +46,8 @@ function rowToSubAdmin(row: SubAdminRow): SubAdmin {
     totalCommissionEarned: Number(row.total_commission_earned),
     commissionBalances: sanitiseCurrencyMap(row.commission_balances),
     totalCommissionEarnedBy: sanitiseCurrencyMap(row.total_commission_earned_by),
+    commissionPct: row.commission_pct === null ? undefined : Number(row.commission_pct),
+    commissionPauseExempt: row.commission_pause_exempt ?? false,
   }
 }
 
@@ -153,6 +157,12 @@ export async function updateSubAdmin(
     dbPatch.commission_balances = patch.commissionBalances
   if (patch.totalCommissionEarnedBy !== undefined)
     dbPatch.total_commission_earned_by = patch.totalCommissionEarnedBy
+  // null is meaningful here: it clears the override so the partner falls back
+  // to the global default, which is different from leaving the field alone.
+  if ('commissionPct' in patch)
+    dbPatch.commission_pct = patch.commissionPct ?? null
+  if (patch.commissionPauseExempt !== undefined)
+    dbPatch.commission_pause_exempt = patch.commissionPauseExempt
 
   if (Object.keys(dbPatch).length === 0) {
     return findSubAdminById(id)

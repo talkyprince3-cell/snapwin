@@ -21,7 +21,8 @@ import {
   recordDeposit,
 } from '@/lib/users-store'
 import { creditCommission, findSubAdminById } from '@/lib/sub-admins-store'
-import { COMMISSION_RATE, type AppUser } from '@/lib/domain-types'
+import { type AppUser } from '@/lib/domain-types'
+import { readCommissionConfig, resolveRate } from '@/lib/commission-config'
 import { getVerificationAmount, isCountryCode, toInternationalPhone } from '@/lib/countries'
 import { formatMoneyWithCurrency } from '@/lib/format-money'
 import { sendSms } from '@/lib/sms'
@@ -137,15 +138,25 @@ export async function applyDepositCredit(
         amount,
       })
     } else {
-      const amt = +(amount * COMMISSION_RATE).toFixed(2)
-      commission = await fireCommission({
-        subAdminId: sa.id,
-        userId: user.id,
-        amount,
-        commissionAmount: amt,
-        currency: user.currency,
-        depositNumber: result.isFirst ? 1 : '2+',
-      })
+      const decision = resolveRate(sa, await readCommissionConfig())
+      if (decision.suppressed === 'paused') {
+        console.log('[deposit-credit] commission skipped: programme paused', {
+          userId: user.id,
+          subAdminId: sa.id,
+          amount,
+        })
+      } else {
+        const amt = +(amount * decision.rate).toFixed(2)
+        commission = await fireCommission({
+          subAdminId: sa.id,
+          userId: user.id,
+          amount,
+          commissionAmount: amt,
+          rate: decision.rate,
+          currency: user.currency,
+          depositNumber: result.isFirst ? 1 : '2+',
+        })
+      }
     }
   }
 
@@ -183,10 +194,13 @@ async function fireCommission(params: {
   userId: string
   amount: number
   commissionAmount: number
+  /** Fraction actually applied. Stored on the row so a historic payout stays
+   *  auditable at the rate that was in force, not whatever it is set to now. */
+  rate: number
   currency: AppUser['currency']
   depositNumber: number | string
 }): Promise<ApplyDepositResult['commission']> {
-  const { subAdminId, userId, amount, commissionAmount, currency, depositNumber } = params
+  const { subAdminId, userId, amount, commissionAmount, rate, currency, depositNumber } = params
   let lastErr: unknown = null
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
@@ -196,7 +210,7 @@ async function fireCommission(params: {
         userId,
         depositAmount: amount,
         commission: commissionAmount,
-        rate: COMMISSION_RATE,
+        rate,
         currency,
       })
       console.log('[deposit-credit] commission credited', {
@@ -208,7 +222,7 @@ async function fireCommission(params: {
         depositNumber,
         attempt,
       })
-      return { amount: commissionAmount, rate: COMMISSION_RATE, subAdminId, currency }
+      return { amount: commissionAmount, rate, subAdminId, currency }
     } catch (e) {
       lastErr = e
       console.error('[deposit-credit] commission attempt failed', {
