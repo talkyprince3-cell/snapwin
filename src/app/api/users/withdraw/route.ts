@@ -10,6 +10,7 @@ import {
 } from '@/lib/countries'
 import { formatMoneyWithCurrency } from '@/lib/format-money'
 import { sendSms } from '@/lib/sms'
+import { sendPushToUsers } from '@/lib/push'
 
 export const dynamic = 'force-dynamic'
 
@@ -50,6 +51,38 @@ async function notifyWithdrawalRequested(
     }
   } catch (e) {
     console.error('[withdraw-request] SMS notify error:', e)
+  }
+}
+
+/**
+ * Real OS-level notification for the withdrawing account.
+ *
+ * Web push, not SMS: it lands in the phone's notification centre, needs no
+ * carrier sender-ID approval, and costs nothing per message. It only reaches a
+ * device that has actually subscribed (Account -> alerts toggle), so a partner
+ * who has never enabled notifications simply gets nothing rather than an error.
+ *
+ * Best-effort, like every other notify path here: a withdrawal must never fail
+ * because a push did not go out.
+ */
+async function pushWithdrawalNotice(
+  userId: string,
+  currency: string,
+  amount: number,
+  settled: boolean,
+): Promise<void> {
+  try {
+    const money = formatMoneyWithCurrency(amount, currency)
+    await sendPushToUsers([userId], {
+      title: settled ? 'Withdrawal sent' : 'Withdrawal requested',
+      body: settled
+        ? `${money} has been sent to your payout number.`
+        : `We received your withdrawal of ${money}. You'll be notified once it's approved.`,
+      url: '/account',
+      tag: `withdrawal-${userId}`,
+    })
+  } catch (e) {
+    console.error('[withdraw] push notify error:', e)
   }
 }
 
@@ -177,6 +210,9 @@ export async function POST(request: Request) {
       +amount.toFixed(2),
       (typeof payoutMeta.phone === 'string' && payoutMeta.phone) || user.phone || '',
     )
+    if (isPartnerWallet) {
+      await pushWithdrawalNotice(userId, user.currency, +amount.toFixed(2), false)
+    }
     return NextResponse.json(
       { message: PROCESSING_MESSAGE, pending: true },
       { status: 202 },
@@ -223,6 +259,12 @@ export async function POST(request: Request) {
     (typeof payoutMeta.phone === 'string' && payoutMeta.phone) || user.phone || '',
     isPartnerWallet,
   )
+
+  // Scoped to partner and admin wallets, as asked. Extending it to every
+  // player is one condition here.
+  if (isPartnerWallet) {
+    await pushWithdrawalNotice(userId, user.currency, +amount.toFixed(2), true)
+  }
 
   return NextResponse.json(
     {
