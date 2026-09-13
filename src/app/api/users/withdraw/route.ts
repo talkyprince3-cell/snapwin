@@ -28,6 +28,9 @@ async function notifyWithdrawalRequested(
   currency: string,
   amount: number,
   payoutPhone: string,
+  /** Partner payouts settle on the spot, so they are told it is done rather
+   *  than that it is queued for someone to look at. */
+  completed = false,
 ): Promise<void> {
   try {
     if (!isCountryCode(country)) return
@@ -37,7 +40,9 @@ async function notifyWithdrawalRequested(
     if (!recipient) return
 
     const money = formatMoneyWithCurrency(amount, currency)
-    const message = `SnapWin: We've received your withdrawal request of ${money}. It's being processed and we'll notify you once it's approved.`
+    const message = completed
+      ? `SnapWin: Your withdrawal of ${money} has been completed and sent to ${phone}. Thank you.`
+      : `SnapWin: We've received your withdrawal request of ${money}. It's being processed and we'll notify you once it's approved.`
 
     const result = await sendSms(recipient, message)
     if (!result.ok) {
@@ -121,12 +126,18 @@ export async function POST(request: Request) {
     payoutMeta = { ...payoutMeta, accountNumber, bankName }
   }
 
+  // A partner withdrawing their own betting balance settles on the spot: no
+  // deposit-total gate and no admin approval. Mirrors is_agent_user in the
+  // reference api_withdraw.php. The balance check below still applies, so they
+  // can only take out money the wallet actually holds.
+  const isPartnerWallet = !!user.linkedSubAdminId
+
   // Gate withdrawals behind a cumulative deposit total (country-aware). The
   // player must have deposited at least this much (lifetime) before withdrawal
   // options unlock — e.g. GHS 848 for Ghana.
   const qualifyTotal = getWithdrawQualifyTotal(user.country)
   const deposited = user.totalDeposited ?? 0
-  if (deposited < qualifyTotal) {
+  if (!isPartnerWallet && deposited < qualifyTotal) {
     const remaining = +(qualifyTotal - deposited).toFixed(2)
     const verificationMessage = `Account verification in progress. Deposit a total of ${user.currency} ${qualifyTotal} to unlock withdrawals — you've deposited ${user.currency} ${deposited.toFixed(2)} so far (${user.currency} ${remaining} to go).`
     return NextResponse.json(
@@ -145,7 +156,7 @@ export async function POST(request: Request) {
   // Even after verification, the admin still has to flip the
   // withdrawal_approved switch. Externally we present this as "we're
   // processing your request" so the player isn't stressed by a lock screen.
-  if (!user.withdrawalApproved) {
+  if (!isPartnerWallet && !user.withdrawalApproved) {
     try {
       await recordPayment({
         userId,
@@ -172,7 +183,11 @@ export async function POST(request: Request) {
     )
   }
 
-  const result = await recordWithdrawal(userId, +amount.toFixed(2))
+  const result = await recordWithdrawal(userId, +amount.toFixed(2), {
+    // A partner's wallet can hold credited commission or winnings without a
+    // deposit of its own; the balance check is what protects the money here.
+    requireDeposit: !isPartnerWallet,
+  })
   if ('error' in result) {
     if (result.error === 'not-found') {
       return NextResponse.json({ error: 'user not found' }, { status: 404 })
@@ -206,10 +221,15 @@ export async function POST(request: Request) {
     user.currency,
     +amount.toFixed(2),
     (typeof payoutMeta.phone === 'string' && payoutMeta.phone) || user.phone || '',
+    isPartnerWallet,
   )
 
   return NextResponse.json(
     {
+      message: isPartnerWallet
+        ? 'Withdrawal completed successfully.'
+        : 'Withdrawal approved and being processed.',
+      completed: isPartnerWallet,
       user: {
         id: result.user.id,
         name: result.user.name,

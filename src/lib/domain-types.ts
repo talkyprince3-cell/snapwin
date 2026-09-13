@@ -119,6 +119,9 @@ export interface AppUser {
   kycId?: string
   referredByCode?: string
   referredBySubAdminId?: string
+  /** Set when this wallet IS a partner's own betting account. Distinct from
+   *  referredBySubAdminId, which marks a player the partner recruited. */
+  linkedSubAdminId?: string
   firstDepositAmount: number
   firstDepositAt?: string
   totalDeposited: number
