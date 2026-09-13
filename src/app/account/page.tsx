@@ -10,6 +10,7 @@ import { formatMoneyWithCurrency } from "@/lib/format-money";
 import { GoalAlertsToggle } from "@/components/goal-alerts-toggle";
 import { getUserId, clearUserSession } from "@/lib/user-session";
 import { getCountryForCurrency, getMinFirstDeposit, isCurrencyCode } from "@/lib/countries";
+import { WithdrawalNotification, type WithdrawalNotice } from "@/components/withdrawal-notification";
 
 interface AccountUser {
   id: string;
@@ -384,6 +385,9 @@ function PaymentModal({
 }) {
   const [amount, setAmount] = useState("");
   const [phone, setPhone] = useState(user.phone ?? "");
+  // Drives the iOS-style confirmation. Populated only from the withdrawal
+  // response, so the figures on it are the server's, not the client's.
+  const [notice, setNotice] = useState<WithdrawalNotice | null>(null);
   const [network, setNetwork] = useState<(typeof NETWORKS)[number]["id"]>("mtn");
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<string>("");
@@ -941,8 +945,25 @@ function PaymentModal({
       });
       const data = await res.json();
       // 202 = received & pending operator processing — still a success to the user.
-      if (res.status === 202) { setDone(true); onSuccess(); return; }
+      if (res.status === 202) {
+        setNotice({
+          amount: amt,
+          // No new balance on the pending path: nothing has been deducted yet,
+          // so the wallet figure already on screen is still the true one.
+          currentBalance: user.balance ?? 0,
+          currency: user.currency ?? "GHS",
+          settled: false,
+        });
+        setDone(true); onSuccess(); return;
+      }
       if (!res.ok) { setError(data.error ?? "Withdrawal failed."); return; }
+      setNotice({
+        amount: amt,
+        // Read back from the server after the deduction, never derived here.
+        currentBalance: data.user?.balance ?? user.balance ?? 0,
+        currency: data.user?.currency ?? user.currency ?? "GHS",
+        settled: data.completed === true,
+      });
       setDone(true);
       onSuccess();
     } catch {
@@ -953,6 +974,8 @@ function PaymentModal({
   }
 
   return (
+    <>
+    <WithdrawalNotification notice={notice} onDone={() => setNotice(null)} />
     <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center sm:p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-full sm:max-w-[420px] card rounded-b-none sm:rounded-2xl animate-rise">
@@ -1313,6 +1336,7 @@ function PaymentModal({
         )}
       </div>
     </div>
+    </>
   );
 }
 

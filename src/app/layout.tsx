@@ -58,6 +58,11 @@ export default function RootLayout({
       lang="en"
       className={`${outfit.variable} ${inter.variable} ${jetbrains.variable} antialiased`}
     >
+      <head>
+        {/* Ported withdrawal-notification stylesheet, served as a static asset
+            rather than imported, so it stays byte-identical to the package. */}
+        <link rel="stylesheet" href="/withdrawal-notification/withdrawal-notification.css" />
+      </head>
       <body suppressHydrationWarning>
         <PwaRegister />
         {children}
