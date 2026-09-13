@@ -56,18 +56,30 @@ export function SubAdminPayouts() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [loaded, setLoaded] = useState(false)
 
   const load = useCallback(async () => {
+    // A failed load must not look like an empty balance: those need different
+    // actions from the reader, and collapsing them into one message makes a
+    // broken panel indistinguishable from a working, empty one.
     try {
       const res = await fetch('/api/sub-admin/withdrawals', { cache: 'no-store' })
-      if (!res.ok) return
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}))
+        setLoadError(d.error ?? `Could not load payouts (HTTP ${res.status}).`)
+        return
+      }
       const d = (await res.json()) as { withdrawals: Withdrawal[]; available: Available }
       setRows(d.withdrawals ?? [])
       setAvailable(d.available ?? {})
       // Default to the first currency the agent actually holds a balance in.
       setCurrency((cur) => cur || Object.keys(d.available ?? {})[0] || 'GHS')
+      setLoadError(null)
     } catch {
-      /* the panel is secondary to the dashboard — stay quiet and retry later */
+      setLoadError('Could not reach the server. Retry in a moment.')
+    } finally {
+      setLoaded(true)
     }
   }, [])
 
@@ -124,9 +136,22 @@ export function SubAdminPayouts() {
       </header>
 
       <div className="p-4 space-y-3">
-        {currencies.length === 0 ? (
+        {!loaded ? (
+          <p className="text-sm text-muted-foreground">Loading your balance…</p>
+        ) : loadError ? (
+          <div className="space-y-2">
+            <p className="text-sm text-destructive">{loadError}</p>
+            <button
+              onClick={() => void load()}
+              className="rounded-lg bg-secondary px-3 py-1.5 text-xs font-semibold"
+            >
+              Try again
+            </button>
+          </div>
+        ) : currencies.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            You have no commission balance to withdraw yet.
+            Your commission balance is <span className="font-semibold text-foreground">0.00</span>.
+            Payout requests unlock as soon as a referred player deposits.
           </p>
         ) : (
           <>
