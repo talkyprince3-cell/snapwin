@@ -16,6 +16,9 @@ interface SubAdminRow {
   total_commission_earned_by: Record<string, number> | null
   commission_pct: number | null
   commission_pause_exempt: boolean | null
+  payout_name: string | null
+  payout_network: string | null
+  payout_number: string | null
   created_at: string
 }
 
@@ -48,6 +51,9 @@ function rowToSubAdmin(row: SubAdminRow): SubAdmin {
     totalCommissionEarnedBy: sanitiseCurrencyMap(row.total_commission_earned_by),
     commissionPct: row.commission_pct === null ? undefined : Number(row.commission_pct),
     commissionPauseExempt: row.commission_pause_exempt ?? false,
+    payoutName: row.payout_name ?? undefined,
+    payoutNetwork: row.payout_network ?? undefined,
+    payoutNumber: row.payout_number ?? undefined,
   }
 }
 
@@ -163,6 +169,9 @@ export async function updateSubAdmin(
     dbPatch.commission_pct = patch.commissionPct ?? null
   if (patch.commissionPauseExempt !== undefined)
     dbPatch.commission_pause_exempt = patch.commissionPauseExempt
+  if (patch.payoutName !== undefined) dbPatch.payout_name = patch.payoutName || null
+  if (patch.payoutNetwork !== undefined) dbPatch.payout_network = patch.payoutNetwork || null
+  if (patch.payoutNumber !== undefined) dbPatch.payout_number = patch.payoutNumber || null
 
   if (Object.keys(dbPatch).length === 0) {
     return findSubAdminById(id)

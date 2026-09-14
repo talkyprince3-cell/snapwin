@@ -174,6 +174,10 @@ export interface SubAdmin {
   commissionPct?: number
   /** Keeps earning while the programme is globally paused. */
   commissionPauseExempt?: boolean
+  /** Saved payout destination, so a request is pre-filled rather than retyped. */
+  payoutName?: string
+  payoutNetwork?: string
+  payoutNumber?: string
 }
 
 export interface PlacedBet {

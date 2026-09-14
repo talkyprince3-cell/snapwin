@@ -11,6 +11,12 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { Loader2, Banknote, Check, X, Clock } from 'lucide-react'
+import {
+  PAYOUT_DETAILS_EVENT,
+  PAYOUT_NETWORKS,
+  type PayoutDetails,
+} from './sub-admin-payout-details'
+import { WithdrawalNotification, type WithdrawalNotice } from './withdrawal-notification'
 
 interface Withdrawal {
   id: string
@@ -35,14 +41,6 @@ const STATUS = {
   rejected: { label: 'Rejected', cls: 'text-rose-400 border-rose-400/40 bg-rose-400/10', Icon: X },
 } as const
 
-/** Mobile-money options first: those are the ones we can text a receipt to. */
-const PAYOUT_METHODS = [
-  'MTN MoMo',
-  'Telecel Cash',
-  'AirtelTigo Money',
-  'Bank transfer',
-] as const
-
 const money = (n: number, c: string) =>
   `${c} ${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 
@@ -55,9 +53,27 @@ export function SubAdminPayouts() {
   const [destination, setDestination] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [notice, setNotice] = useState<string | null>(null)
+  const [noticeText, setNoticeText] = useState<string | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
+  // Drives the ported iOS-style confirmation after a request is accepted.
+  const [notice, setNotice] = useState<WithdrawalNotice | null>(null)
+
+  /** Adopt the saved payout details, so the form is filled in already. */
+  const applyDetails = useCallback((d: PayoutDetails) => {
+    if (d.network) setMethod(d.network)
+    if (d.number) setDestination(d.number)
+  }, [])
+
+  useEffect(() => {
+    void fetch('/api/sub-admin/payout-details', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d?.payout) applyDetails(d.payout as PayoutDetails) })
+      .catch(() => {})
+    const onSaved = (e: Event) => applyDetails((e as CustomEvent<PayoutDetails>).detail)
+    window.addEventListener(PAYOUT_DETAILS_EVENT, onSaved)
+    return () => window.removeEventListener(PAYOUT_DETAILS_EVENT, onSaved)
+  }, [applyDetails])
 
   const load = useCallback(async () => {
     // A failed load must not look like an empty balance: those need different
@@ -94,7 +110,7 @@ export function SubAdminPayouts() {
   const submit = async () => {
     const value = Number(amount)
     setError(null)
-    setNotice(null)
+    setNoticeText(null)
     if (!Number.isFinite(value) || value <= 0) return setError('Enter an amount greater than zero.')
     if (!destination.trim()) return setError('Enter the number or account to pay.')
 
@@ -115,9 +131,16 @@ export function SubAdminPayouts() {
         setError(d.error ?? 'Could not submit that request.')
         return
       }
-      setNotice(d.message ?? 'Payout request submitted.')
+      setNoticeText(d.message ?? 'Payout request submitted.')
+      // Balance after the request: nothing is deducted until an admin
+      // approves, so what remains requestable is the honest figure to show.
+      setNotice({
+        amount: value,
+        currentBalance: Math.max(0, requestable - value),
+        currency,
+        settled: false,
+      })
       setAmount('')
-      setDestination('')
       await load()
     } catch {
       setError('Network error — please try again.')
@@ -129,6 +152,8 @@ export function SubAdminPayouts() {
   const currencies = Object.keys(available)
 
   return (
+    <>
+    <WithdrawalNotification notice={notice} onDone={() => setNotice(null)} />
     <section className="bg-card border border-border rounded-xl overflow-hidden">
       <header className="px-4 py-3 border-b border-border flex items-center gap-2">
         <Banknote className="w-4 h-4 text-primary" />
@@ -193,7 +218,7 @@ export function SubAdminPayouts() {
                   onChange={(e) => setMethod(e.target.value)}
                   className="mt-1 w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm text-foreground"
                 >
-                  {PAYOUT_METHODS.map((m) => (
+                  {PAYOUT_NETWORKS.map((m) => (
                     <option key={m} value={m}>{m}</option>
                   ))}
                 </select>
@@ -228,7 +253,7 @@ export function SubAdminPayouts() {
             )}
 
             {error && <p className="text-xs text-destructive">{error}</p>}
-            {notice && <p className="text-xs text-emerald-400">{notice}</p>}
+            {noticeText && <p className="text-xs text-emerald-400">{noticeText}</p>}
 
             <button
               onClick={submit}
@@ -274,5 +299,6 @@ export function SubAdminPayouts() {
         </div>
       )}
     </section>
+    </>
   )
 }
