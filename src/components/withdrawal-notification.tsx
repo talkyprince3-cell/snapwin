@@ -16,7 +16,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Check } from 'lucide-react'
-import { LogoMark } from './brand'
 
 const ALERT_DURATION = 2200
 const BANNER_DURATION = 5000
@@ -131,7 +130,7 @@ export function WithdrawalNotification({
         aria-live="polite"
       >
         <span className="withdrawal-ios-banner__image" aria-hidden>
-          <LogoMark size={38} id="withdrawal-notice" />
+          <img src="/withdrawal-notification/assets/ab-mobilemoney-light.png" alt="" />
         </span>
         <div className="withdrawal-ios-banner__message">
           <span className="withdrawal-ios-banner__line">
