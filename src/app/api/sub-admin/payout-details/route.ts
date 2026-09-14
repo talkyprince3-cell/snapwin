@@ -47,11 +47,33 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: 'One or more payout details are too long.' }, { status: 400 })
   }
 
-  const updated = await updateSubAdmin(sa.id, {
-    payoutName: name,
-    payoutNetwork: network,
-    payoutNumber: number,
-  })
+  // Say what actually went wrong. Letting the store throw returned a bare 500,
+  // which the panel could only render as "Could not save." - identical whether
+  // the migration was missing, the network dropped, or the row was gone.
+  let updated
+  try {
+    updated = await updateSubAdmin(sa.id, {
+      payoutName: name,
+      payoutNetwork: network,
+      payoutNumber: number,
+    })
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e)
+    console.error('[payout-details] save failed:', message)
+    if (/payout_(name|network|number).*does not exist/i.test(message)) {
+      return NextResponse.json(
+        {
+          error:
+            'Payout details are not set up on the database yet. Run migration 0025_sub_admin_payout_details.sql, then try again.',
+        },
+        { status: 503 },
+      )
+    }
+    return NextResponse.json(
+      { error: 'Could not save payout details. Please try again.' },
+      { status: 500 },
+    )
+  }
   if (!updated) return NextResponse.json({ error: 'not found' }, { status: 404 })
 
   return NextResponse.json({
