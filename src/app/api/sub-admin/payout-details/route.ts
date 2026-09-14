@@ -60,7 +60,13 @@ export async function PUT(request: Request) {
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e)
     console.error('[payout-details] save failed:', message)
-    if (/payout_(name|network|number).*does not exist/i.test(message)) {
+    // PostgREST words this differently for reads and writes: a select says
+    // "column ... does not exist", an update says "Could not find the '...'
+    // column ... in the schema cache" (PGRST204). Match both.
+    const missingColumn =
+      /payout_(name|network|number)/i.test(message) &&
+      /(does not exist|could not find|schema cache|PGRST204)/i.test(message)
+    if (missingColumn) {
       return NextResponse.json(
         {
           error:
