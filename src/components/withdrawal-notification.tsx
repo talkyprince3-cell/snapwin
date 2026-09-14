@@ -141,7 +141,7 @@ export function WithdrawalNotification({
           <span className="withdrawal-ios-banner__line">Balance: {balance}</span>
         </div>
         {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-        <audio ref={audioRef} preload="auto" src="/withdrawal-notification/tone.mp3" />
+        <audio ref={audioRef} preload="auto" src="/withdrawal-notification/assets/tone.mp3" />
       </aside>
 
       {/* Ground-level confirmation, matching the reference layout: the banner
