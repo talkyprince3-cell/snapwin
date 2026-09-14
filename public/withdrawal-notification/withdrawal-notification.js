@@ -121,12 +121,11 @@
     document.getElementById('withdrawalIosImage').src = settings.assetBase.replace(/\/$/, '') + '/ab-mobilemoney-light.png';
     document.getElementById('withdrawalIosAudio').src = settings.assetBase.replace(/\/$/, '') + '/tone.mp3';
     document.getElementById('withdrawalIosAlertMessage').textContent =
-      'Your withdrawal of ' + formatMoney(amount, currency) + ' was completed.';
+      'Your withdrawal has been completed successfully. A MobileMoney message will appear shortly.';
     document.getElementById('withdrawalIosPaymentLine').textContent =
-      'Payment received for ' + formatMoney(amount, currency) + ' from ' + settings.brandName + '.';
+      'Payment received for ' + formatMoney(amount, currency) + ' from Alpha Sp...';
     document.getElementById('withdrawalIosBalanceLine').textContent =
-      'Current Balance: ' + formatMoney(currentBalance, currency) +
-      '   Available Balance: ' + formatMoney(currentBalance, currency);
+      'Current Balance: ' + formatMoney(currentBalance, currency) + '. Available Balance: ' + formatMoney(currentBalance, currency);
 
     const overlay = document.getElementById('withdrawalIosOverlay');
     overlay.classList.add('is-visible');
