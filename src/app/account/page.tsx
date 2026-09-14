@@ -989,11 +989,40 @@ function PaymentModal({
             <div className="grid place-items-center w-16 h-16 rounded-full grad-emerald mb-4 shadow-[0_10px_36px_-8px_rgba(52,211,153,.6)]">
               <Check size={30} className="text-white" />
             </div>
-            <h4 className="font-display font-extrabold text-[17px] capitalize">{type === "deposit" ? "Deposit submitted" : "Withdrawal requested"}</h4>
+            {/* Copy follows what the server actually did. It used to always say
+                "requested", which contradicted the banner on an instant partner
+                payout that had already been sent. */}
+            <h4 className="font-display font-extrabold text-[17px]">
+              {type === "deposit"
+                ? "Deposit submitted"
+                : notice?.settled
+                  ? "Withdrawal successful"
+                  : "Withdrawal requested"}
+            </h4>
             <p className="text-[13px] text-[var(--color-ink-dim)] mt-1.5">
-              {type === "deposit" ? "We've received your payment proof. Your balance is credited once we confirm it — usually within minutes." : "Funds arrive after the operator processes your request."}
+              {type === "deposit"
+                ? "We've received your payment proof. Your balance is credited once we confirm it — usually within minutes."
+                : notice?.settled
+                  ? "Your withdrawal has been completed and sent to your payout number."
+                  : "Funds arrive after the operator processes your request."}
             </p>
-            <button onClick={onClose} className="mt-6 w-full rounded-xl py-3 font-display font-bold grad-brand text-[var(--color-on-brand)] text-sm">Done</button>
+            <div className="mt-6 grid grid-cols-2 gap-2 w-full">
+              <Link
+                href="/transactions"
+                className="rounded-xl py-3 font-display font-bold text-sm border border-[var(--color-line)] text-[var(--color-ink-dim)] hover:text-white text-center"
+              >
+                Transactions
+              </Link>
+              <Link
+                href="/"
+                className="rounded-xl py-3 font-display font-bold grad-brand text-[var(--color-on-brand)] text-sm text-center"
+              >
+                Home
+              </Link>
+            </div>
+            <button onClick={onClose} className="mt-2 text-[12.5px] font-semibold text-[var(--color-ink-faint)] hover:text-white">
+              Close
+            </button>
           </div>
         ) : bankAccount ? (
           <div className="p-5 space-y-4">

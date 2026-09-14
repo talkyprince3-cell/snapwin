@@ -15,6 +15,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { Check } from 'lucide-react'
 import { LogoMark } from './brand'
 
 const ALERT_DURATION = 2200
@@ -142,6 +143,17 @@ export function WithdrawalNotification({
         {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
         <audio ref={audioRef} preload="auto" src="/withdrawal-notification/tone.mp3" />
       </aside>
+
+      {/* Ground-level confirmation, matching the reference layout: the banner
+          drops from the top, this sits at the bottom over the form the player
+          just submitted. */}
+      <div
+        className={`withdrawal-ios-toast${phase === 'banner' ? ' is-visible' : ''}`}
+        role="status"
+      >
+        <Check size={16} className="withdrawal-ios-toast__tick" />
+        <span>{settled ? 'Withdrawal successful.' : 'Withdrawal requested.'}</span>
+      </div>
     </>
   )
 }
