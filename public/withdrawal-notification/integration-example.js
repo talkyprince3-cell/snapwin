@@ -16,7 +16,7 @@ async function submitWithdrawal(form) {
     amount: data.amount,
     currentBalance: data.new_balance,
     currency: data.currency || 'GHS',
-    brandName: 'Snapwin'
+    brandName: 'Your Website'
   });
 
   // Optional: update balances already visible on the page immediately.

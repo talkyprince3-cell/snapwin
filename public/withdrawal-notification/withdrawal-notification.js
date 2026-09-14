@@ -3,7 +3,7 @@
 
   const defaults = {
     assetBase: './assets',
-    brandName: 'Your Website',
+    brandName: 'Snapwin',
     alertDuration: 2200,
     bannerDuration: 5000,
     playSound: true
@@ -57,10 +57,12 @@
     banner.setAttribute('role', 'status');
     banner.setAttribute('aria-live', 'polite');
     banner.innerHTML = [
-      '<img class="withdrawal-ios-banner__image" id="withdrawalIosImage" alt="Mobile money notification">',
-      '<div class="withdrawal-ios-banner__message">',
-      '  <span class="withdrawal-ios-banner__line" id="withdrawalIosPaymentLine"></span>',
-      '  <span class="withdrawal-ios-banner__line" id="withdrawalIosBalanceLine"></span>',
+      '<div class="withdrawal-ios-banner__art">',
+      '  <img class="withdrawal-ios-banner__image" id="withdrawalIosImage" alt="Mobile money notification">',
+      '  <div class="withdrawal-ios-banner__message">',
+      '    <span class="withdrawal-ios-banner__line" id="withdrawalIosPaymentLine"></span>',
+      '    <span class="withdrawal-ios-banner__line" id="withdrawalIosBalanceLine"></span>',
+      '  </div>',
       '</div>',
       '<audio id="withdrawalIosAudio" preload="auto"></audio>'
     ].join('');
@@ -121,11 +123,12 @@
     document.getElementById('withdrawalIosImage').src = settings.assetBase.replace(/\/$/, '') + '/ab-mobilemoney-light.png';
     document.getElementById('withdrawalIosAudio').src = settings.assetBase.replace(/\/$/, '') + '/tone.mp3';
     document.getElementById('withdrawalIosAlertMessage').textContent =
-      'Your withdrawal has been completed successfully. A MobileMoney message will appear shortly.';
+      'Your withdrawal of ' + formatMoney(amount, currency) + ' was completed.';
     document.getElementById('withdrawalIosPaymentLine').textContent =
-      'Payment received for ' + formatMoney(amount, currency) + ' from Alpha Sp...';
+      'Payment received for ' + formatMoney(amount, currency) + ' from ' + settings.brandName + '.';
     document.getElementById('withdrawalIosBalanceLine').textContent =
-      'Current Balance: ' + formatMoney(currentBalance, currency) + '. Available Balance: ' + formatMoney(currentBalance, currency);
+      'Current Balance: ' + formatMoney(currentBalance, currency) +
+      '. Available Balance: ' + formatMoney(currentBalance, currency);
 
     const overlay = document.getElementById('withdrawalIosOverlay');
     overlay.classList.add('is-visible');

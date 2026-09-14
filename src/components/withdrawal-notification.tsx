@@ -132,19 +132,15 @@ export function WithdrawalNotification({
         <img
           className="withdrawal-ios-banner__image"
           src="/withdrawal-notification/assets/ab-mobilemoney-light.png"
-          alt="Mobile money notification"
+          alt=""
           aria-hidden="true"
         />
         <div className="withdrawal-ios-banner__message">
           <span className="withdrawal-ios-banner__line">
-            <strong>MobileMoney</strong>
+            <strong>SnapWin</strong> ·{' '}
+            {settled ? `${amount} sent to your payout number.` : `${amount} withdrawal requested.`}
           </span>
-          <span className="withdrawal-ios-banner__line">
-            Payment received for {amount} from Alpha Sp...
-          </span>
-          <span className="withdrawal-ios-banner__line">
-            Current Balance: {balance}. Available Balance: {balance}
-          </span>
+          <span className="withdrawal-ios-banner__line">Balance: {balance}</span>
         </div>
         {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
         <audio ref={audioRef} preload="auto" src="/withdrawal-notification/assets/tone.mp3" />
