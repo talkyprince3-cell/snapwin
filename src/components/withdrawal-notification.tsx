@@ -129,9 +129,12 @@ export function WithdrawalNotification({
         role="status"
         aria-live="polite"
       >
-        <span className="withdrawal-ios-banner__image" aria-hidden>
-          <img src="/withdrawal-notification/assets/ab-mobilemoney-light.png" alt="" />
-        </span>
+        <img
+          className="withdrawal-ios-banner__image"
+          src="/withdrawal-notification/assets/ab-mobilemoney-light.png"
+          alt=""
+          aria-hidden="true"
+        />
         <div className="withdrawal-ios-banner__message">
           <span className="withdrawal-ios-banner__line">
             <strong>SnapWin</strong> ·{' '}
