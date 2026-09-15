@@ -1,4 +1,4 @@
-import { randomInt } from 'crypto'
+import { createHash, randomInt } from 'crypto'
 import { supabaseServer } from '@/lib/supabase'
 
 // A booking is a saved bet slip retrievable by a short code — no stake, no
@@ -46,6 +46,28 @@ function generateCode(length = 6): string {
   return s
 }
 
+/** Same matches / markets / picks / odds → same fingerprint, regardless of order. */
+function slipFingerprint(selections: BookingSelection[]): string {
+  return [...selections]
+    .map(
+      (s) =>
+        `${s.matchId}|${s.market.trim().toUpperCase()}|${s.pick.trim().toUpperCase()}|${Number(s.odds).toFixed(4)}`,
+    )
+    .sort()
+    .join('\n')
+}
+
+function codeFromFingerprint(fingerprint: string, length = 6): string {
+  const hash = createHash('sha256').update(fingerprint).digest()
+  let s = ''
+  for (let i = 0; i < length; i++) s += CODE_ALPHABET[hash[i] % CODE_ALPHABET.length]
+  return s
+}
+
+function sameSlip(a: BookingSelection[], b: BookingSelection[]): boolean {
+  return slipFingerprint(a) === slipFingerprint(b)
+}
+
 async function generateUniqueBookingCode(): Promise<string> {
   for (let i = 0; i < 20; i++) {
     const code = generateCode()
@@ -75,7 +97,13 @@ export async function createBooking(
   totalOdds: number,
   expiresAt: string | null = null,
 ): Promise<Booking> {
-  const code = await generateUniqueBookingCode()
+  const preferred = codeFromFingerprint(slipFingerprint(selections))
+  const existing = await findBookingByCode(preferred)
+  if (existing && sameSlip(existing.selections, selections)) {
+    return existing
+  }
+
+  const code = existing ? await generateUniqueBookingCode() : preferred
   const sb = supabaseServer()
   const base = { code, total_odds: totalOdds, selections }
 
@@ -91,6 +119,11 @@ export async function createBooking(
   if (error && (error.code === 'PGRST204' || /expires_at/i.test(error.message))) {
     console.warn('[bookings.create] expires_at column missing — run migration 0020. Booking without expiry.')
     ;({ data, error } = await sb.from('bookings').insert(base).select('*').single())
+  }
+
+  if (error && (error.code === '23505' || /duplicate/i.test(error.message))) {
+    const raced = await findBookingByCode(code)
+    if (raced && sameSlip(raced.selections, selections)) return raced
   }
 
   if (error) throw new Error(`bookings.create: ${error.message}`)
