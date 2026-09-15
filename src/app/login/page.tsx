@@ -34,7 +34,7 @@ export default function LoginPage() {
         return;
       }
       saveUserSession(data.user.id, data.user.name);
-      router.push("/account");
+      router.replace("/account");
     } catch {
       setError("Network error — please try again.");
     } finally {

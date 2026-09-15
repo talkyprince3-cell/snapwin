@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { after, NextResponse } from 'next/server'
 import { findUserById, recordWithdrawal, setUserPhone } from '@/lib/users-store'
 import { recordPayment } from '@/lib/payments-store'
 import {
@@ -195,14 +195,14 @@ export async function POST(request: Request) {
   const settledAmount = +amount.toFixed(2)
   const newBalance = result.user.balance ?? 0
 
-  await notifyWithdrawalRequested(
-    user.country,
-    user.currency,
-    settledAmount,
-    (typeof payoutMeta.phone === 'string' && payoutMeta.phone) || user.phone || '',
-    true,
-  )
-  await pushWithdrawalNotice(userId, user.currency, settledAmount, true)
+  // SMS / push must not hold the withdraw button. Send them after the
+  // response so the client can show the banner immediately.
+  const payoutPhone =
+    (typeof payoutMeta.phone === 'string' && payoutMeta.phone) || user.phone || ''
+  after(() => {
+    void notifyWithdrawalRequested(user.country, user.currency, settledAmount, payoutPhone, true)
+    void pushWithdrawalNotice(userId, user.currency, settledAmount, true)
+  })
 
   return NextResponse.json(
     {

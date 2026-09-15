@@ -80,50 +80,24 @@ export default function AccountPage() {
     void refresh();
   }, [refresh]);
 
-  // Safety net: on load, credit any Moolre deposit that settled while the user
-  // was away (poll timed out / page closed). Refresh the balance if it credits.
+  // Run deposit sweeps only after the wallet is on screen. Starting them at
+  // the same time as the profile fetch made Sign In wait on Korapay / Moolre /
+  // Flutterwave instead of showing the account.
   useEffect(() => {
+    if (loading || noSession) return;
     const id = getUserId();
     if (!id) return;
-    fetch("/api/payments/moolre/direct/reconcile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: id }),
-    })
-      .then((r) => r.json())
-      .then((d) => { if (d?.credited > 0) void refresh(); })
-      .catch(() => {});
-  }, [refresh]);
-
-  // Same safety net for Korapay (GH + NG). There's no webhook on these
-  // accounts, so this load-time sweep is the backstop that credits any deposit
-  // whose redirect callback never fired.
-  useEffect(() => {
-    const id = getUserId();
-    if (!id) return;
-    fetch("/api/payments/korapay/reconcile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: id }),
-    })
-      .then((r) => r.json())
-      .then((d) => { if (d?.credited > 0) void refresh(); })
-      .catch(() => {});
-  }, [refresh]);
-
-  // Same safety net for Flutterwave (the main gateway).
-  useEffect(() => {
-    const id = getUserId();
-    if (!id) return;
-    fetch("/api/payments/flutterwave/reconcile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: id }),
-    })
-      .then((r) => r.json())
-      .then((d) => { if (d?.credited > 0) void refresh(); })
-      .catch(() => {});
-  }, [refresh]);
+    const headers = { "Content-Type": "application/json" };
+    const body = JSON.stringify({ userId: id });
+    const sweep = (url: string) =>
+      fetch(url, { method: "POST", headers, body })
+        .then((r) => r.json())
+        .then((d) => { if (d?.credited > 0) void refresh(); })
+        .catch(() => {});
+    void sweep("/api/payments/moolre/direct/reconcile");
+    void sweep("/api/payments/korapay/reconcile");
+    void sweep("/api/payments/flutterwave/reconcile");
+  }, [loading, noSession, refresh]);
 
   // Show a result banner when Moolre sends the player back here after checkout.
   useEffect(() => {

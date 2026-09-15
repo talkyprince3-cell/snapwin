@@ -30,6 +30,7 @@ export async function sendSms(recipient: string, message: string): Promise<SmsRe
       method: 'POST',
       headers: { 'api-key': apiKey, 'Content-Type': 'application/json' },
       body: JSON.stringify({ sender, message, recipients: [recipient] }),
+      signal: AbortSignal.timeout(4000),
     })
     const data = (await res.json().catch(() => ({}))) as {
       status?: string
