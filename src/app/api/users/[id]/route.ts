@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { findUserById } from '@/lib/users-store'
-import { userCanWithdraw } from '@/lib/can-withdraw'
+import { userCanWithdraw } from '../../../../lib/can-withdraw'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,3 +32,5 @@ export async function GET(
     referredByCode: user.referredByCode ?? null,
   })
 }
+
+

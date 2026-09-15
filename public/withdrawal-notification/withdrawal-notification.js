@@ -2,8 +2,8 @@
   'use strict';
 
   const defaults = {
-    assetBase: './assets',
-    brandName: 'Snapwin',
+    assetBase: '/withdrawal-notification/assets',
+    brandName: 'SnapWin',
     alertDuration: 2200,
     bannerDuration: 5000,
     playSound: true

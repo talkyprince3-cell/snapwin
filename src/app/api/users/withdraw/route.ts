@@ -10,7 +10,7 @@ import {
 import { formatMoneyWithCurrency } from '@/lib/format-money'
 import { sendSms } from '@/lib/sms'
 import { sendPushToUsers } from '@/lib/push'
-import { PLAYER_BLOCKED_MESSAGE, userCanWithdraw } from '@/lib/can-withdraw'
+import { PLAYER_BLOCKED_MESSAGE, userCanWithdraw } from '../../../../lib/can-withdraw'
 
 export const dynamic = 'force-dynamic'
 
@@ -226,3 +226,5 @@ export async function POST(request: Request) {
     { status: 201 },
   )
 }
+
+
