@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { findUserById } from '@/lib/users-store'
+import { userCanWithdraw } from '@/lib/can-withdraw'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,6 +26,7 @@ export async function GET(
     balance,
     verificationStep: user.verificationStep ?? 0,
     withdrawalApproved: user.withdrawalApproved ?? false,
+    canWithdraw: await userCanWithdraw(user),
     phone: user.phone ?? null,
     firstDepositAt: user.firstDepositAt ?? null,
     referredByCode: user.referredByCode ?? null,

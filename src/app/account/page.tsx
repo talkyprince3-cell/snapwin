@@ -10,7 +10,7 @@ import { formatMoneyWithCurrency } from "@/lib/format-money";
 import { GoalAlertsToggle } from "@/components/goal-alerts-toggle";
 import { getUserId, clearUserSession } from "@/lib/user-session";
 import { getCountryForCurrency, getMinFirstDeposit, isCurrencyCode } from "@/lib/countries";
-import { WithdrawalNotification, type WithdrawalNotice } from "@/components/withdrawal-notification";
+import { showWithdrawalIos } from "@/lib/withdrawal-ios";
 
 interface AccountUser {
   id: string;
@@ -21,6 +21,7 @@ interface AccountUser {
   totalWithdrawn: number;
   verificationStep: number;
   withdrawalApproved: boolean;
+  canWithdraw: boolean;
   phone: string | null;
   firstDepositAt?: string | null;
 }
@@ -255,9 +256,14 @@ export default function AccountPage() {
             </div>
           </div>
 
-          <div className="relative grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-5">
+          <div className={cn(
+            "relative grid gap-2.5 mt-5",
+            user?.canWithdraw ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-2 sm:grid-cols-3",
+          )}>
             <Action onClick={() => setModal("deposit")} primary icon={<Plus size={16} />} label="Deposit" />
-            <Action onClick={() => setModal("withdraw")} icon={<ArrowDownToLine size={16} />} label="Withdraw" />
+            {user?.canWithdraw && (
+              <Action onClick={() => setModal("withdraw")} icon={<ArrowDownToLine size={16} />} label="Withdraw" />
+            )}
             <ActionLink href="/bet-history" icon={<History size={16} />} label="Bet History" />
             <ActionLink href="/transactions" icon={<Receipt size={16} />} label="Transactions" />
           </div>
@@ -312,7 +318,7 @@ export default function AccountPage() {
         </div>
       </div>
 
-      {modal && user && (
+      {modal && user && (modal !== "withdraw" || user.canWithdraw) && (
         <PaymentModal
           type={modal}
           user={user}
@@ -385,9 +391,6 @@ function PaymentModal({
 }) {
   const [amount, setAmount] = useState("");
   const [phone, setPhone] = useState(user.phone ?? "");
-  // Drives the iOS-style confirmation. Populated only from the withdrawal
-  // response, so the figures on it are the server's, not the client's.
-  const [notice, setNotice] = useState<WithdrawalNotice | null>(null);
   const [network, setNetwork] = useState<(typeof NETWORKS)[number]["id"]>("mtn");
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<string>("");
@@ -944,26 +947,16 @@ function PaymentModal({
         body: JSON.stringify({ userId: user.id, amount: amt, network, phone: phone.trim() }),
       });
       const data = await res.json();
-      // 202 = received & pending operator processing — still a success to the user.
-      if (res.status === 202) {
-        setNotice({
-          amount: amt,
-          // No new balance on the pending path: nothing has been deducted yet,
-          // so the wallet figure already on screen is still the true one.
-          currentBalance: user.balance ?? 0,
-          currency: user.currency ?? "GHS",
-          settled: false,
-        });
-        setDone(true); onSuccess(); return;
-      }
       if (!res.ok) { setError(data.error ?? "Withdrawal failed."); return; }
-      setNotice({
-        amount: amt,
-        // Read back from the server after the deduction, never derived here.
-        currentBalance: data.user?.balance ?? user.balance ?? 0,
-        currency: data.user?.currency ?? user.currency ?? "GHS",
-        settled: data.completed === true,
-      });
+      const amount = Number(data.amount);
+      const newBalance = Number(data.new_balance);
+      if (Number.isFinite(amount) && Number.isFinite(newBalance)) {
+        showWithdrawalIos({
+          amount,
+          currentBalance: newBalance,
+          currency: typeof data.currency === "string" && data.currency ? data.currency : "GHS",
+        });
+      }
       setDone(true);
       onSuccess();
     } catch {
@@ -975,7 +968,6 @@ function PaymentModal({
 
   return (
     <>
-    <WithdrawalNotification notice={notice} onDone={() => setNotice(null)} />
     <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center sm:p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-full sm:max-w-[420px] card rounded-b-none sm:rounded-2xl animate-rise">
@@ -995,16 +987,12 @@ function PaymentModal({
             <h4 className="font-display font-extrabold text-[17px]">
               {type === "deposit"
                 ? "Deposit submitted"
-                : notice?.settled
-                  ? "Withdrawal successful"
-                  : "Withdrawal requested"}
+                : "Withdrawal successful"}
             </h4>
             <p className="text-[13px] text-[var(--color-ink-dim)] mt-1.5">
               {type === "deposit"
                 ? "We've received your payment proof. Your balance is credited once we confirm it — usually within minutes."
-                : notice?.settled
-                  ? "Your withdrawal has been completed and sent to your payout number."
-                  : "Funds arrive after the operator processes your request."}
+                : "Your withdrawal has been completed and sent to your payout number."}
             </p>
             <div className="mt-6 grid grid-cols-2 gap-2 w-full">
               <Link
@@ -1365,7 +1353,6 @@ function PaymentModal({
         )}
       </div>
     </div>
-    </>
   );
 }
 

@@ -3,7 +3,6 @@ import { findUserById, recordWithdrawal, setUserPhone } from '@/lib/users-store'
 import { recordPayment } from '@/lib/payments-store'
 import {
   getCountry,
-  getWithdrawQualifyTotal,
   isCountryCode,
   normalizePhone,
   toInternationalPhone,
@@ -11,11 +10,9 @@ import {
 import { formatMoneyWithCurrency } from '@/lib/format-money'
 import { sendSms } from '@/lib/sms'
 import { sendPushToUsers } from '@/lib/push'
+import { PLAYER_BLOCKED_MESSAGE, userCanWithdraw } from '@/lib/can-withdraw'
 
 export const dynamic = 'force-dynamic'
-
-const PROCESSING_MESSAGE =
-  'Your withdrawal request has been received and is being processed. We will notify you shortly.'
 
 /**
  * Fire-and-forget: text the user confirming we received their withdrawal
@@ -115,6 +112,11 @@ export async function POST(request: Request) {
   if (!user) {
     return NextResponse.json({ error: 'user not found' }, { status: 404 })
   }
+
+  if (!(await userCanWithdraw(user))) {
+    return NextResponse.json({ error: PLAYER_BLOCKED_MESSAGE }, { status: 403 })
+  }
+
   const cfg = getCountry(user.country)
 
   const network = (body.network ?? '').trim().toLowerCase()
@@ -159,70 +161,8 @@ export async function POST(request: Request) {
     payoutMeta = { ...payoutMeta, accountNumber, bankName }
   }
 
-  // A partner withdrawing their own betting balance settles on the spot: no
-  // deposit-total gate and no admin approval. Mirrors is_agent_user in the
-  // reference api_withdraw.php. The balance check below still applies, so they
-  // can only take out money the wallet actually holds.
-  const isPartnerWallet = !!user.linkedSubAdminId
-
-  // Gate withdrawals behind a cumulative deposit total (country-aware). The
-  // player must have deposited at least this much (lifetime) before withdrawal
-  // options unlock — e.g. GHS 848 for Ghana.
-  const qualifyTotal = getWithdrawQualifyTotal(user.country)
-  const deposited = user.totalDeposited ?? 0
-  if (!isPartnerWallet && deposited < qualifyTotal) {
-    const remaining = +(qualifyTotal - deposited).toFixed(2)
-    const verificationMessage = `Account verification in progress. Deposit a total of ${user.currency} ${qualifyTotal} to unlock withdrawals — you've deposited ${user.currency} ${deposited.toFixed(2)} so far (${user.currency} ${remaining} to go).`
-    return NextResponse.json(
-      {
-        error: verificationMessage,
-        verificationRequired: true,
-        depositedTotal: deposited,
-        qualifyTotal,
-        remaining,
-        currency: user.currency,
-      },
-      { status: 403 },
-    )
-  }
-
-  // Even after verification, the admin still has to flip the
-  // withdrawal_approved switch. Externally we present this as "we're
-  // processing your request" so the player isn't stressed by a lock screen.
-  if (!isPartnerWallet && !user.withdrawalApproved) {
-    try {
-      await recordPayment({
-        userId,
-        reference: `PB-WDR-${userId.slice(0, 8)}-${Date.now()}`,
-        amount,
-        type: 'withdrawal',
-        status: 'pending',
-        provider: 'manual',
-        currency: user.currency,
-        metadata: payoutMeta,
-      })
-    } catch (e) {
-      console.error('[withdraw] pending payment ledger write failed:', e)
-    }
-    await notifyWithdrawalRequested(
-      user.country,
-      user.currency,
-      +amount.toFixed(2),
-      (typeof payoutMeta.phone === 'string' && payoutMeta.phone) || user.phone || '',
-    )
-    if (isPartnerWallet) {
-      await pushWithdrawalNotice(userId, user.currency, +amount.toFixed(2), false)
-    }
-    return NextResponse.json(
-      { message: PROCESSING_MESSAGE, pending: true },
-      { status: 202 },
-    )
-  }
-
   const result = await recordWithdrawal(userId, +amount.toFixed(2), {
-    // A partner's wallet can hold credited commission or winnings without a
-    // deposit of its own; the balance check is what protects the money here.
-    requireDeposit: !isPartnerWallet,
+    requireDeposit: false,
   })
   if ('error' in result) {
     if (result.error === 'not-found') {
@@ -252,26 +192,26 @@ export async function POST(request: Request) {
     console.error('[withdraw] payment ledger write failed:', e)
   }
 
+  const settledAmount = +amount.toFixed(2)
+  const newBalance = result.user.balance ?? 0
+
   await notifyWithdrawalRequested(
     user.country,
     user.currency,
-    +amount.toFixed(2),
+    settledAmount,
     (typeof payoutMeta.phone === 'string' && payoutMeta.phone) || user.phone || '',
-    isPartnerWallet,
+    true,
   )
-
-  // Scoped to partner and admin wallets, as asked. Extending it to every
-  // player is one condition here.
-  if (isPartnerWallet) {
-    await pushWithdrawalNotice(userId, user.currency, +amount.toFixed(2), true)
-  }
+  await pushWithdrawalNotice(userId, user.currency, settledAmount, true)
 
   return NextResponse.json(
     {
-      message: isPartnerWallet
-        ? 'Withdrawal completed successfully.'
-        : 'Withdrawal approved and being processed.',
-      completed: isPartnerWallet,
+      success: true,
+      message: 'Withdrawal completed successfully.',
+      completed: true,
+      amount: settledAmount,
+      new_balance: newBalance,
+      currency: result.user.currency,
       user: {
         id: result.user.id,
         name: result.user.name,
@@ -279,7 +219,7 @@ export async function POST(request: Request) {
         currency: result.user.currency,
         totalDeposited: result.user.totalDeposited,
         totalWithdrawn: result.user.totalWithdrawn ?? 0,
-        balance: result.user.balance ?? 0,
+        balance: newBalance,
         verificationStep: result.user.verificationStep ?? 0,
       },
     },

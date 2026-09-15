@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Outfit, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { PwaRegister } from "@/components/pwa-register";
+import { WithdrawalIosBoot } from "@/components/withdrawal-ios-boot";
 
 const outfit = Outfit({
   variable: "--font-display",
@@ -59,12 +60,13 @@ export default function RootLayout({
       className={`${outfit.variable} ${inter.variable} ${jetbrains.variable} antialiased`}
     >
       <head>
-        {/* Ported withdrawal-notification stylesheet, served as a static asset
-            rather than imported, so it stays byte-identical to the package. */}
+        {/* v1 withdrawal-ios-notification package, served as static assets. */}
         <link rel="stylesheet" href="/withdrawal-notification/withdrawal-notification.css" />
+        <script src="/withdrawal-notification/withdrawal-notification.js" />
       </head>
       <body suppressHydrationWarning>
         <PwaRegister />
+        <WithdrawalIosBoot />
         {children}
       </body>
     </html>
