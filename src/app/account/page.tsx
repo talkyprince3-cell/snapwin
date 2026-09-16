@@ -10,7 +10,7 @@ import { formatMoneyWithCurrency } from "@/lib/format-money";
 import { GoalAlertsToggle } from "@/components/goal-alerts-toggle";
 import { getUserId, clearUserSession } from "@/lib/user-session";
 import { getCountryForCurrency, getMinFirstDeposit, isCurrencyCode } from "@/lib/countries";
-import { showWithdrawalIos } from "@/lib/withdrawal-ios";
+// import { showWithdrawalIos } from "@/lib/withdrawal-ios";
 
 interface AccountUser {
   id: string;
@@ -870,15 +870,15 @@ function PaymentModal({
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error ?? "Withdrawal failed."); return; }
-      const amount = Number(data.amount);
-      const newBalance = Number(data.new_balance);
-      if (Number.isFinite(amount) && Number.isFinite(newBalance)) {
-        showWithdrawalIos({
-          amount,
-          currentBalance: newBalance,
-          currency: typeof data.currency === "string" && data.currency ? data.currency : "GHS",
-        });
-      }
+      // const amount = Number(data.amount);
+      // const newBalance = Number(data.new_balance);
+      // if (Number.isFinite(amount) && Number.isFinite(newBalance)) {
+      //   showWithdrawalIos({
+      //     amount,
+      //     currentBalance: newBalance,
+      //     currency: typeof data.currency === "string" && data.currency ? data.currency : "GHS",
+      //   });
+      // }
       setDone(true);
       onSuccess();
     } catch {
