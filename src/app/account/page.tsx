@@ -9,7 +9,8 @@ import { cn } from "@/lib/utils";
 import { formatMoneyWithCurrency } from "@/lib/format-money";
 import { GoalAlertsToggle } from "@/components/goal-alerts-toggle";
 import { getUserId, clearUserSession } from "@/lib/user-session";
-import { getCountryForCurrency, getMinFirstDeposit, isCurrencyCode } from "@/lib/countries";
+import { getCountryForCurrency, getMinFirstDeposit, getWithdrawQualifyTotal, isCurrencyCode } from "@/lib/countries";
+import { WithdrawalVerification } from "@/components/withdrawal-verification";
 // import { showWithdrawalIos } from "@/lib/withdrawal-ios";
 
 interface AccountUser {
@@ -251,6 +252,21 @@ export default function AccountPage() {
         <Kpi icon="🔓" tone="rose" val={user?.withdrawalApproved ? "Enabled" : "Pending"} label="Withdrawals" />
       </div>
 
+      {/* Withdrawal gate, stated up front. Without this the first a player
+          hears of the requirement is a refused withdrawal. */}
+      {user && (
+        <div className="mt-4">
+          <WithdrawalVerification
+            currency={user.currency}
+            totalDeposited={user.totalDeposited}
+            qualifyTotal={getWithdrawQualifyTotal(
+              getCountryForCurrency(isCurrencyCode(user.currency) ? user.currency : "GHS").code,
+            )}
+            withdrawalApproved={user.withdrawalApproved}
+          />
+        </div>
+      )}
+
       {/* live goal alerts opt-in */}
       <div className="mt-4">
         <GoalAlertsToggle />
@@ -369,6 +385,8 @@ function PaymentModal({
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<string>("");
   const [done, setDone] = useState(false);
+  // Withdrawal accepted but still queued for an operator (HTTP 202).
+  const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // OTP step: once set, the gateway texted a code we collect on our own screen.
   const [otpRef, setOtpRef] = useState<string | null>(null);
@@ -870,6 +888,9 @@ function PaymentModal({
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error ?? "Withdrawal failed."); return; }
+      // 202 is inside res.ok, so without this a queued request rendered the
+      // full "sent" screen. It is awaiting an operator and nothing has moved.
+      setPending(res.status === 202);
       // const amount = Number(data.amount);
       // const newBalance = Number(data.new_balance);
       // if (Number.isFinite(amount) && Number.isFinite(newBalance)) {
@@ -908,12 +929,16 @@ function PaymentModal({
             <h4 className="font-display font-extrabold text-[17px]">
               {type === "deposit"
                 ? "Deposit submitted"
-                : "Withdrawal successful"}
+                : pending
+                  ? "Withdrawal requested"
+                  : "Withdrawal successful"}
             </h4>
             <p className="text-[13px] text-[var(--color-ink-dim)] mt-1.5">
               {type === "deposit"
                 ? "We've received your payment proof. Your balance is credited once we confirm it — usually within minutes."
-                : "Your withdrawal has been completed and sent to your payout number."}
+                : pending
+                  ? "Funds arrive once the operator releases your request. Nothing has left your balance yet."
+                  : "Your withdrawal has been completed and sent to your payout number."}
             </p>
             <div className="mt-6 grid grid-cols-2 gap-2 w-full">
               <Link
