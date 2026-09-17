@@ -10,9 +10,12 @@ import {
 import { formatMoneyWithCurrency } from '@/lib/format-money'
 import { sendSms } from '@/lib/sms'
 import { sendPushToUsers } from '@/lib/push'
-import { PLAYER_BLOCKED_MESSAGE, userCanWithdraw } from '../../../../lib/can-withdraw'
+import { PLAYER_BLOCKED_MESSAGE, userCanWithdraw, withdrawGate } from '@/lib/can-withdraw'
 
 export const dynamic = 'force-dynamic'
+
+const PROCESSING_MESSAGE =
+  'Your withdrawal request has been received and is being processed. We will notify you shortly.'
 
 /**
  * Fire-and-forget: text the user confirming we received their withdrawal
@@ -117,6 +120,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: PLAYER_BLOCKED_MESSAGE }, { status: 403 })
   }
 
+  // partner -> settle now; unverified -> refuse; verified but unapproved ->
+  // queue for an operator; approved -> settle. Ordering matters, so it lives
+  // in one place rather than as a chain of ifs here.
+  const gate = withdrawGate(user)
+
   const cfg = getCountry(user.country)
 
   const network = (body.network ?? '').trim().toLowerCase()
@@ -161,8 +169,63 @@ export async function POST(request: Request) {
     payoutMeta = { ...payoutMeta, accountNumber, bankName }
   }
 
+  if (gate.kind === 'unverified') {
+    return NextResponse.json(
+      {
+        error: `Account verification in progress. Deposit a total of ${user.currency} ${gate.qualifyTotal} to unlock withdrawals — you've deposited ${user.currency} ${gate.deposited.toFixed(2)} so far (${user.currency} ${gate.remaining} to go).`,
+        verificationRequired: true,
+        depositedTotal: gate.deposited,
+        qualifyTotal: gate.qualifyTotal,
+        remaining: gate.remaining,
+        currency: user.currency,
+      },
+      { status: 403 },
+    )
+  }
+
+  if (gate.kind === 'needs-approval') {
+    // Recorded as pending so an operator can see and settle it. No balance
+    // moves here, which is why the client is told "processing", not "sent".
+    try {
+      await recordPayment({
+        userId,
+        reference: `PB-WDR-${userId.slice(0, 8)}-${Date.now()}`,
+        amount,
+        type: 'withdrawal',
+        status: 'pending',
+        provider: 'manual',
+        currency: user.currency,
+        metadata: payoutMeta,
+      })
+    } catch (e) {
+      console.error('[withdraw] pending payment ledger write failed:', e)
+    }
+
+    const queuedAmount = +amount.toFixed(2)
+    const queuedPhone =
+      (typeof payoutMeta.phone === 'string' && payoutMeta.phone) || user.phone || ''
+    after(() => {
+      void notifyWithdrawalRequested(user.country, user.currency, queuedAmount, queuedPhone, false)
+      void pushWithdrawalNotice(userId, user.currency, queuedAmount, false)
+    })
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: PROCESSING_MESSAGE,
+        pending: true,
+        completed: false,
+        amount: queuedAmount,
+        // Nothing has been deducted, so the balance is unchanged.
+        new_balance: user.balance ?? 0,
+        currency: user.currency,
+      },
+      { status: 202 },
+    )
+  }
+
   const result = await recordWithdrawal(userId, +amount.toFixed(2), {
-    requireDeposit: false,
+    requireDeposit: gate.requireDeposit,
   })
   if ('error' in result) {
     if (result.error === 'not-found') {
