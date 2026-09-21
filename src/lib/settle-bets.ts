@@ -216,7 +216,11 @@ export async function settlePendingBets(userId?: string): Promise<SettleResult> 
         continue
       }
 
-      for (const l of legResults) await setSelectionStatusById(l.leg.id, 'won').catch(() => {})
+      // Stamp the score the leg was judged against, so the ticket can still
+      // show it after the fixture leaves the live feed.
+      for (const l of legResults) {
+        await setSelectionStatusById(l.leg.id, 'won', finished.get(l.leg.matchId)).catch(() => {})
+      }
       result.won++
       result.creditedTotal += payout
     } else {
@@ -224,7 +228,9 @@ export async function settlePendingBets(userId?: string): Promise<SettleResult> 
       if (!settled) continue
       // Colour each judged leg; undecided legs stay pending (they're moot now).
       for (const l of legResults) {
-        if (l.res !== 'pending') await setSelectionStatusById(l.leg.id, l.res).catch(() => {})
+        if (l.res !== 'pending') {
+          await setSelectionStatusById(l.leg.id, l.res, finished.get(l.leg.matchId)).catch(() => {})
+        }
       }
       result.lost++
     }

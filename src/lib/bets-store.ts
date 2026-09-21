@@ -35,6 +35,8 @@ interface BetSelectionRow {
   outcome_label: string
   odds: number
   status: 'pending' | 'won' | 'lost' | null
+  home_score: number | null
+  away_score: number | null
 }
 
 function rowToSelection(row: BetSelectionRow): BetSelection {
@@ -44,6 +46,8 @@ function rowToSelection(row: BetSelectionRow): BetSelection {
     country: row.country,
     homeTeam: row.home_team,
     awayTeam: row.away_team,
+    homeScore: row.home_score ?? undefined,
+    awayScore: row.away_score ?? undefined,
     isLive: false,
     odds: { home: 0, draw: 0, away: 0 },
   }
@@ -262,10 +266,18 @@ export async function revertBetToPending(id: string): Promise<void> {
 export async function setSelectionStatusById(
   selectionId: string,
   status: 'won' | 'lost' | 'pending',
+  /** Final score the leg was judged against. Stored so an old ticket can still
+   *  show it once the fixture has left the live feed. */
+  score?: { home: number; away: number } | null,
 ): Promise<void> {
+  const patch: Record<string, unknown> = { status }
+  if (score) {
+    patch.home_score = score.home
+    patch.away_score = score.away
+  }
   const { error } = await supabaseServer()
     .from('bet_selections')
-    .update({ status })
+    .update(patch)
     .eq('id', selectionId)
   if (error) throw new Error(`bet_selections.setStatusById: ${error.message}`)
 }

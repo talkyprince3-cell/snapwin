@@ -45,6 +45,8 @@ export function placedBetToUi(b: PlacedBet): Bet {
     away: s.match?.awayTeam || undefined,
     league: s.match?.league || undefined,
     country: s.match?.country || undefined,
+    homeScore: s.match?.homeScore,
+    awayScore: s.match?.awayScore,
     market: s.marketLabel || undefined,
     pick: s.outcomeLabel ?? s.marketLabel ?? '—',
     odds: Number(s.odds) || 0,

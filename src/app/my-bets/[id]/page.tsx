@@ -165,7 +165,18 @@ function LegCard({
         : state === "playing"
           ? "bg-[var(--color-cyan)]"
           : "bg-[var(--color-ink-faint)]/50";
-  const hasScore = live && typeof live.scoreHome === "number" && typeof live.scoreAway === "number";
+  // The score stored when the leg settled wins over the live feed: it is the
+  // score the bet was actually judged against, and it survives the fixture
+  // dropping out of the feed. The feed is the fallback for a leg still running.
+  const storedScore =
+    typeof leg.homeScore === "number" && typeof leg.awayScore === "number"
+      ? { home: leg.homeScore, away: leg.awayScore }
+      : null;
+  const liveScore =
+    live && typeof live.scoreHome === "number" && typeof live.scoreAway === "number"
+      ? { home: live.scoreHome, away: live.scoreAway }
+      : null;
+  const score = storedScore ?? liveScore;
 
   return (
     <div className="card overflow-hidden flex">
@@ -184,8 +195,8 @@ function LegCard({
 
         {/* Teams, each with its score column — dashes when we have no score. */}
         <div className="mt-2 rounded-[var(--radius-ctl)] bg-[var(--color-surface-2)] px-3 py-2">
-          <TeamLine name={leg.home ?? leg.match} score={hasScore ? live!.scoreHome : undefined} />
-          {leg.away && <TeamLine name={leg.away} score={hasScore ? live!.scoreAway : undefined} />}
+          <TeamLine name={leg.home ?? leg.match} score={score?.home} />
+          {leg.away && <TeamLine name={leg.away} score={score?.away} />}
         </div>
 
         <dl className="mt-2 space-y-1">

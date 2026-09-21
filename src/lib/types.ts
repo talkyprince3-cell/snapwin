@@ -72,6 +72,9 @@ export type BetLeg = {
   country?: string;
   /** e.g. "Match Result" — which market the pick was made in. */
   market?: string;
+  /** Final score recorded when the leg settled. Undefined while pending. */
+  homeScore?: number;
+  awayScore?: number;
   /** The chosen outcome, e.g. "Draw" or a team name. */
   pick: string;
   odds: number;
