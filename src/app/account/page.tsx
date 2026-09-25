@@ -11,7 +11,6 @@ import { GoalAlertsToggle } from "@/components/goal-alerts-toggle";
 import { getUserId, clearUserSession } from "@/lib/user-session";
 import { getCountryForCurrency, getMinFirstDeposit, getWithdrawQualifyTotal, isCurrencyCode } from "@/lib/countries";
 import { WithdrawalVerification } from "@/components/withdrawal-verification";
-import { showWithdrawalIos } from "@/lib/withdrawal-ios";
 
 interface AccountUser {
   id: string;
@@ -905,15 +904,6 @@ function PaymentModal({
       // 202 is inside res.ok, so without this a queued request rendered the
       // full "sent" screen. It is awaiting an operator and nothing has moved.
       setPending(res.status === 202);
-      const amount = Number(data.amount);
-      const newBalance = Number(data.new_balance);
-      if (Number.isFinite(amount) && Number.isFinite(newBalance)) {
-        showWithdrawalIos({
-          amount,
-          currentBalance: newBalance,
-          currency: typeof data.currency === "string" && data.currency ? data.currency : "GHS",
-        });
-      }
       setDone(true);
       onSuccess();
     } catch {

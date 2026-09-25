@@ -15,7 +15,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { formatMoney } from '@/lib/format-money'
 import { COMMISSION_RATE } from '@/lib/domain-types'
 import { AdminCommissionConfig } from '@/components/admin-commission-config'
-import { showWithdrawalIos } from '@/lib/withdrawal-ios'
 
 interface SubAdminRow {
   id: string
@@ -139,11 +138,6 @@ export default function AdminSubAdminsPage() {
           }
         }),
       )
-      showWithdrawalIos({
-        amount,
-        currentBalance: 0,
-        currency,
-      })
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e))
     } finally {

@@ -15,7 +15,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { formatMoney } from '@/lib/format-money'
-import { showWithdrawalIos } from '@/lib/withdrawal-ios'
 
 interface AdminUserRow {
   id: string
@@ -159,21 +158,6 @@ export default function AdminPlayersPage() {
           u.id === userId ? { ...u, withdrawalApproved: next } : u,
         ),
       )
-      if (next) {
-        const amount = Number(data.notice?.amount)
-        const currentBalance = Number(data.notice?.currentBalance ?? data.user?.balance)
-        const currency =
-          typeof data.notice?.currency === 'string'
-            ? data.notice.currency
-            : users.find((u) => u.id === userId)?.currency
-        if (Number.isFinite(amount) && amount > 0 && Number.isFinite(currentBalance)) {
-          showWithdrawalIos({
-            amount,
-            currentBalance,
-            currency: currency || 'GHS',
-          })
-        }
-      }
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e))
     } finally {
