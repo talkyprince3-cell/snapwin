@@ -366,6 +366,28 @@ function ActionLink({ href, icon, label }: { href: string; icon: React.ReactNode
   );
 }
 
+/**
+ * Turn the gateway's own words into something the player can act on.
+ *
+ * Every failed deposit start used to read "try again in a moment", which made
+ * an unset key, an over-limit amount and a provider outage look identical —
+ * from the phone and from support. Anything unrecognised still gets the
+ * generic line, but the gateway's exact reply goes to the diagnostic line
+ * below the button so it can be reported instead of guessed at.
+ */
+function depositStartMessage(raw?: string): string {
+  const e = (raw ?? "").toLowerCase();
+  if (e.includes("not configured"))
+    return "Mobile Money deposits aren't switched on right now. Please contact support.";
+  if (e.includes("limit"))
+    return "Our payment provider is refusing this amount right now. Try a smaller deposit, or contact support.";
+  if (e.includes("not available") || e.includes("unavailable"))
+    return "Mobile Money is temporarily unavailable from our payment provider. Please try again shortly.";
+  // The route's own validation messages are already player-facing.
+  if (e.includes("minimum deposit") || e.includes("valid network")) return raw as string;
+  return "We couldn't start your Mobile Money deposit right now. Please try again in a moment.";
+}
+
 function PaymentModal({
   type,
   user,
@@ -405,7 +427,9 @@ function PaymentModal({
     account_name?: string;
     expires_at?: string;
   } | null>(null);
-  const [diag, setDiag] = useState(""); // temp: shows Moolre's raw reply on screen
+  // The gateway's raw reply, shown under the button so a failed deposit can be
+  // reported precisely rather than described as "it didn't work".
+  const [diag, setDiag] = useState("");
   // Manual deposit: customer pays our MoMo number and uploads the screenshot.
   const [file, setFile] = useState<File | null>(null);
   const [copiedNum, setCopiedNum] = useState<string | null>(null);
@@ -646,7 +670,8 @@ function PaymentModal({
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.reference) {
         console.error("[deposit] flutterwave v4 momo start failed:", data.error);
-        setError("We couldn't start your Mobile Money deposit right now. Please try again in a moment.");
+        setDiag(`Gateway: ${data.error ?? `HTTP ${res.status}`}`);
+        setError(depositStartMessage(data.error));
         return;
       }
       // V4 authorises with a PIN prompt and nothing else — no OTP to collect,
