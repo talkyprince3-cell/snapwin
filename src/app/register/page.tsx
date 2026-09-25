@@ -146,7 +146,7 @@ export default function RegisterPage() {
               autoComplete="new-password"
               className={inputCls + " pr-11"}
             />
-            <button type="button" onClick={() => setShow((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-ink-faint)] hover:text-white">
+            <button type="button" onClick={() => setShow((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-ink-faint)] hover:text-[var(--color-ink)]">
               {show ? <EyeOff size={17} /> : <Eye size={17} />}
             </button>
           </div>
@@ -183,7 +183,7 @@ export default function RegisterPage() {
           className="flex items-start gap-2.5 my-4 text-left"
         >
           <span className={`grid place-items-center w-5 h-5 rounded-md border shrink-0 mt-0.5 transition ${agree ? "grad-brand border-transparent" : "border-[var(--color-line-2)]"}`}>
-            {agree && <Check size={13} className="text-white" />}
+            {agree && <Check size={13} className="text-[var(--color-ink)]" />}
           </span>
           <span className="text-[12px] text-[var(--color-ink-dim)] leading-relaxed">
             I&apos;m 18+ and agree to the <span className="text-[var(--color-cyan)]">Terms</span> and <span className="text-[var(--color-cyan)]">Privacy Policy</span>.

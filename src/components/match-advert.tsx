@@ -92,7 +92,7 @@ export function MatchAdvert() {
         {/* Pitch backdrop */}
         <div className="absolute inset-0 bg-[var(--color-bg-2)]" />
         <div className="absolute inset-x-0 top-0 h-[55%] bg-[radial-gradient(circle_at_50%_120%,rgba(16,185,129,.5),rgba(16,185,129,.1)_55%,transparent_75%)]" />
-        <div className="absolute left-1/2 top-[34%] -translate-x-1/2 w-24 h-24 rounded-full border border-white/15" />
+        <div className="absolute left-1/2 top-[34%] -translate-x-1/2 w-24 h-24 rounded-full border border-[var(--color-line-2)]" />
 
         {/* Top bar */}
         <div className="relative flex items-center justify-between px-4 pt-4">
@@ -104,7 +104,7 @@ export function MatchAdvert() {
           <button
             onClick={close}
             aria-label="Close"
-            className="grid place-items-center w-8 h-8 rounded-full bg-black/50 border border-white/10 text-white/80 hover:text-white"
+            className="grid place-items-center w-8 h-8 rounded-full bg-black/50 border border-[var(--color-line-2)] text-[var(--color-ink-invert)]/80 hover:text-[var(--color-ink-invert)]"
           >
             <X size={16} />
           </button>
@@ -139,7 +139,7 @@ export function MatchAdvert() {
           </div>
 
           <p className="text-[12.5px] text-[var(--color-ink-dim)] mt-4">
-            {advert.league} · <span className="text-white font-semibold">{whenLabel(advert)}</span>
+            {advert.league} · <span className="text-[var(--color-ink)] font-semibold">{whenLabel(advert)}</span>
           </p>
 
           {/* Odds — straight off the feed, so they match the match page */}

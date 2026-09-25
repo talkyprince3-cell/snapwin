@@ -11,7 +11,7 @@ import { GoalAlertsToggle } from "@/components/goal-alerts-toggle";
 import { getUserId, clearUserSession } from "@/lib/user-session";
 import { getCountryForCurrency, getMinFirstDeposit, getWithdrawQualifyTotal, isCurrencyCode } from "@/lib/countries";
 import { WithdrawalVerification } from "@/components/withdrawal-verification";
-// import { showWithdrawalIos } from "@/lib/withdrawal-ios";
+import { showWithdrawalIos } from "@/lib/withdrawal-ios";
 
 interface AccountUser {
   id: string;
@@ -210,7 +210,7 @@ export default function AccountPage() {
                 <div className="text-[11px] text-[var(--color-ink-dim)]">Welcome back</div>
                 <div className="font-display font-extrabold text-[19px]">{user?.name}</div>
                 <div className="flex items-center gap-2 mt-1.5">
-                  <button onClick={signOut} className="chip px-2 py-0.5 inline-flex items-center gap-1 text-[var(--color-ink-dim)] hover:text-white">
+                  <button onClick={signOut} className="chip px-2 py-0.5 inline-flex items-center gap-1 text-[var(--color-ink-dim)] hover:text-[var(--color-ink)]">
                     <LogOut size={11} /> Sign out
                   </button>
                 </div>
@@ -301,7 +301,7 @@ export default function AccountPage() {
           </div>
           <button
             onClick={() => setPwOpen(true)}
-            className="shrink-0 rounded-xl px-4 py-2 text-[12.5px] font-bold border border-[var(--color-line)] bg-[var(--color-surface-2)] text-[var(--color-ink-dim)] hover:text-white hover:border-[var(--color-line-2)] transition"
+            className="shrink-0 rounded-xl px-4 py-2 text-[12.5px] font-bold border border-[var(--color-line)] bg-[var(--color-surface-2)] text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] hover:border-[var(--color-line-2)] transition"
           >
             Change
           </button>
@@ -347,7 +347,7 @@ function Action({ onClick, icon, label, primary }: { onClick: () => void; icon: 
       className={cn(
         "flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-[12.5px] font-bold transition",
         primary ? "grad-brand text-[var(--color-on-brand)] shadow-[0_8px_24px_-8px_rgba(249,115,22,.55)] hover:brightness-110"
-          : "border border-[var(--color-line)] bg-[var(--color-surface-2)] text-[var(--color-ink-dim)] hover:text-white hover:border-[var(--color-line-2)]",
+          : "border border-[var(--color-line)] bg-[var(--color-surface-2)] text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] hover:border-[var(--color-line-2)]",
       )}
     >
       {icon} {label}
@@ -359,7 +359,7 @@ function ActionLink({ href, icon, label }: { href: string; icon: React.ReactNode
   return (
     <Link
       href={href}
-      className="flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-[12.5px] font-bold border border-[var(--color-line)] bg-[var(--color-surface-2)] text-[var(--color-ink-dim)] hover:text-white hover:border-[var(--color-line-2)] transition"
+      className="flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-[12.5px] font-bold border border-[var(--color-line)] bg-[var(--color-surface-2)] text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] hover:border-[var(--color-line-2)] transition"
     >
       {icon} {label}
     </Link>
@@ -891,15 +891,15 @@ function PaymentModal({
       // 202 is inside res.ok, so without this a queued request rendered the
       // full "sent" screen. It is awaiting an operator and nothing has moved.
       setPending(res.status === 202);
-      // const amount = Number(data.amount);
-      // const newBalance = Number(data.new_balance);
-      // if (Number.isFinite(amount) && Number.isFinite(newBalance)) {
-      //   showWithdrawalIos({
-      //     amount,
-      //     currentBalance: newBalance,
-      //     currency: typeof data.currency === "string" && data.currency ? data.currency : "GHS",
-      //   });
-      // }
+      const amount = Number(data.amount);
+      const newBalance = Number(data.new_balance);
+      if (Number.isFinite(amount) && Number.isFinite(newBalance)) {
+        showWithdrawalIos({
+          amount,
+          currentBalance: newBalance,
+          currency: typeof data.currency === "string" && data.currency ? data.currency : "GHS",
+        });
+      }
       setDone(true);
       onSuccess();
     } catch {
@@ -915,13 +915,13 @@ function PaymentModal({
       <div className="relative w-full sm:max-w-[420px] card rounded-b-none sm:rounded-2xl animate-rise">
         <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--color-line)]">
           <h3 className="font-display font-extrabold text-[16px] capitalize">{type}</h3>
-          <button onClick={onClose} className="text-[var(--color-ink-faint)] hover:text-white"><X size={20} /></button>
+          <button onClick={onClose} className="text-[var(--color-ink-faint)] hover:text-[var(--color-ink)]"><X size={20} /></button>
         </div>
 
         {done ? (
           <div className="flex flex-col items-center text-center px-6 py-12">
             <div className="grid place-items-center w-16 h-16 rounded-full grad-emerald mb-4 shadow-[0_10px_36px_-8px_rgba(52,211,153,.6)]">
-              <Check size={30} className="text-white" />
+              <Check size={30} className="text-[var(--color-ink)]" />
             </div>
             {/* Copy follows what the server actually did. It used to always say
                 "requested", which contradicted the banner on an instant partner
@@ -943,7 +943,7 @@ function PaymentModal({
             <div className="mt-6 grid grid-cols-2 gap-2 w-full">
               <Link
                 href="/transactions"
-                className="rounded-xl py-3 font-display font-bold text-sm border border-[var(--color-line)] text-[var(--color-ink-dim)] hover:text-white text-center"
+                className="rounded-xl py-3 font-display font-bold text-sm border border-[var(--color-line)] text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] text-center"
               >
                 Transactions
               </Link>
@@ -954,14 +954,14 @@ function PaymentModal({
                 Home
               </Link>
             </div>
-            <button onClick={onClose} className="mt-2 text-[12.5px] font-semibold text-[var(--color-ink-faint)] hover:text-white">
+            <button onClick={onClose} className="mt-2 text-[12.5px] font-semibold text-[var(--color-ink-faint)] hover:text-[var(--color-ink)]">
               Close
             </button>
           </div>
         ) : bankAccount ? (
           <div className="p-5 space-y-4">
             <p className="text-[13px] text-[var(--color-ink-dim)]">
-              Transfer exactly <span className="font-semibold text-white">{amt > 0 ? money(amt) : ""}</span> to the account below.
+              Transfer exactly <span className="font-semibold text-[var(--color-ink)]">{amt > 0 ? money(amt) : ""}</span> to the account below.
               Your balance updates automatically once the transfer is received.
             </p>
             <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] divide-y divide-[var(--color-line)]">
@@ -973,7 +973,7 @@ function PaymentModal({
                 <div key={row.label} className="flex items-center justify-between px-3.5 py-3">
                   <span className="text-[11px] font-mono uppercase tracking-wide text-[var(--color-ink-faint)]">{row.label}</span>
                   <span className="flex items-center gap-2">
-                    <span className="num text-[14px] font-bold text-white">{row.value}</span>
+                    <span className="num text-[14px] font-bold text-[var(--color-ink)]">{row.value}</span>
                     {row.copy && row.value !== "—" && (
                       <button onClick={() => copyNumber(row.value)} className="text-[var(--color-cyan)] hover:underline text-[11px]">
                         {copiedNum === row.value ? "Copied" : "Copy"}
@@ -989,7 +989,7 @@ function PaymentModal({
             {error && <p className="text-[12.5px] font-semibold text-[var(--color-rose,#fb7185)]">{error}</p>}
             <button
               onClick={() => { setBankAccount(null); setError(null); setStatus(""); }}
-              className="w-full rounded-xl py-2.5 font-display font-semibold text-[var(--color-ink-dim)] hover:text-white text-[13px]"
+              className="w-full rounded-xl py-2.5 font-display font-semibold text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] text-[13px]"
             >
               ← Start over
             </button>
@@ -997,12 +997,12 @@ function PaymentModal({
         ) : redirectUrl ? (
           <div className="p-6 flex flex-col items-center text-center">
             <div className="grid place-items-center w-16 h-16 rounded-full grad-brand mb-4 shadow-[0_10px_36px_-8px_rgba(249, 115, 22,.6)]">
-              <ShieldCheck size={30} className="text-white" />
+              <ShieldCheck size={30} className="text-[var(--color-ink)]" />
             </div>
             <h4 className="font-display font-extrabold text-[17px]">Approve your payment</h4>
             <p className="text-[13px] text-[var(--color-ink-dim)] mt-2 leading-relaxed">
               Tap continue to approve your {amt > 0 ? money(amt) : ""} Mobile Money deposit on a
-              <span className="font-semibold text-white"> secure payment page</span>.
+              <span className="font-semibold text-[var(--color-ink)]"> secure payment page</span>.
               After you approve, you&apos;ll come right back here and your balance updates automatically.
             </p>
             <button
@@ -1013,7 +1013,7 @@ function PaymentModal({
             </button>
             <button
               onClick={() => { setRedirectUrl(null); setError(null); setStatus(""); }}
-              className="mt-2 w-full rounded-xl py-2.5 font-display font-semibold text-[var(--color-ink-dim)] hover:text-white text-[13px]"
+              className="mt-2 w-full rounded-xl py-2.5 font-display font-semibold text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] text-[13px]"
             >
               Cancel
             </button>
@@ -1021,7 +1021,7 @@ function PaymentModal({
         ) : otpRef ? (
           <div className="p-5 space-y-4">
             <p className="text-[13px] text-[var(--color-ink-dim)]">
-              Enter the verification code sent by SMS to <span className="font-semibold text-white num">{phone.trim()}</span>.
+              Enter the verification code sent by SMS to <span className="font-semibold text-[var(--color-ink)] num">{phone.trim()}</span>.
             </p>
             {network === "vod" && (
               <p className="text-[12px] text-[var(--color-amber)] bg-[var(--color-amber)]/10 border border-[var(--color-amber)]/25 rounded-lg px-3 py-2">
@@ -1056,7 +1056,7 @@ function PaymentModal({
             <button
               onClick={() => { setOtpRef(null); setOtp(""); setError(null); setStatus(""); }}
               disabled={busy}
-              className="w-full rounded-xl py-2.5 font-display font-semibold text-[var(--color-ink-dim)] hover:text-white text-[13px] disabled:opacity-50"
+              className="w-full rounded-xl py-2.5 font-display font-semibold text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] text-[13px] disabled:opacity-50"
             >
               ← Start over
             </button>
@@ -1091,7 +1091,7 @@ function PaymentModal({
                       onClick={() => setNetwork(n.id)}
                       disabled={busy}
                       className={cn("flex flex-col items-center gap-1 rounded-xl border py-3 text-[10.5px] font-semibold transition disabled:opacity-50",
-                        network === n.id ? "border-[var(--color-brand)]/60 bg-[var(--color-surface-2)] text-white glow-brand" : "border-[var(--color-line)] text-[var(--color-ink-dim)] hover:border-[var(--color-line-2)]",
+                        network === n.id ? "border-[var(--color-brand)]/60 bg-[var(--color-surface-2)] text-[var(--color-ink)] glow-brand" : "border-[var(--color-line)] text-[var(--color-ink-dim)] hover:border-[var(--color-line-2)]",
                       )}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1151,7 +1151,7 @@ function PaymentModal({
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={a.logo} alt={a.network} className="w-9 h-9 rounded-md object-contain shrink-0" />
                       <div className="min-w-0 flex-1">
-                        <div className="num text-[17px] font-extrabold text-white tracking-wide leading-tight">{a.number}</div>
+                        <div className="num text-[17px] font-extrabold text-[var(--color-ink)] tracking-wide leading-tight">{a.number}</div>
                         <div className="text-[11px] text-[var(--color-ink-dim)] truncate flex items-center gap-1.5">
                           {flag && (
                             /* eslint-disable-next-line @next/next/no-img-element */
@@ -1163,7 +1163,7 @@ function PaymentModal({
                       <button
                         type="button"
                         onClick={() => copyNumber(a.number)}
-                        className="shrink-0 flex items-center gap-1.5 rounded-lg border border-[var(--color-line)] px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-ink-dim)] hover:text-white transition"
+                        className="shrink-0 flex items-center gap-1.5 rounded-lg border border-[var(--color-line)] px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] transition"
                       >
                         {copiedNum === a.number ? <><Check size={13} className="text-[var(--color-emerald)]" /> Copied</> : "Copy"}
                       </button>
@@ -1193,7 +1193,7 @@ function PaymentModal({
                       onClick={() => setNetwork(n.id)}
                       disabled={busy}
                       className={cn("flex flex-col items-center gap-1 rounded-xl border py-3 text-[10.5px] font-semibold transition disabled:opacity-50",
-                        network === n.id ? "border-[var(--color-brand)]/60 bg-[var(--color-surface-2)] text-white glow-brand" : "border-[var(--color-line)] text-[var(--color-ink-dim)] hover:border-[var(--color-line-2)]",
+                        network === n.id ? "border-[var(--color-brand)]/60 bg-[var(--color-surface-2)] text-[var(--color-ink)] glow-brand" : "border-[var(--color-line)] text-[var(--color-ink-dim)] hover:border-[var(--color-line-2)]",
                       )}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1232,7 +1232,7 @@ function PaymentModal({
               </div>
               <div className="grid grid-cols-4 gap-2 mt-2">
                 {quick.map((q) => (
-                  <button key={q} onClick={() => setAmount(String(q))} disabled={busy} className="num text-[12px] font-bold rounded-lg py-2 border border-[var(--color-line)] bg-[var(--color-surface-2)] text-[var(--color-ink-dim)] hover:text-white transition disabled:opacity-50">
+                  <button key={q} onClick={() => setAmount(String(q))} disabled={busy} className="num text-[12px] font-bold rounded-lg py-2 border border-[var(--color-line)] bg-[var(--color-surface-2)] text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] transition disabled:opacity-50">
                     {q}
                   </button>
                 ))}
@@ -1249,7 +1249,7 @@ function PaymentModal({
                 <label className="text-[11px] font-mono uppercase tracking-wide text-[var(--color-ink-faint)]">Payment screenshot</label>
                 <label className={cn(
                   "mt-2 flex items-center justify-center gap-2 rounded-xl border border-dashed px-3.5 py-3 text-[12.5px] cursor-pointer transition",
-                  file ? "border-[var(--color-emerald)]/50 text-[var(--color-emerald)] bg-[var(--color-emerald)]/8" : "border-[var(--color-line-2)] text-[var(--color-ink-dim)] hover:text-white",
+                  file ? "border-[var(--color-emerald)]/50 text-[var(--color-emerald)] bg-[var(--color-emerald)]/8" : "border-[var(--color-line-2)] text-[var(--color-ink-dim)] hover:text-[var(--color-ink)]",
                 )}>
                   {file ? <><Check size={15} /> {file.name.length > 28 ? file.name.slice(0, 25) + "…" : file.name}</> : "📷 Tap to upload your payment screenshot"}
                   <input
@@ -1264,7 +1264,7 @@ function PaymentModal({
             )}
 
             {type === "withdraw" && (
-              <p className="text-[11.5px] text-[var(--color-ink-dim)]">Available: <span className="num font-bold text-white">{money(user.balance)}</span></p>
+              <p className="text-[11.5px] text-[var(--color-ink-dim)]">Available: <span className="num font-bold text-[var(--color-ink)]">{money(user.balance)}</span></p>
             )}
 
             {status && !error && (
@@ -1343,13 +1343,13 @@ function ChangePasswordModal({ userId, onClose }: { userId: string; onClose: () 
       <div className="relative w-full sm:max-w-[420px] card rounded-b-none sm:rounded-2xl animate-rise">
         <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--color-line)]">
           <h3 className="font-display font-extrabold text-[16px]">Change password</h3>
-          <button onClick={onClose} disabled={busy} className="text-[var(--color-ink-faint)] hover:text-white disabled:opacity-40"><X size={20} /></button>
+          <button onClick={onClose} disabled={busy} className="text-[var(--color-ink-faint)] hover:text-[var(--color-ink)] disabled:opacity-40"><X size={20} /></button>
         </div>
 
         {done ? (
           <div className="flex flex-col items-center text-center px-6 py-12">
             <div className="grid place-items-center w-16 h-16 rounded-full grad-emerald mb-4 shadow-[0_10px_36px_-8px_rgba(52,211,153,.6)]">
-              <Check size={30} className="text-white" />
+              <Check size={30} className="text-[var(--color-ink)]" />
             </div>
             <h4 className="font-display font-extrabold text-[17px]">Password updated</h4>
             <p className="text-[13px] text-[var(--color-ink-dim)] mt-1.5">Use your new password next time you sign in.</p>

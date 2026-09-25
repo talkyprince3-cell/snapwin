@@ -64,7 +64,7 @@ export default function MatchDetail({ params }: { params: Promise<{ id: string }
   if (status === "notfound" || !api) {
     return (
       <AppShell tabs={false}>
-        <Link href="/" className="inline-flex items-center gap-1 text-[13px] text-[var(--color-ink-dim)] hover:text-white mb-3 transition">
+        <Link href="/" className="inline-flex items-center gap-1 text-[13px] text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] mb-3 transition">
           <ChevronLeft size={16} /> Back to Sports
         </Link>
         <p className="text-[13px] text-[var(--color-ink-faint)] py-12 text-center">
@@ -79,7 +79,7 @@ export default function MatchDetail({ params }: { params: Promise<{ id: string }
 
   return (
     <AppShell tabs={false}>
-      <Link href="/" className="inline-flex items-center gap-1 text-[13px] text-[var(--color-ink-dim)] hover:text-white mb-3 transition">
+      <Link href="/" className="inline-flex items-center gap-1 text-[13px] text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] mb-3 transition">
         <ChevronLeft size={16} /> Back to Sports
       </Link>
 
@@ -92,7 +92,7 @@ export default function MatchDetail({ params }: { params: Promise<{ id: string }
               <button className="grid place-items-center w-8 h-8 rounded-lg border border-[var(--color-line)] hover:text-[var(--color-amber)] hover:border-[var(--color-amber)]/40 transition">
                 <Star size={15} />
               </button>
-              <button className="grid place-items-center w-8 h-8 rounded-lg border border-[var(--color-line)] hover:text-white transition">
+              <button className="grid place-items-center w-8 h-8 rounded-lg border border-[var(--color-line)] hover:text-[var(--color-ink)] transition">
                 <Share2 size={15} />
               </button>
             </div>
@@ -174,7 +174,7 @@ export default function MatchDetail({ params }: { params: Promise<{ id: string }
                     }}
                     className="odds-btn group/o flex items-center justify-between gap-2 px-3 py-2.5 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
-                    <span className="text-[11.5px] font-medium text-[var(--color-ink-dim)] group-data-[active=true]/o:text-white/80 truncate">{p.label}</span>
+                    <span className="text-[11.5px] font-medium text-[var(--color-ink-dim)] group-data-[active=true]/o:text-[var(--color-ink)]/80 truncate">{p.label}</span>
                     <span className="num text-[13px] font-bold shrink-0">{p.odds.toFixed(2)}</span>
                   </button>
                 );

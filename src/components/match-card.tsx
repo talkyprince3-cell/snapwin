@@ -41,7 +41,7 @@ function OddsCell({ m, idx }: { m: Match; idx: number }) {
       }}
       className="odds-btn group/odds flex flex-col items-center justify-center gap-0.5 py-2 px-1 disabled:opacity-40 disabled:cursor-not-allowed"
     >
-      <span className="text-[10px] font-medium text-[var(--color-ink-faint)] group-data-[active=true]/odds:text-white/80">
+      <span className="text-[10px] font-medium text-[var(--color-ink-faint)] group-data-[active=true]/odds:text-[var(--color-ink)]/80">
         {mk.label}
       </span>
       <span className="num text-[13px]">{mk.odds.toFixed(2)}</span>
@@ -104,7 +104,7 @@ export function MatchCard({ m }: { m: Match }) {
         </div>
         <Link
           href={`/match/${m.id}`}
-          className="flex items-center gap-1 shrink-0 rounded-lg border border-[var(--color-line)] bg-[var(--color-surface-2)] px-2.5 py-2 text-[var(--color-ink-dim)] hover:text-white hover:border-[var(--color-brand)]/50 transition-colors"
+          className="flex items-center gap-1 shrink-0 rounded-lg border border-[var(--color-line)] bg-[var(--color-surface-2)] px-2.5 py-2 text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] hover:border-[var(--color-brand)]/50 transition-colors"
         >
           <BarChart3 size={13} />
           <span className="num text-[11px] font-bold">+{m.marketCount}</span>
@@ -209,7 +209,7 @@ export function FixtureRow({ m }: { m: Match }) {
       <Link
         href={`/match/${m.id}`}
         aria-label={`${m.marketCount} more markets`}
-        className="shrink-0 w-[42px] grid place-items-center rounded-[var(--radius-ctl)] border border-[var(--color-line)] bg-[var(--color-surface-2)] text-[var(--color-ink-dim)] hover:text-white hover:border-[var(--color-brand)]/50 transition-colors"
+        className="shrink-0 w-[42px] grid place-items-center rounded-[var(--radius-ctl)] border border-[var(--color-line)] bg-[var(--color-surface-2)] text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] hover:border-[var(--color-brand)]/50 transition-colors"
       >
         <span className="num text-[11px] font-bold">+{m.marketCount}</span>
       </Link>

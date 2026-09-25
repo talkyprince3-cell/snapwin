@@ -43,7 +43,7 @@ export function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => 
             placeholder="Search teams, leagues, ticket ID…"
             className="flex-1 bg-transparent outline-none text-[15px] placeholder:text-[var(--color-ink-faint)]"
           />
-          <button onClick={close} className="text-[var(--color-ink-faint)] hover:text-white">
+          <button onClick={close} className="text-[var(--color-ink-faint)] hover:text-[var(--color-ink)]">
             <X size={18} />
           </button>
         </div>
@@ -75,7 +75,7 @@ export function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => 
               key={m.id}
               href={`/match/${m.id}`}
               onClick={close}
-              className="flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 hover:bg-white/5 transition-colors"
+              className="flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 hover:bg-[var(--color-ink)]/5 transition-colors"
             >
               <div className="min-w-0">
                 <div className="font-display font-semibold text-[13.5px] truncate">

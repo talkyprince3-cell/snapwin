@@ -42,7 +42,7 @@ export function AuthShell({
           <div className="absolute top-0 left-1/4 w-[300px] h-[300px] rounded-full bg-[var(--color-brand)]/18 blur-[90px]" />
         </div>
         <div className="relative w-full max-w-[400px]">
-          <Link href="/" className="inline-flex items-center gap-1 text-[12.5px] text-[var(--color-ink-dim)] hover:text-white mb-6 transition">
+          <Link href="/" className="inline-flex items-center gap-1 text-[12.5px] text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] mb-6 transition">
             <ChevronLeft size={15} /> Back to home
           </Link>
           <div className="lg:hidden mb-6"><Brand size={32} /></div>

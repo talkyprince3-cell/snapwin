@@ -20,10 +20,10 @@ import { cn } from "@/lib/utils";
    ============================================================ */
 
 const HERO_TONE: Record<string, string> = {
-  gold: "from-[#ffc800]/25 via-[#ff9f0a]/10 to-transparent border-[#ffc800]/35",
-  amber: "from-[#ff9f0a]/25 via-[#ffc800]/10 to-transparent border-[#ff9f0a]/35",
-  emerald: "from-[#059669]/30 via-[#34d399]/10 to-transparent border-[#34d399]/30",
-  sky: "from-[#0284c7]/30 via-[#38bdf8]/10 to-transparent border-[#38bdf8]/30",
+  gold: "from-[#0d9488]/18 via-[#14b8a6]/8 to-transparent border-[#0d9488]/30",
+  amber: "from-[#facc15]/22 via-[#fde68a]/10 to-transparent border-[#facc15]/35",
+  emerald: "from-[#0b9b3a]/18 via-[#22c55e]/8 to-transparent border-[#0b9b3a]/30",
+  sky: "from-[#0284c7]/18 via-[#38bdf8]/8 to-transparent border-[#0284c7]/30",
 };
 
 export function HeroCarousel() {
@@ -146,14 +146,14 @@ export function HeroCarousel() {
       <button
         onClick={() => go(-1)}
         aria-label="Previous promotion"
-        className="hidden sm:grid place-items-center absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/55 border border-[var(--color-line)] text-white/85 hover:text-white hover:border-[var(--color-brand)]/60"
+        className="hidden sm:grid place-items-center absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/55 border border-[var(--color-line)] text-[var(--color-ink-invert)]/85 hover:text-[var(--color-ink-invert)] hover:border-[var(--color-brand)]/60"
       >
         <ChevronLeft size={17} />
       </button>
       <button
         onClick={() => go(1)}
         aria-label="Next promotion"
-        className="hidden sm:grid place-items-center absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/55 border border-[var(--color-line)] text-white/85 hover:text-white hover:border-[var(--color-brand)]/60"
+        className="hidden sm:grid place-items-center absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/55 border border-[var(--color-line)] text-[var(--color-ink-invert)]/85 hover:text-[var(--color-ink-invert)] hover:border-[var(--color-brand)]/60"
       >
         <ChevronRight size={17} />
       </button>
@@ -167,7 +167,7 @@ export function HeroCarousel() {
             aria-current={i === idx}
             className={cn(
               "h-1.5 rounded-full transition-all",
-              i === idx ? "w-5 bg-[var(--color-brand)]" : "w-1.5 bg-white/30 hover:bg-white/50",
+              i === idx ? "w-5 bg-[var(--color-brand)]" : "w-1.5 bg-[var(--color-ink)]/30 hover:bg-[var(--color-ink)]/50",
             )}
           />
         ))}
@@ -194,7 +194,7 @@ export function QuickActions() {
         const inner = (
           <>
             <span className="text-[20px] leading-none">{a.icon}</span>
-            <span className="text-[11px] font-semibold text-[var(--color-ink-dim)] group-hover:text-white transition-colors">
+            <span className="text-[11px] font-semibold text-[var(--color-ink-dim)] group-hover:text-[var(--color-ink)] transition-colors">
               {a.label}
             </span>
             {a.live && live.length > 0 && (

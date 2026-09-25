@@ -39,7 +39,7 @@ export async function GET(_req: Request, { params }: Params) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 46, fontWeight: 800 }}>
             <span style={{ color: '#f7f7f8' }}>SNAP</span>
-            <span style={{ color: '#ffc800' }}>WIN</span>
+            <span style={{ color: '#2dd4bf' }}>WIN</span>
           </div>
           <div
             style={{
@@ -69,7 +69,7 @@ export async function GET(_req: Request, { params }: Params) {
               fontWeight: 800,
               letterSpacing: 8,
               lineHeight: 1.05,
-              backgroundImage: 'linear-gradient(90deg, #ffc800, #ff9f0a)',
+              backgroundImage: 'linear-gradient(90deg, #14b8a6, #0d9488)',
               backgroundClip: 'text',
               color: 'transparent',
             }}

@@ -88,7 +88,7 @@ export default function TicketPage({ params }: { params: Promise<{ id: string }>
           <button
             onClick={copyId}
             aria-label="Copy ticket ID"
-            className="flex items-center gap-1 rounded-full border border-[var(--color-line-2)] px-2 py-0.5 text-[10.5px] font-bold text-[var(--color-ink-dim)] hover:text-white transition-colors"
+            className="flex items-center gap-1 rounded-full border border-[var(--color-line-2)] px-2 py-0.5 text-[10.5px] font-bold text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] transition-colors"
           >
             {copied ? <Check size={11} className="text-[var(--color-emerald)]" /> : <Copy size={11} />}
             {copied ? "Copied" : "Copy"}
@@ -207,7 +207,7 @@ function LegCard({
         {leg.matchId && (
           <Link
             href={`/match/${leg.matchId}`}
-            className="mt-2.5 w-full flex items-center justify-center gap-1.5 rounded-full border border-[var(--color-line-2)] py-2 text-[12px] font-semibold text-[var(--color-ink-dim)] hover:text-white hover:border-[var(--color-brand)]/50 transition-colors"
+            className="mt-2.5 w-full flex items-center justify-center gap-1.5 rounded-full border border-[var(--color-line-2)] py-2 text-[12px] font-semibold text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] hover:border-[var(--color-brand)]/50 transition-colors"
           >
             <IdCard size={13} /> Match Details
           </Link>
@@ -377,7 +377,7 @@ function Shell({ children }: { children: React.ReactNode }) {
         <Link
           href="/my-bets"
           aria-label="Back to My Bets"
-          className="grid place-items-center w-9 h-9 rounded-[var(--radius-ctl)] border border-[var(--color-line)] bg-[var(--color-surface)] text-[var(--color-ink-dim)] hover:text-white hover:border-[var(--color-line-2)] transition-colors"
+          className="grid place-items-center w-9 h-9 rounded-[var(--radius-ctl)] border border-[var(--color-line)] bg-[var(--color-surface)] text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] hover:border-[var(--color-line-2)] transition-colors"
         >
           <ChevronLeft size={18} />
         </Link>

@@ -198,7 +198,7 @@ export default function BookingPage() {
                         <div className="min-w-0">
                           <p className="text-[13px] font-semibold truncate">{l.match}</p>
                           <p className="text-[11.5px] text-[var(--color-ink-dim)] truncate">
-                            {l.market} · <span className="text-white">{l.pick}</span> · {l.odds.toFixed(2)}
+                            {l.market} · <span className="text-[var(--color-ink)]">{l.pick}</span> · {l.odds.toFixed(2)}
                           </p>
                         </div>
                         <LegBadge leg={l} />
@@ -215,7 +215,7 @@ export default function BookingPage() {
                 <div className="mt-5 flex gap-2">
                   <button
                     onClick={reset}
-                    className="flex items-center justify-center gap-1.5 rounded-xl border border-[var(--color-line)] px-4 py-3 text-[13px] font-semibold text-[var(--color-ink-dim)] hover:text-white transition"
+                    className="flex items-center justify-center gap-1.5 rounded-xl border border-[var(--color-line)] px-4 py-3 text-[13px] font-semibold text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] transition"
                   >
                     <RotateCcw size={14} /> Another code
                   </button>

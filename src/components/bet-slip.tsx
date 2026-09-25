@@ -246,7 +246,7 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
         </button>
         <button
           onClick={() => setNeedsLogin(false)}
-          className="mt-2 w-full rounded-xl py-2.5 font-display font-semibold text-[var(--color-ink-dim)] hover:text-white text-[13px]"
+          className="mt-2 w-full rounded-xl py-2.5 font-display font-semibold text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] text-[13px]"
         >
           Back to slip
         </button>
@@ -258,7 +258,7 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
     return (
       <div className="flex flex-col items-center text-center px-5 py-8 overflow-y-auto no-scrollbar animate-rise">
         <div className="grid place-items-center w-14 h-14 rounded-full grad-brand mb-3 shadow-[0_10px_40px_-8px_rgba(249,115,22,.65)]">
-          <BookmarkPlus className="text-white" size={26} />
+          <BookmarkPlus className="text-[var(--color-ink)]" size={26} />
         </div>
         <h3 className="font-display font-extrabold text-lg">Slip Booked!</h3>
         <p className="text-[13px] text-[var(--color-ink-dim)] mt-1">
@@ -289,14 +289,14 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
           className="mt-2.5 w-full flex items-center justify-between gap-3 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] px-4 py-3 hover:border-[var(--color-brand)]/60 transition group"
         >
           <span className="num text-[20px] font-extrabold tracking-[0.2em] grad-text">{bookedCode}</span>
-          <span className="flex items-center gap-1.5 text-[12px] font-semibold text-[var(--color-ink-dim)] group-hover:text-white">
+          <span className="flex items-center gap-1.5 text-[12px] font-semibold text-[var(--color-ink-dim)] group-hover:text-[var(--color-ink)]">
             {copied ? <><Check size={15} className="text-[var(--color-emerald)]" /> Copied</> : <><Copy size={15} /> Copy code</>}
           </span>
         </button>
 
         <button
           onClick={() => { setBookedCode(null); clear(); onPlaced?.(); }}
-          className="mt-4 w-full rounded-xl py-2.5 font-display font-semibold text-[var(--color-ink-dim)] hover:text-white text-[13px]"
+          className="mt-4 w-full rounded-xl py-2.5 font-display font-semibold text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] text-[13px]"
         >
           Done
         </button>
@@ -313,7 +313,7 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
       <div className="px-4 py-6 animate-rise">
         <div className="flex items-center justify-center gap-2.5">
           <span className="grid place-items-center w-9 h-9 rounded-full grad-emerald shrink-0">
-            <ShieldCheck className="text-white" size={19} />
+            <ShieldCheck className="text-[var(--color-ink)]" size={19} />
           </span>
           <h3 className="font-display font-extrabold text-[20px]">Bet Successful</h3>
         </div>
@@ -328,10 +328,10 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
           <div className="mt-4 flex items-center justify-between gap-3 border-y border-[var(--color-line)] py-3">
             <span className="num text-[16px] font-extrabold tracking-wider truncate">{code}</span>
             <div className="flex items-center gap-3 shrink-0">
-              <button onClick={() => shareTicket(code)} aria-label="Share ticket code" className="text-[var(--color-ink-faint)] hover:text-white transition-colors">
+              <button onClick={() => shareTicket(code)} aria-label="Share ticket code" className="text-[var(--color-ink-faint)] hover:text-[var(--color-ink)] transition-colors">
                 <Share2 size={17} />
               </button>
-              <button onClick={() => copyTicket(code)} aria-label="Copy ticket code" className="text-[var(--color-ink-faint)] hover:text-white transition-colors">
+              <button onClick={() => copyTicket(code)} aria-label="Copy ticket code" className="text-[var(--color-ink-faint)] hover:text-[var(--color-ink)] transition-colors">
                 {copied ? <Check size={17} className="text-[var(--color-emerald)]" /> : <Copy size={17} />}
               </button>
             </div>
@@ -444,7 +444,7 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
                 "flex-1 num text-[11px] font-bold rounded-lg py-1.5 border transition-colors",
                 stake === q
                   ? "grad-brand text-[var(--color-on-brand)] border-transparent"
-                  : "bg-[var(--color-surface-2)] border-[var(--color-line)] text-[var(--color-ink-dim)] hover:text-white",
+                  : "bg-[var(--color-surface-2)] border-[var(--color-line)] text-[var(--color-ink-dim)] hover:text-[var(--color-ink)]",
               )}
             >
               {q}
@@ -494,7 +494,7 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
         <button
           onClick={book}
           disabled={booking || busy}
-          className="w-full flex items-center justify-center gap-2 rounded-xl py-3 font-display font-bold text-[13px] border border-[var(--color-line)] bg-[var(--color-surface)] text-[var(--color-ink-dim)] hover:text-white hover:border-[var(--color-brand)]/60 disabled:opacity-50 active:scale-[.99] transition"
+          className="w-full flex items-center justify-center gap-2 rounded-xl py-3 font-display font-bold text-[13px] border border-[var(--color-line)] bg-[var(--color-surface)] text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] hover:border-[var(--color-brand)]/60 disabled:opacity-50 active:scale-[.99] transition"
         >
           {booking ? <Loader2 size={15} className="animate-spin" /> : <BookmarkPlus size={15} />}
           {booking ? "Booking…" : "Book a Bet — get a code"}
@@ -571,7 +571,7 @@ export function MobileBetSlip() {
           className="xl:hidden fixed bottom-[68px] left-3 right-3 z-40 flex items-center justify-between rounded-2xl px-4 py-3 grad-brand text-[var(--color-on-brand)] shadow-[0_12px_40px_-10px_rgba(249,115,22,.7)] animate-rise"
         >
           <span className="flex items-center gap-2 font-display font-bold text-[13px]">
-            <span className="num bg-white/25 rounded-full min-w-[20px] h-5 grid place-items-center px-1.5 text-[11px]">{count}</span>
+            <span className="num bg-[var(--color-ink)]/25 rounded-full min-w-[20px] h-5 grid place-items-center px-1.5 text-[11px]">{count}</span>
             Bet Slip
           </span>
           <span className="flex items-center gap-2 num text-[12px] font-bold">
@@ -587,7 +587,7 @@ export function MobileBetSlip() {
           <div className="relative card rounded-b-none max-h-[82dvh] flex flex-col animate-rise">
             <div className="flex items-center justify-between px-4 py-3.5 border-b border-[var(--color-line)]">
               <span className="font-display font-extrabold text-[15px]">Bet Slip</span>
-              <button onClick={() => setMobileOpen(false)} className="text-[var(--color-ink-dim)] hover:text-white">
+              <button onClick={() => setMobileOpen(false)} className="text-[var(--color-ink-dim)] hover:text-[var(--color-ink)]">
                 <X size={20} />
               </button>
             </div>

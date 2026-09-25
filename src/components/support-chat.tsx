@@ -71,7 +71,7 @@ export function SupportChat() {
                 <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-emerald)]" /> Online · Replies instantly
               </div>
             </div>
-            <button onClick={() => setOpen(false)} className="ml-auto text-[var(--color-ink-faint)] hover:text-white">
+            <button onClick={() => setOpen(false)} className="ml-auto text-[var(--color-ink-faint)] hover:text-[var(--color-ink)]">
               <X size={18} />
             </button>
           </div>

@@ -135,7 +135,7 @@ export default function VerifyPage() {
                   className="m-1.5 flex items-center gap-1.5 rounded-xl grad-brand text-[var(--color-on-brand)] px-4 py-2.5 font-display font-bold text-[13px] active:scale-95 transition disabled:opacity-60"
                 >
                   {loading ? (
-                    <span className="inline-block w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-[spin_0.8s_linear_infinite]" />
+                    <span className="inline-block w-4 h-4 rounded-full border-2 border-[var(--color-line-2)] border-t-white animate-[spin_0.8s_linear_infinite]" />
                   ) : (
                     <>Verify <ArrowRight size={15} /></>
                   )}
@@ -224,7 +224,7 @@ function ResultCard({ r, onReset }: { r: Result; onReset: () => void }) {
           ))}
         </div>
 
-        <button onClick={onReset} className="mt-6 w-full flex items-center justify-center gap-2 rounded-xl border border-[var(--color-line)] py-3 text-[13px] font-semibold text-[var(--color-ink-dim)] hover:text-white transition">
+        <button onClick={onReset} className="mt-6 w-full flex items-center justify-center gap-2 rounded-xl border border-[var(--color-line)] py-3 text-[13px] font-semibold text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] transition">
           <RotateCcw size={15} /> Verify Another Ticket
         </button>
       </div>

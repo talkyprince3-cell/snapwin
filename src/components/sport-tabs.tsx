@@ -23,7 +23,7 @@ export function SportTabs() {
               aria-current={on ? "page" : undefined}
               className={cn(
                 "relative shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 text-[12.5px] font-semibold transition-colors",
-                on ? "text-white" : "text-[var(--color-ink-dim)] hover:text-white",
+                on ? "text-[var(--color-ink)]" : "text-[var(--color-ink-dim)] hover:text-[var(--color-ink)]",
               )}
             >
               <span className={cn("transition-opacity", on ? "opacity-100" : "opacity-60")}>{s.icon}</span>

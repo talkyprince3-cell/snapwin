@@ -39,7 +39,7 @@ export function MobileNav() {
                     </span>
                   )}
                 </span>
-                <span className={cn("text-[9.5px] font-semibold", active ? "text-white" : "text-[var(--color-ink-faint)]")}>{it.label}</span>
+                <span className={cn("text-[9.5px] font-semibold", active ? "text-[var(--color-ink)]" : "text-[var(--color-ink-faint)]")}>{it.label}</span>
                 {active && <span className="absolute top-0 w-9 h-[2.5px] rounded-b-sm grad-brand" />}
               </span>
             );

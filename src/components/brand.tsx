@@ -3,7 +3,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 /**
- * The SnapWin badge: a black disc with a gold rim and a knocked-out bolt.
+ * The SnapWin badge: a navy disc with a teal rim and a knocked-out bolt.
  *
  * Drawn as paths rather than SVG <text> so it renders identically as a favicon,
  * an app icon and an OG image — none of which load our web fonts.
@@ -13,12 +13,12 @@ export function LogoMark({ size = 32, id = "main" }: { size?: number; id?: strin
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true">
       <defs>
         <linearGradient id={`logoGrad-${id}`} x1="6" y1="3" x2="26" y2="29">
-          <stop stopColor="#ffe9a3" />
-          <stop offset="0.45" stopColor="#ffc800" />
-          <stop offset="1" stopColor="#ff9f0a" />
+          <stop stopColor="#5eead4" />
+          <stop offset="0.45" stopColor="#14b8a6" />
+          <stop offset="1" stopColor="#0d9488" />
         </linearGradient>
       </defs>
-      <circle cx="16" cy="16" r="15" fill="#0b0b0c" stroke={`url(#logoGrad-${id})`} strokeWidth="2" />
+      <circle cx="16" cy="16" r="15" fill="#0b1b33" stroke={`url(#logoGrad-${id})`} strokeWidth="2" />
       {/* Bolt, leaning forward to match the wordmark's oblique. */}
       <path d="M18.6 5.5L9.4 17.9h5.2l-1 8.6 9.2-12.4h-5.2l1-8.6z" fill={`url(#logoGrad-${id})`} />
     </svg>
@@ -116,7 +116,7 @@ export function TeamBadge({
   if (logo) {
     return (
       <span
-        className="grid place-items-center rounded-full shrink-0 overflow-hidden bg-white/5"
+        className="grid place-items-center rounded-full shrink-0 overflow-hidden bg-[var(--color-ink)]/5"
         style={{ width: size, height: size, border: `1.5px solid ${color}66` }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}

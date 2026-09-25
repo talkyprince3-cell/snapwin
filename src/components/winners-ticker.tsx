@@ -50,7 +50,7 @@ export function WinnersTicker() {
         <div className="flex items-center gap-8 whitespace-nowrap animate-[ticker_42s_linear_infinite] hover:[animation-play-state:paused] pl-8">
           {items.map((w, i) => (
             <span key={i} className="text-[12px] text-[var(--color-ink-dim)] font-medium">
-              🏆 <span className="text-white font-semibold">{w.masked}</span> won{" "}
+              🏆 <span className="text-[var(--color-ink)] font-semibold">{w.masked}</span> won{" "}
               <span className="num font-bold text-[var(--color-amber)]">
                 {formatMoneyWithCurrency(w.amount, w.currency)}
               </span>

@@ -76,10 +76,10 @@ export function TopBar({ onMenu }: { onMenu?: () => void }) {
 
   return (
     <>
-      <header className="sticky top-0 z-40 glass">
+      <header className="sticky top-0 z-40 masthead on-dark">
         <div className="mx-auto max-w-[1600px] flex items-center gap-3 px-3 sm:px-5 h-[60px]">
           {/* mobile menu */}
-          <button onClick={onMenu} className="lg:hidden text-[var(--color-ink-dim)] hover:text-white p-1 -ml-1">
+          <button onClick={onMenu} className="lg:hidden text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] p-1 -ml-1">
             <Menu size={22} />
           </button>
 
@@ -94,8 +94,8 @@ export function TopBar({ onMenu }: { onMenu?: () => void }) {
                 className={cn(
                   "relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-semibold transition-colors",
                   isActive(n.href)
-                    ? "text-white"
-                    : "text-[var(--color-ink-dim)] hover:text-white hover:bg-white/5",
+                    ? "text-[var(--color-ink)]"
+                    : "text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] hover:bg-[var(--color-ink)]/5",
                 )}
               >
                 <span className="text-[13px]">{n.icon}</span>
@@ -185,7 +185,7 @@ export function TopBar({ onMenu }: { onMenu?: () => void }) {
             <div className="flex items-center gap-2">
               <Link
                 href="/login"
-                className="rounded-lg border border-[var(--color-line)] bg-[var(--color-surface)] px-3.5 py-2 font-display font-semibold text-[13px] text-[var(--color-ink-dim)] hover:text-white hover:border-[var(--color-line-2)] transition"
+                className="rounded-lg border border-[var(--color-line)] bg-[var(--color-surface)] px-3.5 py-2 font-display font-semibold text-[13px] text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] hover:border-[var(--color-line-2)] transition"
               >
                 Log in
               </Link>
@@ -216,7 +216,7 @@ function ProfileItem({
       onClick={onClick}
       className={cn(
         "flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-colors",
-        danger ? "text-[var(--color-rose)] hover:bg-[var(--color-rose)]/10" : "text-[var(--color-ink-dim)] hover:text-white hover:bg-white/5",
+        danger ? "text-[var(--color-rose)] hover:bg-[var(--color-rose)]/10" : "text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] hover:bg-[var(--color-ink)]/5",
       )}
     >
       <span className="w-4 grid place-items-center">{icon}</span>

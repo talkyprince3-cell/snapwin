@@ -29,7 +29,7 @@ function SidebarInner({ onNavigate }: { onNavigate?: () => void }) {
               onClick={onNavigate}
               className={cn(
                 "flex items-center justify-between rounded-lg px-3 py-2 text-[13px] font-medium transition-colors",
-                active ? "bg-[var(--color-surface-2)] text-white" : "text-[var(--color-ink-dim)] hover:text-white hover:bg-white/5",
+                active ? "bg-[var(--color-surface-2)] text-[var(--color-ink)]" : "text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] hover:bg-[var(--color-ink)]/5",
               )}
             >
               <span className="flex items-center gap-2.5">
@@ -51,7 +51,7 @@ function SidebarInner({ onNavigate }: { onNavigate?: () => void }) {
             key={c.id}
             href="/"
             onClick={onNavigate}
-            className="flex items-center justify-between rounded-lg px-3 py-2 text-[13px] text-[var(--color-ink-dim)] hover:text-white hover:bg-white/5 transition-colors"
+            className="flex items-center justify-between rounded-lg px-3 py-2 text-[13px] text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] hover:bg-[var(--color-ink)]/5 transition-colors"
           >
             <span className="flex items-center gap-2.5 min-w-0">
               <span>{c.flag}</span> <span className="truncate">{c.name}</span>
@@ -66,7 +66,7 @@ function SidebarInner({ onNavigate }: { onNavigate?: () => void }) {
             key={s.id}
             href="/"
             onClick={onNavigate}
-            className="flex items-center justify-between rounded-lg px-3 py-2 text-[13px] text-[var(--color-ink-dim)] hover:text-white hover:bg-white/5 transition-colors"
+            className="flex items-center justify-between rounded-lg px-3 py-2 text-[13px] text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] hover:bg-[var(--color-ink)]/5 transition-colors"
           >
             <span className="flex items-center gap-2.5">
               <span>{s.icon}</span> {s.name}
@@ -105,7 +105,7 @@ export function MobileSidebar({ open, onClose }: { open: boolean; onClose: () =>
       <div className="relative w-[280px] max-w-[82vw] h-full bg-[var(--color-bg-2)] border-r border-[var(--color-line)] overflow-y-auto no-scrollbar animate-rise">
         <div className="flex items-center justify-between px-4 py-3.5 border-b border-[var(--color-line)] sticky top-0 glass z-10">
           <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--color-ink-dim)]">Menu</span>
-          <button onClick={onClose} className="text-[var(--color-ink-dim)] hover:text-white">
+          <button onClick={onClose} className="text-[var(--color-ink-dim)] hover:text-[var(--color-ink)]">
             <X size={20} />
           </button>
         </div>

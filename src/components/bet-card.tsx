@@ -90,7 +90,7 @@ export function BetCard({ b, liveMatchIds }: { b: Bet; liveMatchIds?: Set<string
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-label={open ? "Hide selections" : "Show selections"}
-          className="shrink-0 grid place-items-center w-8 h-8 rounded-[var(--radius-ctl)] text-[var(--color-ink-faint)] hover:text-white hover:bg-white/5 transition-colors"
+          className="shrink-0 grid place-items-center w-8 h-8 rounded-[var(--radius-ctl)] text-[var(--color-ink-faint)] hover:text-[var(--color-ink)] hover:bg-[var(--color-ink)]/5 transition-colors"
         >
           <ChevronDown size={16} className={cn("transition-transform", open && "rotate-180")} />
         </button>
