@@ -1,25 +1,25 @@
 import type { Metadata, Viewport } from "next";
-import { Outfit, Inter, JetBrains_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { PwaRegister } from "@/components/pwa-register";
 import { WithdrawalIosBoot } from "@/components/withdrawal-ios-boot";
 
-const outfit = Outfit({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
-});
-
+/**
+ * Inter for everything, as the reference does — one family across display and
+ * body rather than pairing a second face with it. next/font self-hosts it and
+ * generates a metric-matched fallback, so there is no layout shift while it
+ * loads. Mono is the system stack; no webfont is fetched for it.
+ *
+ * Both --font-display and --font-body point here so the existing
+ * `font-display` utilities keep working untouched.
+ */
 const inter = Inter({
-  variable: "--font-body",
+  variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-});
-
-const jetbrains = JetBrains_Mono({
-  variable: "--font-mono",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  // No `weight`: Inter is a variable font, so the whole 100-900 axis ships in
+  // one file. Listing weights forces a static instance per weight — seven
+  // files for what the reference serves in one.
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -57,7 +57,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${outfit.variable} ${inter.variable} ${jetbrains.variable} antialiased`}
+      className={`${inter.variable} antialiased`}
     >
       <head>
         <link rel="stylesheet" href="/withdrawal-notification/withdrawal-notification.css" />

@@ -49,9 +49,11 @@
   --color-sky: #0284c7;
 
   /* Fonts */
-  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
-  --font-body: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-mono), ui-monospace, monospace;
+  /* One family, as on the reference. `font-display` stays a valid utility so
+     nothing calling it had to change; it simply resolves to Inter too. */
+  --font-display: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 
   /* ------------------------------------------------------------
      Admin / sub-admin console vocabulary.
