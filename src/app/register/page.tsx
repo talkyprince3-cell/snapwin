@@ -200,7 +200,7 @@ export default function RegisterPage() {
         </button>
 
         <p className="text-center text-[13px] text-[var(--color-ink-dim)] mt-5">
-          Already have an account? <Link href="/login" className="font-bold text-[var(--color-brand)] hover:underline">Sign in</Link>
+          Already have an account? <Link href="/login" className="font-bold text-[var(--color-brand-ink)] hover:underline">Sign in</Link>
         </p>
       </form>
     </AuthShell>

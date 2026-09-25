@@ -63,10 +63,10 @@ export function SiteFooter() {
             </p>
             <div className="mt-5 space-y-2.5">
               <span className="flex items-center gap-2 text-[12px] font-mono text-[var(--color-ink-dim)]">
-                <Lock size={14} className="text-[var(--color-brand)]" /> SSL Secured
+                <Lock size={14} className="text-[var(--color-brand-ink)]" /> SSL Secured
               </span>
               <span className="flex items-center gap-2 text-[12px] font-mono text-[var(--color-ink-dim)]">
-                <Clock size={14} className="text-[var(--color-brand)]" /> 24/7 Support
+                <Clock size={14} className="text-[var(--color-brand-ink)]" /> 24/7 Support
               </span>
             </div>
           </div>

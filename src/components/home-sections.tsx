@@ -129,7 +129,7 @@ export function HeroCarousel() {
             )}
 
             <div className="relative max-w-[64%] sm:max-w-[70%]">
-              <div className="text-[11px] font-semibold text-[var(--color-brand-hi)]">{p.eyebrow}</div>
+              <div className="text-[11px] font-semibold text-[var(--color-brand-ink)]">{p.eyebrow}</div>
               <h2 className="font-display font-extrabold text-[22px] sm:text-[30px] leading-[1.1] mt-1.5 tracking-tight">
                 {p.title}
               </h2>
@@ -254,7 +254,7 @@ export function LiveNowRail({ matches }: { matches: Match[] }) {
         <span className="title-bar" style={{ background: "linear-gradient(180deg,#f43f5e,#dc2626)" }} />
         <h2 className="font-display font-extrabold text-[13px] tracking-tight">Live Now</h2>
         <span className="num text-[10px] font-bold text-[var(--color-rose)]">{matches.length}</span>
-        <Link href="/live" className="ml-auto text-[11.5px] font-semibold text-[var(--color-brand-hi)] hover:underline">
+        <Link href="/live" className="ml-auto text-[11.5px] font-semibold text-[var(--color-brand-ink)] hover:underline">
           All live →
         </Link>
       </div>
@@ -273,11 +273,11 @@ export function LiveNowRail({ matches }: { matches: Match[] }) {
             </div>
             <div className="flex items-center justify-between gap-2">
               <span className="text-[12px] font-semibold truncate">{m.home}</span>
-              <span className="num text-[13px] font-extrabold text-[var(--color-brand)]">{m.scoreHome ?? 0}</span>
+              <span className="num text-[13px] font-extrabold text-[var(--color-brand-ink)]">{m.scoreHome ?? 0}</span>
             </div>
             <div className="flex items-center justify-between gap-2 mt-1">
               <span className="text-[12px] font-semibold truncate">{m.away}</span>
-              <span className="num text-[13px] font-extrabold text-[var(--color-brand)]">{m.scoreAway ?? 0}</span>
+              <span className="num text-[13px] font-extrabold text-[var(--color-brand-ink)]">{m.scoreAway ?? 0}</span>
             </div>
           </Link>
         ))}
@@ -330,7 +330,7 @@ export function FeaturedMatch({ m }: { m: Match }) {
           <div className="flex items-center justify-between gap-4">
             <Link href={`/match/${m.id}`} className="flex flex-col items-center gap-2 flex-1 group">
               <TeamBadge short={m.homeShort} color={m.homeColor} size={56} logo={m.homeLogo} />
-              <span className="font-display font-bold text-[15px] text-center group-hover:text-[var(--color-brand)] transition">
+              <span className="font-display font-bold text-[15px] text-center group-hover:text-[var(--color-brand-ink)] transition">
                 {m.home}
               </span>
             </Link>
@@ -353,14 +353,14 @@ export function FeaturedMatch({ m }: { m: Match }) {
               ) : (
                 <>
                   <div className="font-display text-[22px] font-bold text-[var(--color-ink-dim)]">VS</div>
-                  <span className="num text-[10px] text-[var(--color-brand-hi)] font-semibold mt-1.5">{m.kickoff}</span>
+                  <span className="num text-[10px] text-[var(--color-brand-ink)] font-semibold mt-1.5">{m.kickoff}</span>
                 </>
               )}
             </div>
 
             <Link href={`/match/${m.id}`} className="flex flex-col items-center gap-2 flex-1 group">
               <TeamBadge short={m.awayShort} color={m.awayColor} size={56} logo={m.awayLogo} />
-              <span className="font-display font-bold text-[15px] text-center group-hover:text-[var(--color-brand)] transition">
+              <span className="font-display font-bold text-[15px] text-center group-hover:text-[var(--color-brand-ink)] transition">
                 {m.away}
               </span>
             </Link>
@@ -401,7 +401,7 @@ export function FeaturedMatch({ m }: { m: Match }) {
 
           <Link
             href={`/match/${m.id}`}
-            className="flex items-center justify-center gap-1.5 mt-4 text-[12px] font-semibold text-[var(--color-brand-hi)] hover:underline"
+            className="flex items-center justify-center gap-1.5 mt-4 text-[12px] font-semibold text-[var(--color-brand-ink)] hover:underline"
           >
             View all {m.marketCount} markets <ArrowRight size={13} />
           </Link>

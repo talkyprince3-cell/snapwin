@@ -30,23 +30,33 @@
   /* Ink for the few bands that stay dark (masthead, scrims, splash). */
   --color-ink-invert: #f8fafc;
 
-  /* Brand — teal */
-  --color-brand: #0d9488;
-  --color-brand-hi: #14b8a6;
-  /* Buttons use the deeper tone: white on #0d9488 is ~3.4:1, on this ~5.3:1. */
-  --color-brand-deep: #0f766e;
-  --color-brand-2: #0ea5a0;
-  --color-brand-2-hi: #2dd4bf;
-  --color-brand-2-deep: #115e59;
-  /* Foreground on a teal fill. White reads here, unlike on the old gold. */
-  --color-on-brand: #ffffff;
+  /* Brand — amber, sampled from the SNAP/WIN wordmark itself (#f8b400), with
+     navy as the structural partner. The reference's teal was never ours and
+     fought the logo.
 
-  /* Support */
-  --color-cyan: #0891b2;
-  --color-amber: #facc15;
-  --color-emerald: #0b9b3a;
-  --color-rose: #e40014;
-  --color-sky: #0284c7;
+     Amber is a FILL, never text. Measured on white:
+       navy on amber      9.45:1  OK  — how amber is used
+       white on amber     1.82:1  no
+       amber as text      1.82:1  no  — use --color-brand-ink instead
+       white on navy     17.23:1  OK  — the primary action */
+  --color-brand: #f8b400;
+  --color-brand-hi: #ffc933;
+  /* Text-safe amber, for links and labels where the fill cannot go. 5.02:1. */
+  --color-brand-ink: #b45309;
+  /* Deep = navy: anything that carries white text. */
+  --color-brand-deep: #0b1b33;
+  --color-brand-2: #eaa800;
+  --color-brand-2-hi: #ffd466;
+  --color-brand-2-deep: #92400e;
+  /* Navy on amber, the pairing the contrast table actually supports. */
+  --color-on-brand: #0b1b33;
+
+  /* Support — each one checked against a white card, not eyeballed. */
+  --color-cyan: #0e7490;
+  --color-amber: #b45309;
+  --color-emerald: #15803d;
+  --color-rose: #d10011;
+  --color-sky: #0369a1;
 
   /* Fonts */
   /* One family, as on the reference. `font-display` stays a valid utility so
@@ -68,7 +78,7 @@
   --color-card-foreground: #0f172a;
   --color-popover: #ffffff;
   --color-popover-foreground: #0f172a;
-  --color-primary: #0d9488;
+  --color-primary: #0b1b33;
   --color-primary-foreground: #ffffff;
   --color-secondary: #f1f5f9;
   --color-secondary-foreground: #0f172a;
@@ -76,11 +86,11 @@
   --color-muted-foreground: #64748b;
   --color-accent: #e8eef5;
   --color-accent-foreground: #0f172a;
-  --color-destructive: #e40014;
+  --color-destructive: #d10011;
   --color-destructive-foreground: #ffffff;
   --color-border: #e2e8f0;
   --color-input: #ffffff;
-  --color-ring: #0d9488;
+  --color-ring: #f8b400;
 
   /* Console eyebrow label + card elevation */
   --text-eyebrow: 10px;
@@ -150,7 +160,7 @@ html {
 
 body {
   background:
-    radial-gradient(1100px 560px at 84% -12%, rgba(13, 148, 136, 0.07), transparent 62%),
+    radial-gradient(1100px 560px at 84% -12%, rgba(248, 180, 0, 0.07), transparent 62%),
     radial-gradient(900px 500px at 2% 6%, rgba(11, 27, 51, 0.05), transparent 58%),
     var(--color-bg);
   color: var(--color-ink);
@@ -162,13 +172,13 @@ body {
 }
 
 ::selection {
-  background: rgba(13, 148, 136, 0.22);
+  background: rgba(248, 180, 0, 0.22);
   color: var(--color-ink);
 }
 
 /* Accessible keyboard focus — uses the brand orange, no new colours. */
 :focus-visible {
-  outline: 2px solid rgba(13, 148, 136, 0.75);
+  outline: 2px solid rgba(248, 180, 0, 0.75);
   outline-offset: 2px;
   border-radius: 8px;
 }
@@ -220,7 +230,7 @@ img, svg { user-select: none; -webkit-user-drag: none; }
 
 /* Brand gradient text */
 .grad-text {
-  background: linear-gradient(100deg, #0f766e, #0d9488 45%, #14b8a6);
+  background: linear-gradient(100deg, #0b1b33, #1e3a5f 55%, #b45309);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -248,19 +258,20 @@ img, svg { user-select: none; -webkit-user-drag: none; }
   background: var(--color-surface);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-card);
+  box-shadow: 0 1px 2px rgba(11, 27, 51, 0.04), 0 1px 3px rgba(11, 27, 51, 0.03);
 }
 
 .card-hover {
   transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 .card-hover:hover {
-  border-color: rgba(13, 148, 136, 0.45);
+  border-color: var(--color-line-2);
   transform: translateY(-1px);
-  box-shadow: 0 10px 30px -14px rgba(13, 148, 136, 0.45);
+  box-shadow: 0 6px 16px -6px rgba(11, 27, 51, 0.12), 0 2px 6px rgba(11, 27, 51, 0.06);
 }
 
 /* Glow ring around focus / active */
-.glow-brand { box-shadow: 0 0 0 1px rgba(13, 148, 136,.5), 0 8px 30px -8px rgba(13, 148, 136,.5); }
+.glow-brand { box-shadow: 0 0 0 1px rgba(248, 180, 0,.5), 0 8px 30px -8px rgba(248, 180, 0,.5); }
 
 /* Section title bar */
 .title-bar {
@@ -283,15 +294,16 @@ img, svg { user-select: none; -webkit-user-drag: none; }
   overflow: hidden;
 }
 .odds-btn:hover {
-  border-color: rgba(13, 148, 136, 0.5);
+  border-color: rgba(248, 180, 0, 0.5);
   background: var(--color-surface-3);
 }
 .odds-btn:active { transform: scale(0.96); }
 .odds-btn[data-active="true"] {
-  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-2));
-  border-color: transparent;
+  background: var(--color-brand);
+  border-color: var(--color-brand);
   color: var(--color-on-brand);
-  box-shadow: 0 6px 18px -8px rgba(13, 148, 136, 0.75);
+  font-weight: 800;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 /* Pill / chip */
@@ -427,7 +439,7 @@ img, svg { user-select: none; -webkit-user-drag: none; }
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(13, 148, 136,.7), rgba(20, 184, 166,.45), rgba(251,191,36,.5));
+  background: linear-gradient(135deg, rgba(248, 180, 0,.7), rgba(11, 27, 51,.45), rgba(251,191,36,.5));
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;

@@ -232,7 +232,7 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
     return (
       <div className="flex flex-col items-center text-center px-5 py-10 animate-rise">
         <div className="grid place-items-center w-16 h-16 rounded-full bg-[var(--color-surface-2)] border border-[var(--color-line)] mb-4">
-          <LogIn className="text-[var(--color-brand)]" size={28} />
+          <LogIn className="text-[var(--color-brand-ink)]" size={28} />
         </div>
         <h3 className="font-display font-extrabold text-lg">Sign in to place your bet</h3>
         <p className="text-[13px] text-[var(--color-ink-dim)] mt-1.5">
@@ -404,7 +404,7 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
                 onClick={() => setMobileOpen(false)}
                 className="min-w-0 group/sel"
               >
-                <div className="font-display font-bold text-[13.5px] truncate group-hover/sel:text-[var(--color-brand-hi)] transition-colors">
+                <div className="font-display font-bold text-[13.5px] truncate group-hover/sel:text-[var(--color-brand-ink)] transition-colors">
                   {s.pick}
                 </div>
                 <div className="text-[11.5px] text-[var(--color-ink-dim)] truncate mt-0.5">{s.match}</div>
@@ -412,11 +412,11 @@ function SlipBody({ onPlaced }: { onPlaced?: () => void }) {
                   <span className="text-[10px] font-semibold text-[var(--color-ink-faint)] uppercase tracking-wide">
                     {s.market}
                   </span>
-                  <ChevronRight size={11} className="text-[var(--color-ink-faint)] group-hover/sel:text-[var(--color-brand-hi)] transition-colors" />
+                  <ChevronRight size={11} className="text-[var(--color-ink-faint)] group-hover/sel:text-[var(--color-brand-ink)] transition-colors" />
                 </div>
               </Link>
               <div className="flex flex-col items-end gap-1.5 shrink-0">
-                <span className="num text-[13px] font-bold text-[var(--color-brand)]">{s.odds.toFixed(2)}</span>
+                <span className="num text-[13px] font-bold text-[var(--color-brand-ink)]">{s.odds.toFixed(2)}</span>
                 <button
                   onClick={() => remove(s.id)}
                   aria-label={`Remove ${s.pick}`}
@@ -508,7 +508,7 @@ function ReceiptRow({ label, value, strong }: { label: string; value: string; st
   return (
     <div className="flex items-center justify-between gap-3 py-1.5">
       <dt className="text-[13px] text-[var(--color-ink-dim)]">{label}</dt>
-      <dd className={cn("num text-[15px]", strong ? "font-extrabold text-[var(--color-brand)]" : "font-bold")}>{value}</dd>
+      <dd className={cn("num text-[15px]", strong ? "font-extrabold text-[var(--color-brand-ink)]" : "font-bold")}>{value}</dd>
     </div>
   );
 }
@@ -543,7 +543,7 @@ export function DesktopBetSlip() {
       <div className="card flex flex-col h-full overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3.5 border-b border-[var(--color-line)] bg-[var(--color-bg-2)]">
           <div className="flex items-center gap-2">
-            <Ticket size={16} className="text-[var(--color-brand)]" />
+            <Ticket size={16} className="text-[var(--color-brand-ink)]" />
             <span className="font-display font-extrabold text-[14px]">Bet Slip</span>
           </div>
           <span className="num text-[11px] font-bold grad-brand text-[var(--color-on-brand)] rounded-full min-w-[22px] h-[22px] grid place-items-center px-1.5">

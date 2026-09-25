@@ -290,7 +290,7 @@ function TicketActions({ bet, onCelebrate }: { bet: Bet; onCelebrate: () => void
       {code && (
         <p className="mb-2 text-center text-[12.5px]">
           <span className="text-[var(--color-ink-dim)]">Booking code: </span>
-          <span className="num font-bold tracking-wider text-[var(--color-brand)]">{code}</span>
+          <span className="num font-bold tracking-wider text-[var(--color-brand-ink)]">{code}</span>
         </p>
       )}
       {err && <p className="mb-2 text-center text-[12px] text-[var(--color-rose)]">{err}</p>}
@@ -299,14 +299,14 @@ function TicketActions({ bet, onCelebrate }: { bet: Bet; onCelebrate: () => void
         <button
           onClick={makeBookingCode}
           disabled={busy || selections.length === 0}
-          className="flex items-center justify-center gap-1.5 rounded-full border border-[var(--color-brand)]/60 py-2.5 text-[12.5px] font-display font-bold text-[var(--color-brand)] hover:bg-[var(--color-brand)]/10 disabled:opacity-45 transition-colors"
+          className="flex items-center justify-center gap-1.5 rounded-full border border-[var(--color-brand)]/60 py-2.5 text-[12.5px] font-display font-bold text-[var(--color-brand-ink)] hover:bg-[var(--color-brand)]/10 disabled:opacity-45 transition-colors"
         >
           {busy && <Loader2 size={13} className="animate-spin" />} Booking Code
         </button>
         <button
           onClick={rebet}
           disabled={selections.length === 0}
-          className="rounded-full border border-[var(--color-brand)]/60 py-2.5 text-[12.5px] font-display font-bold text-[var(--color-brand)] hover:bg-[var(--color-brand)]/10 disabled:opacity-45 transition-colors"
+          className="rounded-full border border-[var(--color-brand)]/60 py-2.5 text-[12.5px] font-display font-bold text-[var(--color-brand-ink)] hover:bg-[var(--color-brand)]/10 disabled:opacity-45 transition-colors"
         >
           Rebet
         </button>

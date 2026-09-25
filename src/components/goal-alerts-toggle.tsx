@@ -87,7 +87,7 @@ export function GoalAlertsToggle() {
     <button
       onClick={enable}
       disabled={state === "working"}
-      className="flex items-center gap-2 rounded-xl border border-[var(--color-brand)]/40 bg-[var(--color-brand)]/10 px-3.5 py-2.5 text-[12.5px] font-semibold text-[var(--color-brand)] hover:bg-[var(--color-brand)]/15 transition disabled:opacity-60"
+      className="flex items-center gap-2 rounded-xl border border-[var(--color-brand)]/40 bg-[var(--color-brand)]/10 px-3.5 py-2.5 text-[12.5px] font-semibold text-[var(--color-brand-ink)] hover:bg-[var(--color-brand)]/15 transition disabled:opacity-60"
     >
       {state === "working" ? <Loader2 size={15} className="animate-spin" /> : <Bell size={15} />}
       {state === "working" ? "Enabling…" : "🔔 Get goal alerts on your phone"}

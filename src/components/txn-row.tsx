@@ -13,7 +13,7 @@ const TONE_BG: Record<string, string> = {
   emerald: "bg-[var(--color-emerald)]/12 text-[var(--color-emerald)]",
   rose: "bg-[var(--color-rose)]/12 text-[var(--color-rose)]",
   amber: "bg-[var(--color-amber)]/12 text-[var(--color-amber)]",
-  brand: "bg-[var(--color-brand)]/12 text-[var(--color-brand)]",
+  brand: "bg-[var(--color-brand)]/12 text-[var(--color-brand-ink)]",
 };
 
 const STATUS: Record<string, string> = {

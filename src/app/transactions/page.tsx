@@ -29,7 +29,7 @@ const META: Record<TxnItem["kind"], { icon: React.ReactNode; tone: string }> = {
   deposit: { icon: <ArrowDownToLine size={16} />, tone: "text-[var(--color-emerald)] bg-[var(--color-emerald)]/12" },
   withdrawal: { icon: <ArrowUpRight size={16} />, tone: "text-[var(--color-cyan)] bg-[var(--color-cyan)]/12" },
   "bet-won": { icon: <Trophy size={16} />, tone: "text-[var(--color-amber)] bg-[var(--color-amber)]/12" },
-  "bet-placed": { icon: <Ticket size={16} />, tone: "text-[var(--color-brand)] bg-[var(--color-brand)]/12" },
+  "bet-placed": { icon: <Ticket size={16} />, tone: "text-[var(--color-brand-ink)] bg-[var(--color-brand)]/12" },
   "bet-lost": { icon: <XCircle size={16} />, tone: "text-[var(--color-rose)] bg-[var(--color-rose)]/12" },
 };
 

@@ -106,7 +106,7 @@ export default function BookingPage() {
           <div className="relative p-7 sm:p-9">
             {!data ? (
               <div className="text-center">
-                <div className="mx-auto w-16 h-16 mb-5 grid place-items-center rounded-2xl bg-[var(--color-brand)]/12 text-[var(--color-brand)]">
+                <div className="mx-auto w-16 h-16 mb-5 grid place-items-center rounded-2xl bg-[var(--color-brand)]/12 text-[var(--color-brand-ink)]">
                   <Ticket size={30} strokeWidth={1.6} />
                 </div>
 

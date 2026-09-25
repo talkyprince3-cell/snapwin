@@ -89,7 +89,7 @@ export default function LoginPage() {
         </button>
 
         <p className="text-center text-[13px] text-[var(--color-ink-dim)] mt-6">
-          Don&apos;t have an account? <Link href="/register" className="font-bold text-[var(--color-brand)] hover:underline">Create one</Link>
+          Don&apos;t have an account? <Link href="/register" className="font-bold text-[var(--color-brand-ink)] hover:underline">Create one</Link>
         </p>
       </form>
     </AuthShell>

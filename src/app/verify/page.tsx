@@ -110,7 +110,7 @@ export default function VerifyPage() {
                 <span className="absolute inset-0 rounded-full border border-[var(--color-brand)]/30 animate-ping" />
                 <span className="absolute inset-2 rounded-full border border-[var(--color-cyan)]/20" />
                 <span className="absolute inset-0 grid place-items-center">
-                  <Shield size={44} className="text-[var(--color-brand)]" strokeWidth={1.5} />
+                  <Shield size={44} className="text-[var(--color-brand-ink)]" strokeWidth={1.5} />
                   <Check size={18} className="absolute text-[var(--color-emerald)]" strokeWidth={3} />
                 </span>
               </div>
@@ -162,7 +162,7 @@ export default function VerifyPage() {
 function Feature({ icon, title, sub }: { icon: React.ReactNode; title: string; sub: string }) {
   return (
     <div className="flex flex-col items-center gap-1.5">
-      <span className="text-[var(--color-brand)]">{icon}</span>
+      <span className="text-[var(--color-brand-ink)]">{icon}</span>
       <span className="font-display font-bold text-[12px]">{title}</span>
       <span className="text-[10px] text-[var(--color-ink-faint)]">{sub}</span>
     </div>

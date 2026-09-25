@@ -66,7 +66,7 @@ export function BetCard({ b, liveMatchIds }: { b: Bet; liveMatchIds?: Set<string
           </span>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="font-display font-bold text-[13.5px] group-hover/open:text-[var(--color-brand-hi)] transition-colors">
+              <span className="font-display font-bold text-[13.5px] group-hover/open:text-[var(--color-brand-ink)] transition-colors">
                 {b.type === "multi" ? `${b.legs.length}-Fold Acca` : "Single"}
               </span>
               <span className={cn("text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded border", s.cls)}>{s.label}</span>

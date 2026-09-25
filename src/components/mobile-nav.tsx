@@ -32,7 +32,7 @@ export function MobileNav() {
             const content = (
               <span className="relative flex flex-col items-center justify-center gap-1 h-full">
                 <span className="relative">
-                  <Icon size={20} className={cn(active ? "text-[var(--color-brand-hi)]" : "text-[var(--color-ink-faint)]")} strokeWidth={active ? 2.4 : 2} />
+                  <Icon size={20} className={cn(active ? "text-[var(--color-brand-ink)]" : "text-[var(--color-ink-faint)]")} strokeWidth={active ? 2.4 : 2} />
                   {it.badge && (
                     <span className="absolute -top-1.5 -right-2 num text-[8px] font-bold grad-brand text-[var(--color-on-brand)] rounded-full min-w-[14px] h-[14px] grid place-items-center px-0.5">
                       {it.badge}

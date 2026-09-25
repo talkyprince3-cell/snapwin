@@ -292,7 +292,7 @@ export default function AccountPage() {
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5 min-w-0">
             <span className="grid place-items-center w-9 h-9 rounded-xl bg-[var(--color-brand)]/12 shrink-0">
-              <KeyRound size={16} className="text-[var(--color-brand)]" />
+              <KeyRound size={16} className="text-[var(--color-brand-ink)]" />
             </span>
             <div className="min-w-0">
               <div className="font-display font-bold text-[13.5px]">Password</div>

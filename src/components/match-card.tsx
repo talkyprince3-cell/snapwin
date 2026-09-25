@@ -190,8 +190,8 @@ export function FixtureRow({ m }: { m: Match }) {
         </div>
         {m.live ? (
           <div className="shrink-0 flex flex-col items-center gap-[3px] px-1.5">
-            <span className="num text-[12.5px] font-extrabold leading-tight text-[var(--color-brand)]">{m.scoreHome ?? 0}</span>
-            <span className="num text-[12.5px] font-extrabold leading-tight text-[var(--color-brand)]">{m.scoreAway ?? 0}</span>
+            <span className="num text-[12.5px] font-extrabold leading-tight text-[var(--color-brand-ink)]">{m.scoreHome ?? 0}</span>
+            <span className="num text-[12.5px] font-extrabold leading-tight text-[var(--color-brand-ink)]">{m.scoreAway ?? 0}</span>
           </div>
         ) : m.locked ? (
           <Lock size={11} className="shrink-0 text-[var(--color-ink-faint)]" />
@@ -302,7 +302,7 @@ export function SectionHead({
       </div>
       {more &&
         (href ? (
-          <Link href={href} className="text-[11.5px] font-semibold text-[var(--color-brand-hi)] hover:underline">
+          <Link href={href} className="text-[11.5px] font-semibold text-[var(--color-brand-ink)] hover:underline">
             {more} →
           </Link>
         ) : (

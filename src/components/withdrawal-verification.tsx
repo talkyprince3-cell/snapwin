@@ -43,7 +43,7 @@ export function WithdrawalVerification({
           className={
             met
               ? "grid place-items-center w-9 h-9 rounded-xl bg-[var(--color-amber)]/12 text-[var(--color-amber)] shrink-0"
-              : "grid place-items-center w-9 h-9 rounded-xl bg-[var(--color-brand)]/12 text-[var(--color-brand)] shrink-0"
+              : "grid place-items-center w-9 h-9 rounded-xl bg-[var(--color-brand)]/12 text-[var(--color-brand-ink)] shrink-0"
           }
         >
           {met ? <Clock size={17} /> : <Lock size={17} />}
@@ -72,7 +72,7 @@ export function WithdrawalVerification({
             <span className="num text-[var(--color-ink-dim)]">
               {formatMoneyWithCurrency(deposited, currency)} deposited
             </span>
-            <span className="num font-semibold text-[var(--color-brand)]">
+            <span className="num font-semibold text-[var(--color-brand-ink)]">
               {formatMoneyWithCurrency(remaining, currency)} to go
             </span>
           </div>
