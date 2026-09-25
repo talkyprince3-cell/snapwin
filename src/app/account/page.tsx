@@ -391,7 +391,9 @@ function PaymentModal({
   // OTP step: once set, the gateway texted a code we collect on our own screen.
   const [otpRef, setOtpRef] = useState<string | null>(null);
   // Which gateway the pending OTP belongs to — decides where submitOtp posts.
-  const [otpGateway, setOtpGateway] = useState<"moolre" | "flutterwave" | "payseed">("moolre");
+  // Flutterwave is no longer in here: V4 authorises with a PIN prompt, so the
+  // Ghana MoMo deposit never has a code to collect.
+  const [otpGateway, setOtpGateway] = useState<"moolre" | "payseed">("moolre");
   const [otp, setOtp] = useState("");
   // When a gateway needs the customer on its own secure page, we show a clear
   // hand-off screen (with this URL) instead of silently redirecting them.
@@ -415,9 +417,10 @@ function PaymentModal({
   // Korapay hosted checkout (Ghana + Nigeria): mint a one-time checkout URL and
   // redirect the player there. Auto-credits on return via callback + webhook.
   const useKorapay = getCountryForCurrency(cc).gateway === "korapay";
-  // Flutterwave — the MAIN gateway. Ghana uses v3 branded MoMo checkout
-  // (direct charge + phone prompt / OTP, no hosted page); Nigeria uses the
-  // hosted redirect (card / bank / USSD).
+  // Flutterwave — the MAIN gateway. Ghana deposits go through V4: a direct
+  // charge on our own screen, authorised by a PIN prompt on the phone (V4 has
+  // no OTP step and no hosted page). Nigeria still uses the V3 hosted redirect
+  // (card / bank / USSD), which V4 does not cover.
   const useFlutterwave = getCountryForCurrency(cc).gateway === "flutterwave";
   const useFlutterwaveMomo = useFlutterwave && cc === "GHS";
   const useFlutterwaveHosted = useFlutterwave && cc !== "GHS";
@@ -600,18 +603,20 @@ function PaymentModal({
     }
   }
 
-  // Custom Ghana MoMo checkout: charge Flutterwave directly and poll while the
-  // player approves the prompt on their phone — all on our own screen. Falls
-  // back to Korapay if the charge can't start.
+  // Custom Ghana MoMo checkout: charge Flutterwave V4 directly and poll while
+  // the player approves the PIN prompt on their phone — all on our own screen.
   async function pollFlutterwaveMomo(reference: string) {
     const TERMINAL_FAIL = [
       "failed", "amount-mismatch", "currency-mismatch", "verify-failed",
       "no-user", "credit-failed", "unknown-reference",
+      // V4-only outcomes: the pending row lost its charge id, or we polled
+      // with nothing. Neither recovers by waiting.
+      "no-charge-id", "missing-reference",
     ];
     for (let i = 0; i < 60; i++) {
       await new Promise((r) => setTimeout(r, 3000));
       try {
-        const res = await fetch(`/api/payments/flutterwave/momo/status?reference=${encodeURIComponent(reference)}`);
+        const res = await fetch(`/api/payments/flutterwave-v4/momo/status?reference=${encodeURIComponent(reference)}`);
         const data = await res.json();
         const s = data.status as string;
         if (s === "success" || s === "already-credited") { setDone(true); onSuccess(); return; }
@@ -633,32 +638,22 @@ function PaymentModal({
     setBusy(true);
     setStatus("Starting mobile money deposit…");
     try {
-      const res = await fetch("/api/payments/flutterwave/momo/start", {
+      const res = await fetch("/api/payments/flutterwave-v4/momo/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, amount: amt, phone: phone.trim(), network, purpose: "deposit" }),
+        body: JSON.stringify({ userId: user.id, amount: amt, phone: phone.trim(), network }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.reference) {
-        console.error("[deposit] flutterwave momo start failed:", data.error);
+        console.error("[deposit] flutterwave v4 momo start failed:", data.error);
         setError("We couldn't start your Mobile Money deposit right now. Please try again in a moment.");
         return;
       }
-      // OTP mode: the network texted a code — collect it on our own screen.
-      if (data.otpRequired) {
-        setOtpGateway("flutterwave");
-        setOtpRef(data.reference as string);
-        setStatus("");
-        return;
-      }
-      // Voucher/redirect networks still hand off to Flutterwave's page — show a
-      // clear branded interstitial first so the customer isn't confused.
-      if (data.redirect) {
-        setRedirectUrl(data.redirect as string);
-        setStatus("");
-        return;
-      }
-      setStatus("Approve the prompt on your phone to complete your deposit.");
+      // V4 authorises with a PIN prompt and nothing else — no OTP to collect,
+      // no hosted page to hand off to. It returns the wording to show the
+      // customer ("authorise this payment on your mobile number …"); prefer it
+      // over our own hint, since it names the number the prompt went to.
+      setStatus(data.instruction || "Approve the prompt on your phone to complete your deposit.");
       await pollFlutterwaveMomo(data.reference);
     } catch {
       setError("Network error — please try again.");
@@ -830,12 +825,10 @@ function PaymentModal({
   async function submitOtp() {
     if (!otpRef || !otp.trim()) return;
     const otpEndpoint =
-      otpGateway === "flutterwave"
-        ? "/api/payments/flutterwave/momo/otp"
-        : otpGateway === "payseed"
-          ? "/api/payments/payseed/otp"
-          : "/api/payments/moolre/direct/otp";
-    // Moolre expects `otpcode`; Flutterwave and PaySeed expect `otp`.
+      otpGateway === "payseed"
+        ? "/api/payments/payseed/otp"
+        : "/api/payments/moolre/direct/otp";
+    // Moolre expects `otpcode`; PaySeed expects `otp`.
     const otpBody =
       otpGateway === "moolre"
         ? { reference: otpRef, otpcode: otp.trim() }
@@ -865,11 +858,7 @@ function PaymentModal({
         return;
       }
       setStatus(approvalHint);
-      await (otpGateway === "flutterwave"
-        ? pollFlutterwaveMomo(otpRef)
-        : otpGateway === "payseed"
-          ? pollPayseed(otpRef)
-          : pollDeposit(otpRef));
+      await (otpGateway === "payseed" ? pollPayseed(otpRef) : pollDeposit(otpRef));
     } catch {
       setError("Network error — please try again.");
     } finally {

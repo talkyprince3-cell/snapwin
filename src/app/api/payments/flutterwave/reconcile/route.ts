@@ -1,14 +1,15 @@
 import { NextResponse } from 'next/server'
 import { listPaymentsForUser } from '@/lib/payments-store'
-import { verifyAndCreditFlutterwave } from '@/lib/flutterwave-credit'
+import { verifyAndCreditFlutterwaveAny } from '@/lib/flutterwave-verify'
 
 export const dynamic = 'force-dynamic'
 
 /**
  * Safety net: re-check the user's recent pending Flutterwave deposits and credit
  * any that settled while they were away (redirect never fired / webhook missed).
- * Called on account-page load. Idempotent — verifyAndCreditFlutterwave guards
- * against double-credit.
+ * Called on account-page load. Both V3 and V4 rows carry provider
+ * 'flutterwave', so each reference is dispatched to the API that issued it.
+ * Idempotent — the verifiers guard against double-credit.
  */
 export async function POST(request: Request) {
   let body: { userId?: string }
@@ -40,7 +41,7 @@ export async function POST(request: Request) {
   let credited = 0
   for (const p of pending) {
     try {
-      const r = await verifyAndCreditFlutterwave(p.reference)
+      const r = await verifyAndCreditFlutterwaveAny(p.reference)
       if (r.status === 'success' || r.status === 'already-credited') credited++
     } catch {
       /* skip; will retry on next load */
