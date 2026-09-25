@@ -101,6 +101,21 @@ export function CountryFlag({
   return <span className={className}>{emoji}</span>;
 }
 
+/**
+ * Relative luminance, so an initials badge can pick ink that survives its own
+ * fill. The badge palette runs from #f8fafc to #dc2626 and no single text
+ * colour serves both ends — white on near-white is exactly what made the
+ * fallback badge look like nothing had rendered at all.
+ */
+function readableInk(hex: string): string {
+  const h = hex.replace("#", "");
+  const full = h.length === 3 ? h.split("").map((c) => c + c).join("") : h;
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16) / 255);
+  const lin = (c: number) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  const L = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+  return L > 0.45 ? "#0b1b33" : "#ffffff";
+}
+
 export function TeamBadge({
   short,
   color,
@@ -131,19 +146,22 @@ export function TeamBadge({
       </span>
     );
   }
+  // A solid fill, not a 20%-alpha tint: the tint was designed against a dark
+  // page and all but vanished once the theme went light.
+  const small = size < 26;
   return (
     <span
-      className="grid place-items-center rounded-full font-display font-extrabold shrink-0"
+      className="grid place-items-center rounded-full font-display font-extrabold shrink-0 leading-none"
       style={{
         width: size,
         height: size,
-        fontSize: size * 0.34,
-        background: `radial-gradient(circle at 30% 25%, ${color}38, ${color}14)`,
-        border: `1.5px solid ${color}66`,
-        color: "#fff",
+        fontSize: size * (small ? 0.42 : 0.34),
+        background: color,
+        border: "1px solid rgb(0 0 0 / 0.08)",
+        color: readableInk(color),
       }}
     >
-      {short.slice(0, 3)}
+      {short.slice(0, small ? 2 : 3)}
     </span>
   );
 }

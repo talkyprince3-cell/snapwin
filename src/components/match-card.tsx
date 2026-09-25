@@ -184,9 +184,18 @@ export function FixtureRow({ m }: { m: Match }) {
 
       {/* teams (+ live score) */}
       <Link href={`/match/${m.id}`} className="flex-1 min-w-0 flex items-center gap-2">
+        {/* Crests. TeamBadge falls back to an initials chip in the team's own
+            colour when the feed has no logo, so a row never collapses to a
+            ragged gap — every fixture keeps the same two-line rhythm. */}
         <div className="min-w-0 flex-1 flex flex-col gap-[3px]">
-          <span className="text-[12.5px] font-semibold truncate leading-tight">{m.home}</span>
-          <span className="text-[12.5px] font-semibold truncate leading-tight">{m.away}</span>
+          <span className="flex items-center gap-2 min-w-0">
+            <TeamBadge short={m.homeShort} color={m.homeColor} size={18} logo={m.homeLogo} />
+            <span className="text-[12.5px] font-semibold truncate leading-tight">{m.home}</span>
+          </span>
+          <span className="flex items-center gap-2 min-w-0">
+            <TeamBadge short={m.awayShort} color={m.awayColor} size={18} logo={m.awayLogo} />
+            <span className="text-[12.5px] font-semibold truncate leading-tight">{m.away}</span>
+          </span>
         </div>
         {m.live ? (
           <div className="shrink-0 flex flex-col items-center gap-[3px] px-1.5">
