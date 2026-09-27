@@ -382,8 +382,15 @@ function depositStartMessage(raw?: string): string {
     return "Our payment provider is refusing this amount right now. Try a smaller deposit, or contact support.";
   if (e.includes("not available") || e.includes("unavailable"))
     return "Mobile Money is temporarily unavailable from our payment provider. Please try again shortly.";
-  // The route's own validation messages are already player-facing.
-  if (e.includes("minimum deposit") || e.includes("valid network")) return raw as string;
+  // The route's own messages are already written for the player: its
+  // validation errors, and the ones Edibytes' own wording is mapped to.
+  if (
+    e.includes("minimum deposit") ||
+    e.includes("valid network") ||
+    e.includes("being set up") ||
+    e.includes("service is busy")
+  )
+    return raw as string;
   return "We couldn't start your Mobile Money deposit right now. Please try again in a moment.";
 }
 

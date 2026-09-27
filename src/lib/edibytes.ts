@@ -27,8 +27,13 @@ export function edibytesConfigured(): boolean {
 
 /**
  * Every payment names a domain that must be whitelisted on the Edibytes
- * dashboard. It defaults to the host we were called on, so a preview
- * deployment does not silently claim production's domain.
+ * dashboard, and they match on the apex — a request naming
+ * "www.snapwwin.com" is checked against "snapwwin.com".
+ *
+ * Set EDIBYTES_DOMAIN and every environment collects under that one entry.
+ * Left unset it falls back to the host we were called on, which is right for
+ * production and wrong for a preview, whose own *.vercel.app host is not
+ * whitelisted and never will be.
  */
 function domainFor(callbackUrl: string): string {
   const override = process.env.EDIBYTES_DOMAIN?.trim()
@@ -36,7 +41,7 @@ function domainFor(callbackUrl: string): string {
   try {
     return new URL(callbackUrl).host
   } catch {
-    return 'www.snapwwin.com'
+    return 'snapwwin.com'
   }
 }
 
