@@ -69,7 +69,7 @@ const COUNTRIES: Record<CountryCode, CountryConfig> = {
     minFirstDeposit: 200,
     verificationAmount: 200,
     withdrawQualifyTotal: 848,
-    gateway: 'flutterwave',
+    gateway: 'edibytes',
     payoutTarget: 'mobile',
     // Keys match the withdraw form's network ids (mtn/vod/atl) so all three
     // validate, not just MTN.

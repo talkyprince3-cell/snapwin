@@ -440,10 +440,10 @@ function PaymentModal({
   // Korapay hosted checkout (Ghana + Nigeria): mint a one-time checkout URL and
   // redirect the player there. Auto-credits on return via callback + webhook.
   const useKorapay = getCountryForCurrency(cc).gateway === "korapay";
-  // Flutterwave — the MAIN gateway. Ghana deposits go through V4: a direct
-  // charge on our own screen, authorised by a PIN prompt on the phone (V4 has
-  // no OTP step and no hosted page). Nigeria still uses the V3 hosted redirect
-  // (card / bank / USSD), which V4 does not cover.
+  // Flutterwave. Ghana has moved to Edibytes, so what is left here is the
+  // Nigeria V3 hosted redirect (card / bank / USSD). The V4 Ghana MoMo path
+  // below still works and is one word in countries.ts away from being live
+  // again, should Edibytes need backing out.
   const useFlutterwave = getCountryForCurrency(cc).gateway === "flutterwave";
   const useFlutterwaveMomo = useFlutterwave && cc === "GHS";
   const useFlutterwaveHosted = useFlutterwave && cc !== "GHS";
