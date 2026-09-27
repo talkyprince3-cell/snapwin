@@ -37,12 +37,30 @@ export function edibytesConfigured(): boolean {
  */
 function domainFor(callbackUrl: string): string {
   const override = process.env.EDIBYTES_DOMAIN?.trim()
-  if (override) return override
+  if (override) return bareHost(override)
   try {
-    return new URL(callbackUrl).host
+    return bareHost(new URL(callbackUrl).host)
   } catch {
     return 'snapwwin.com'
   }
+}
+
+/**
+ * "https://www.snapwwin.com/" -> "snapwwin.com".
+ *
+ * The dashboard lists a bare apex, but the natural thing to paste into a
+ * config var is the address bar. Anything recognisable is accepted rather
+ * than sent on to be refused: a scheme, a port, a path, a trailing slash and
+ * a leading "www." are all stripped.
+ */
+export function bareHost(value: string): string {
+  let host = value.trim()
+  host = host.replace(/^[a-z][a-z0-9+.-]*:\/\//i, '') // scheme
+  host = host.split('/')[0] // path
+  host = host.split('@').pop() ?? host // credentials
+  host = host.split(':')[0] // port
+  host = host.replace(/^www\./i, '') // Edibytes matches on the apex
+  return host.toLowerCase()
 }
 
 /** "0241234567" — the local form their charge endpoint accepts. */

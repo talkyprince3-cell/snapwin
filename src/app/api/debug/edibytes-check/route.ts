@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { bareHost } from '@/lib/edibytes'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,9 +27,13 @@ export async function GET() {
     // Live or test, and nothing more of the credential than that.
     keyMode: key ? (key.startsWith('sk_live_') ? 'live' : key.startsWith('sk_test_') ? 'test' : 'unknown') : null,
     hasPublicKey: !!process.env.EDIBYTES_PUBLIC_KEY?.trim(),
-    // Unset means each request uses its own host, which is usually what you
-    // want — but it does mean every host you serve from needs whitelisting.
-    domain: process.env.EDIBYTES_DOMAIN?.trim() || '(request host)',
+    // Both forms: what the var says, and the bare apex actually sent, so a
+    // pasted "https://www.example.com/" can be seen resolving to what the
+    // dashboard is checked against.
+    domainSetting: process.env.EDIBYTES_DOMAIN?.trim() || '(unset — uses request host)',
+    domain: process.env.EDIBYTES_DOMAIN?.trim()
+      ? bareHost(process.env.EDIBYTES_DOMAIN)
+      : '(request host)',
     baseUrl: BASE,
   }
 
