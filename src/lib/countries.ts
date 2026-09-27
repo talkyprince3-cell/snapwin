@@ -10,7 +10,7 @@ export type CountryCode =
 export type CurrencyCode =
   | 'GHS' | 'NGN' | 'KES' | 'ZAR'
   | 'UGX' | 'TZS' | 'XAF' | 'ZMW' | 'USD' | 'GBP' | 'XOF' | 'RWF'
-export type Gateway = 'moolre' | 'paystack' | 'korapay' | 'flutterwave' | 'payseed' | 'manual'
+export type Gateway = 'moolre' | 'paystack' | 'korapay' | 'flutterwave' | 'payseed' | 'edibytes' | 'manual'
 
 export interface PayoutNetwork {
   key: string

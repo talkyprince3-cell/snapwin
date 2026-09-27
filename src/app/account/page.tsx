@@ -455,10 +455,14 @@ function PaymentModal({
   // MoMo flow); Nigeria uses a bank-transfer virtual account.
   const usePayseed = getCountryForCurrency(cc).gateway === "payseed";
   const usePayseedMomo = usePayseed && cc === "GHS";
+  // Edibytes — Ghana MoMo charged on our own screen. Their hosted page exists,
+  // but the prompt call behind its "Pay now" button is public, so we send it
+  // ourselves and the player never leaves us.
+  const useEdibytesMomo = getCountryForCurrency(cc).gateway === "edibytes" && cc === "GHS";
   const usePayseedBank = usePayseed && cc !== "GHS";
   // In-app MoMo UI (network picker + phone) is shared by the Flutterwave and
   // PaySeed Ghana flows.
-  const useMomoForm = useFlutterwaveMomo || usePayseedMomo;
+  const useMomoForm = useFlutterwaveMomo || usePayseedMomo || useEdibytesMomo;
   // Hosted redirect checkouts (Moolre, Korapay, Flutterwave-NG) skip the
   // agent-account + screenshot UI: the player pays on the gateway page and we
   // credit on return.
@@ -514,6 +518,7 @@ function PaymentModal({
 
   // Route the deposit to the right flow for the user's country.
   async function deposit() {
+    if (useEdibytesMomo) return depositEdibytesMomo();
     if (usePayseedMomo) return depositPayseedMomo();
     if (usePayseedBank) return depositPayseedBank();
     if (useMoolre) return depositMoolre();
@@ -679,6 +684,61 @@ function PaymentModal({
       // over our own hint, since it names the number the prompt went to.
       setStatus(data.instruction || "Approve the prompt on your phone to complete your deposit.");
       await pollFlutterwaveMomo(data.reference);
+    } catch {
+      setError("Network error — please try again.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // Edibytes poll — verifies by our own reference (they have no id of their
+  // own to quote back) and credits on success.
+  async function pollEdibytesMomo(reference: string) {
+    const TERMINAL_FAIL = [
+      "failed", "amount-mismatch", "currency-mismatch",
+      "no-user", "credit-failed", "unknown-reference", "missing-reference",
+    ];
+    for (let i = 0; i < 60; i++) {
+      await new Promise((r) => setTimeout(r, 3000));
+      try {
+        const res = await fetch(`/api/payments/edibytes/momo/status?reference=${encodeURIComponent(reference)}`);
+        const data = await res.json();
+        const s = data.status as string;
+        if (s === "success" || s === "already-credited") { setDone(true); onSuccess(); return; }
+        if (TERMINAL_FAIL.includes(s)) { setError("Payment was not completed. Please try again."); return; }
+        setStatus("Waiting for your approval — " + approvalHint);
+      } catch {
+        /* transient — keep polling */
+      }
+    }
+    setError("Still waiting for confirmation. If you approved the payment, your balance will update once it settles — refresh in a minute.");
+  }
+
+  async function depositEdibytesMomo() {
+    if (!phone.trim()) {
+      setError("Enter your mobile money number.");
+      return;
+    }
+    setError(null);
+    setBusy(true);
+    setStatus("Starting mobile money deposit…");
+    try {
+      const res = await fetch("/api/payments/edibytes/momo/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, amount: amt, phone: phone.trim(), network }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.reference) {
+        console.error("[deposit] edibytes momo start failed:", data.error);
+        setDiag(`Gateway: ${data.error ?? `HTTP ${res.status}`}`);
+        setError(depositStartMessage(data.error));
+        return;
+      }
+      // Edibytes returns no wording of its own, so the network-specific hint
+      // is the only instruction the player gets.
+      setStatus(approvalHint);
+      await pollEdibytesMomo(data.reference);
     } catch {
       setError("Network error — please try again.");
     } finally {
