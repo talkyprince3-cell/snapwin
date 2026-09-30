@@ -26,6 +26,11 @@ export async function GET() {
     hasSecretKey: !!key,
     // Live or test, and nothing more of the credential than that.
     keyMode: key ? (key.startsWith('sk_live_') ? 'live' : key.startsWith('sk_test_') ? 'test' : 'unknown') : null,
+    // First four characters of the key body. Enough to tell two Edibytes
+    // accounts apart in a support thread — which matters, because a key from
+    // the wrong account authenticates perfectly well and then collects into
+    // someone else's balance.
+    keyPrefix: key ? key.replace(/^sk_(live|test)_/, '').slice(0, 4) : null,
     hasPublicKey: !!process.env.EDIBYTES_PUBLIC_KEY?.trim(),
     // Both forms: what the var says, and the bare apex actually sent, so a
     // pasted "https://www.example.com/" can be seen resolving to what the

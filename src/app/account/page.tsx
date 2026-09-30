@@ -97,6 +97,7 @@ export default function AccountPage() {
     void sweep("/api/payments/moolre/direct/reconcile");
     void sweep("/api/payments/korapay/reconcile");
     void sweep("/api/payments/flutterwave/reconcile");
+    void sweep("/api/payments/edibytes/reconcile");
   }, [loading, noSession, refresh]);
 
   // Show a result banner when Moolre sends the player back here after checkout.

@@ -95,6 +95,55 @@ export async function readUsers(): Promise<AppUser[]> {
   return out
 }
 
+export interface UserMoneyTotals {
+  count: number
+  depositsByCurrency: Record<string, number>
+  withdrawalsByCurrency: Record<string, number>
+}
+
+/**
+ * Deposit and withdrawal totals per currency, plus how many players there are.
+ *
+ * The admin dashboard used to get this by reading every column of every user
+ * — password hashes and all — and adding up three of them. On a platform this
+ * size that is megabytes over the wire per dashboard load, which is how the
+ * Supabase egress quota got spent. Four columns, same answer.
+ */
+export async function sumUserMoney(): Promise<UserMoneyTotals> {
+  const sb = supabaseServer()
+  const PAGE = 1000
+  const depositsByCurrency: Record<string, number> = {}
+  const withdrawalsByCurrency: Record<string, number> = {}
+  let count = 0
+
+  for (let from = 0; ; from += PAGE) {
+    const { data, error } = await sb
+      .from('users')
+      .select('country,currency,total_deposited,total_withdrawn')
+      .range(from, from + PAGE - 1)
+    if (error) throw new Error(`users.sumMoney: ${error.message}`)
+    const rows = data ?? []
+    for (const row of rows) {
+      // Same fallback rowToUser applies, so a row with a missing or unknown
+      // currency lands in the same bucket the full read would have put it in.
+      const country: CountryCode = isCountryCode(row.country) ? row.country : DEFAULT_COUNTRY
+      const currency: CurrencyCode = isCurrencyCode(row.currency)
+        ? row.currency
+        : currencyFromCountry(country)
+      depositsByCurrency[currency] = +(
+        (depositsByCurrency[currency] ?? 0) + Number(row.total_deposited ?? 0)
+      ).toFixed(2)
+      withdrawalsByCurrency[currency] = +(
+        (withdrawalsByCurrency[currency] ?? 0) + Number(row.total_withdrawn ?? 0)
+      ).toFixed(2)
+    }
+    count += rows.length
+    if (rows.length < PAGE) break
+  }
+
+  return { count, depositsByCurrency, withdrawalsByCurrency }
+}
+
 export async function findUserByEmail(email: string): Promise<AppUser | null> {
   const { data, error } = await supabaseServer()
     .from('users')

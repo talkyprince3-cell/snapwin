@@ -1,23 +1,32 @@
 import { NextResponse } from 'next/server'
 import { readBets } from '@/lib/bets-store'
-import { listUsersForAdmin } from '@/lib/users-store'
+import { sumUserMoney } from '@/lib/users-store'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  const [bets, users] = await Promise.all([readBets(), listUsersForAdmin()])
-
-  // Wallets are denominated in different currencies; group these sums by
+  // Wallets are denominated in different currencies; these sums are grouped by
   // currency so the admin dashboard can render one row per currency instead
   // of summing GHS+NGN+KES+ZAR into a meaningless number.
-  const depositsByCurrency: Record<string, number> = {}
-  const withdrawalsByCurrency: Record<string, number> = {}
+  let bets, money
+  try {
+    ;[bets, money] = await Promise.all([readBets(), sumUserMoney()])
+  } catch (e) {
+    // Every figure here comes from the database, so there is no partial
+    // answer worth assembling. Say what went wrong instead of throwing: a
+    // bare 500 in the console told nobody that the project was over its
+    // egress quota and had been cut off.
+    const detail = e instanceof Error ? e.message : String(e)
+    console.error('[admin/stats] load failed:', detail)
+    return NextResponse.json(
+      { error: 'stats-unavailable', detail },
+      { status: 503 },
+    )
+  }
+
+  const { depositsByCurrency, withdrawalsByCurrency } = money
   const stakesByCurrency: Record<string, number> = {}
   const returnsByCurrency: Record<string, number> = {}
-  for (const u of users) {
-    depositsByCurrency[u.currency] = +(((depositsByCurrency[u.currency] ?? 0) + (u.totalDeposited ?? 0))).toFixed(2)
-    withdrawalsByCurrency[u.currency] = +(((withdrawalsByCurrency[u.currency] ?? 0) + (u.totalWithdrawn ?? 0))).toFixed(2)
-  }
   for (const b of bets) {
     stakesByCurrency[b.currency] = +(((stakesByCurrency[b.currency] ?? 0) + b.stake)).toFixed(2)
     if (b.status === 'won') {
@@ -90,7 +99,7 @@ export async function GET() {
       open: open.length,
       won: won.length,
       lost: lost.length,
-      users: users.length,
+      users: money.count,
     },
     money: {
       // Legacy single-number fields are kept for backwards compatibility but
