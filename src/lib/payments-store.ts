@@ -235,6 +235,38 @@ export async function mergePaymentMetadata(
  * Returns the updated record on success, null if the row was already
  * resolved OR doesn't exist.
  */
+/**
+ * Close a payment the rail has terminally refused.
+ *
+ * Without this a refused deposit stays 'pending' for ever: the row is swept
+ * again on every account-page load, counts against the operator's pending
+ * queue, and is indistinguishable from a prompt the player has yet to
+ * approve. Only a row still pending is touched, so this can never walk back
+ * a credit that has already been made.
+ */
+export async function markPaymentFailed(
+  id: string,
+  note?: string,
+): Promise<PaymentRecord | null> {
+  const { data, error } = await supabaseServer()
+    .from('payments')
+    .update({ status: 'failed' })
+    .eq('id', id)
+    .eq('status', 'pending')
+    .select('*')
+    .maybeSingle()
+  if (error) throw new Error(`payments.markFailed: ${error.message}`)
+  if (!data) return null
+  if (note) {
+    try {
+      await mergePaymentMetadata(id, { failureNote: note, failedAt: new Date().toISOString() })
+    } catch {
+      /* the status is what matters; the note is a convenience */
+    }
+  }
+  return rowToRecord(data as PaymentRow)
+}
+
 export async function markPaymentResolved(
   id: string,
   note?: string,

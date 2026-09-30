@@ -5,7 +5,7 @@
 // needs nothing but that string. The wallet moves ONLY when Edibytes reports
 // the payment confirmed. Idempotent via markPaymentResolved.
 
-import { findPaymentByReference, markPaymentResolved } from '@/lib/payments-store'
+import { findPaymentByReference, markPaymentFailed, markPaymentResolved } from '@/lib/payments-store'
 import { getPaymentStatus } from '@/lib/edibytes'
 import { applyDepositCredit } from '@/lib/deposit-credit'
 
@@ -24,7 +24,17 @@ export async function verifyAndCreditEdibytes(ref: string): Promise<EdibytesCred
   if (pending.status === 'success') return { status: 'already-credited', ok: true, reference }
 
   const outcome = await getPaymentStatus(reference)
-  if (outcome.status === 'failed') return { status: 'failed', ok: false, reference }
+  if (outcome.status === 'failed') {
+    // Close it, or it is swept again on every account-page load and sits in
+    // the operator's pending queue for ever looking like an unapproved
+    // prompt. Edibytes does not un-fail a payment.
+    try {
+      await markPaymentFailed(pending.id, 'edibytes reported the charge failed')
+    } catch (e) {
+      console.error('[edibytes-credit] could not close failed payment:', e)
+    }
+    return { status: 'failed', ok: false, reference }
+  }
   if (outcome.status !== 'confirmed') return { status: 'pending', ok: false, reference }
 
   // Guard the amount and currency before anything moves. Edibytes reports both
