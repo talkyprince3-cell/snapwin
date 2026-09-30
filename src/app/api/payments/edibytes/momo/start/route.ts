@@ -14,10 +14,13 @@ interface Body {
 }
 
 /**
- * Ghana MoMo deposit via Edibytes. Opens the payment, pushes the approval
- * prompt to the handset, and writes a pending row keyed on our reference —
- * which is the only thing the status poll needs, since Edibytes verifies by
- * reference rather than by an id of its own.
+ * Ghana MoMo deposit via Edibytes. Opens the payment — which texts the player
+ * a verification code — and writes a pending row keyed on our reference, the
+ * only thing the status poll needs, since Edibytes verifies by reference
+ * rather than by an id of its own.
+ *
+ * No prompt has gone to the handset yet when this returns `otpRequired`. The
+ * charge is dispatched by /edibytes/otp once the code comes back.
  */
 export async function POST(request: Request) {
   let body: Body
@@ -102,5 +105,15 @@ export async function POST(request: Request) {
     console.error('[edibytes/momo/start] pending ledger write failed:', e)
   }
 
-  return NextResponse.json({ reference: started.reference, status: 'pending' }, { status: 201 })
+  return NextResponse.json(
+    {
+      reference: started.reference,
+      status: started.otpRequired ? 'otp-required' : 'pending',
+      otpRequired: started.otpRequired,
+      // Their own wording ("Enter the verification code sent to your phone…"),
+      // which names the step better than anything we would write blind.
+      instruction: started.message ?? null,
+    },
+    { status: 201 },
+  )
 }

@@ -1,13 +1,23 @@
-// Edibytes — Ghana mobile money, charged on our own screen.
+// Edibytes (AlphaPay) — Ghana mobile money, charged on our own screen.
 //
 // Three calls, and only the first and last are authenticated:
-//   1. POST /api/payments/initialize/        -> payment id + reference
-//   2. POST /api/payments/{reference}/charge/ -> pushes the prompt to the phone
-//   3. GET  /api/payments/verify/{reference}/ -> poll until it settles
+//   1. POST /api/payments/initialize/            -> texts a code, 'otp_required'
+//   2. POST /api/payments/{reference}/verify-otp/ -> dispatches the real charge
+//   3. GET  /api/payments/verify/{reference}/     -> poll until it settles
 //
-// Step 2 is the same call their hosted page makes behind its "Pay now" button,
-// so sending it ourselves keeps the player on our screen instead of bouncing
-// them to a checkout page and back.
+// The OTP is not optional decoration. Their docs are explicit: "every
+// collection requires the customer to verify their mobile money number with a
+// one-time SMS code before the real charge is ever sent to their phone", and
+// verify-otp "is the one step that actually reaches BluPay". Skip it and the
+// player gets a text, no prompt ever arrives, and the payment sits pending
+// for ever — which is exactly what happened here.
+//
+// A merchant can have OTP switched off, in which case initialize dispatches
+// straight away and answers 'pending' with no checkout_url. Both shapes are
+// handled, since that is an account setting we do not control.
+//
+// verify-otp needs no secret key: it is scoped by the unguessable reference.
+// We still call it server-side so the browser never sees our key at all.
 //
 // Amounts are MAJOR units (GH₵200 = 200), and so is the figure verify reports
 // back ("200.00"). Credit ONLY on a confirmed status.
@@ -92,6 +102,10 @@ export interface EdibytesStart {
   id?: string
   /** The reference they acknowledged, which is normally the one we sent. */
   reference: string
+  /** True when a code was texted and the charge waits on it. */
+  otpRequired: boolean
+  /** Their wording for what the player should do next, when they give it. */
+  message?: string
 }
 
 /**
@@ -121,8 +135,10 @@ export async function startGhanaMomo(input: {
       domain: domainFor(input.callbackUrl),
       email: input.email || undefined,
       name: input.name,
-      // No phone here: any number at all makes initialize answer 502. The
-      // handset number belongs to the charge call below.
+      // With the number supplied, initialize texts the verification code
+      // itself rather than handing back a page for the player to go and
+      // enter it on. That is what keeps this on our own screen.
+      phone_number: localGhanaNumber(input.phone),
       callback_url: input.callbackUrl,
     }),
     cache: 'no-store',
@@ -145,23 +161,55 @@ export async function startGhanaMomo(input: {
 
   const id = pick(json, 'data.id', 'id', 'data.access_code', 'access_code')
   const reference = String(pick(json, 'data.reference', 'reference') ?? input.reference)
+  const status = String(pick(json, 'data.status', 'status') ?? '').toLowerCase()
+  const message = pick(json, 'data.message', 'message') as string | undefined
 
-  const charge = await fetch(`${BASE}/api/payments/${encodeURIComponent(reference)}/charge/`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ phone: localGhanaNumber(input.phone) }),
-    cache: 'no-store',
-  })
-  const chargeJson = (await charge.json().catch(() => null)) as Record<string, unknown> | null
-
-  if (!charge.ok) {
-    const reason = reasonFrom(chargeJson)
-    console.error('[edibytes] charge refused', charge.status, reason)
-    if (charge.status >= 500) throw new Error('The payment service is busy. Please try again in a minute.')
-    throw new Error(reason || 'Could not send the payment prompt. Check the number and try again.')
+  return {
+    id: id ? String(id) : undefined,
+    reference,
+    // 'otp_required' is the documented answer when a code has been texted.
+    // Anything else means this merchant has OTP switched off and the prompt
+    // is already on its way to the handset.
+    otpRequired: status === 'otp_required',
+    message,
   }
+}
 
-  return { id: id ? String(id) : undefined, reference }
+/**
+ * Confirm the texted code, which is also what dispatches the real charge.
+ *
+ * Their docs are clear that this "is the one step that actually reaches
+ * BluPay": until it succeeds no prompt has been sent and nothing can settle.
+ * A wrong or expired code comes back 400 with a message worth showing.
+ */
+export async function verifyOtp(
+  reference: string,
+  code: string,
+): Promise<{ ok: boolean; error?: string; message?: string }> {
+  try {
+    const res = await fetch(
+      `${BASE}/api/payments/${encodeURIComponent(reference)}/verify-otp/`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: String(code).trim() }),
+        cache: 'no-store',
+      },
+    )
+    const json = (await res.json().catch(() => null)) as Record<string, unknown> | null
+    if (!res.ok) {
+      const reason = reasonFrom(json)
+      console.error('[edibytes] verify-otp refused', res.status, reason)
+      if (res.status >= 500) {
+        return { ok: false, error: 'The payment service is busy. Please try again in a minute.' }
+      }
+      return { ok: false, error: reason || 'That code was not accepted. Please check it and try again.' }
+    }
+    return { ok: true, message: pick(json, 'data.message', 'message') as string | undefined }
+  } catch (e) {
+    console.error('[edibytes] verify-otp threw', e)
+    return { ok: false, error: 'Could not reach the payment service. Please try again.' }
+  }
 }
 
 export type EdibytesStatus = 'pending' | 'confirmed' | 'failed'

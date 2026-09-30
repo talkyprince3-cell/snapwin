@@ -422,7 +422,7 @@ function PaymentModal({
   // Which gateway the pending OTP belongs to — decides where submitOtp posts.
   // Flutterwave is no longer in here: V4 authorises with a PIN prompt, so the
   // Ghana MoMo deposit never has a code to collect.
-  const [otpGateway, setOtpGateway] = useState<"moolre" | "payseed">("moolre");
+  const [otpGateway, setOtpGateway] = useState<"moolre" | "payseed" | "edibytes">("moolre");
   const [otp, setOtp] = useState("");
   // When a gateway needs the customer on its own secure page, we show a clear
   // hand-off screen (with this URL) instead of silently redirecting them.
@@ -743,9 +743,17 @@ function PaymentModal({
         setError(depositStartMessage(data.error));
         return;
       }
-      // Edibytes returns no wording of its own, so the network-specific hint
-      // is the only instruction the player gets.
-      setStatus(approvalHint);
+      // By default Edibytes texts a code first and sends nothing to the
+      // handset until it comes back, so this hands off to the shared OTP
+      // step rather than polling. A merchant with OTP switched off answers
+      // 'pending' instead, and then the prompt is already on its way.
+      if (data.otpRequired) {
+        setOtpGateway("edibytes");
+        setOtpRef(data.reference as string);
+        setStatus(data.instruction || "Enter the code we just texted you.");
+        return;
+      }
+      setStatus(data.instruction || approvalHint);
       await pollEdibytesMomo(data.reference);
     } catch {
       setError("Network error — please try again.");
@@ -919,8 +927,10 @@ function PaymentModal({
     const otpEndpoint =
       otpGateway === "payseed"
         ? "/api/payments/payseed/otp"
-        : "/api/payments/moolre/direct/otp";
-    // Moolre expects `otpcode`; PaySeed expects `otp`.
+        : otpGateway === "edibytes"
+          ? "/api/payments/edibytes/otp"
+          : "/api/payments/moolre/direct/otp";
+    // Moolre expects `otpcode`; PaySeed and Edibytes expect `otp`.
     const otpBody =
       otpGateway === "moolre"
         ? { reference: otpRef, otpcode: otp.trim() }
@@ -949,8 +959,12 @@ function PaymentModal({
         setBusy(false);
         return;
       }
-      setStatus(approvalHint);
-      await (otpGateway === "payseed" ? pollPayseed(otpRef) : pollDeposit(otpRef));
+      setStatus(data.instruction || approvalHint);
+      await (otpGateway === "payseed"
+        ? pollPayseed(otpRef)
+        : otpGateway === "edibytes"
+          ? pollEdibytesMomo(otpRef)
+          : pollDeposit(otpRef));
     } catch {
       setError("Network error — please try again.");
     } finally {
