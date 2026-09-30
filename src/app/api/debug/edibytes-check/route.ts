@@ -71,7 +71,7 @@ export async function GET() {
     env,
     auth,
     hint: auth.ok
-      ? `The key works. If a deposit still fails at the prompt, the likely cause is the domain not being whitelisted on the Edibytes dashboard — it must list ${env.domain}.`
+      ? `The key works. This does not prove '${env.domain}' is whitelisted — that is only checked when a payment is opened, and opening one is exactly what this check refuses to do. The whitelist lives on the account this key belongs to (body starts ${env.keyPrefix}), so check it there rather than on whichever Edibytes account is open in the browser.`
       : 'The deployment cannot authenticate with Edibytes. Check EDIBYTES_SECRET_KEY in Vercel, then redeploy.',
   })
 }
