@@ -120,6 +120,11 @@ export async function sumUserMoney(): Promise<UserMoneyTotals> {
     const { data, error } = await sb
       .from('users')
       .select('country,currency,total_deposited,total_withdrawn')
+      // Paging without an order is paging over an arbitrary order: Postgres
+      // is free to hand back a different arrangement per query, so rows get
+      // counted twice and others never at all. Ordering by the primary key
+      // is stable and costs nothing.
+      .order('id', { ascending: true })
       .range(from, from + PAGE - 1)
     if (error) throw new Error(`users.sumMoney: ${error.message}`)
     const rows = data ?? []
