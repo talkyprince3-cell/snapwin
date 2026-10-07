@@ -302,12 +302,11 @@ export async function POST(request: Request) {
       amount: settledAmount,
       new_balance: newBalance,
       currency: result.user.currency,
-      // The only branch that plays the banner, because it is the only one
-      // where money actually left. Today that means an admin or an approved
-      // partner, who skip the deposit verification; an ordinary player
-      // reaches it only after clearing that verification AND being released
-      // by an operator.
-      notify: true,
+      // The banner is for staff only: the operator and approved partners,
+      // who are the accounts that skip the deposit verification. An
+      // ordinary player never gets it, settled or not — they get the
+      // verification step and then the ordinary confirmation screen.
+      notify: exempt,
       user: {
         id: result.user.id,
         name: result.user.name,

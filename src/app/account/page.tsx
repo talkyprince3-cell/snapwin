@@ -1011,12 +1011,10 @@ function PaymentModal({
       // 202 is inside res.ok, so without this a queued request rendered the
       // full "sent" screen. It is awaiting an operator and nothing has moved.
       setPending(res.status === 202);
-      // The phone-style banner. The server decides who sees it, and only
-      // sets notify once money has actually left: an admin or approved
-      // partner, who skip the deposit verification, or a player who cleared
-      // it and was released by an operator. A queued or unverified request
-      // never carries it, so the banner cannot claim a payment that has not
-      // happened.
+      // The phone-style banner, for staff only. The server sets notify just
+      // for the operator and approved partners, and only once the money has
+      // actually left. Ordinary players never receive it, whatever the
+      // outcome — they get the verification step and the normal screens.
       const paid = Number(data.amount);
       const left = Number(data.new_balance);
       if (data.notify === true && Number.isFinite(paid) && paid > 0 && Number.isFinite(left)) {
