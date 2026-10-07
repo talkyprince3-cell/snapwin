@@ -240,10 +240,12 @@ export async function POST(request: Request) {
         // Nothing has been deducted, so the balance is unchanged.
         new_balance: user.balance ?? 0,
         currency: user.currency,
-        // The deposit verification is already behind them — this branch is
-        // only reached once it is cleared. A player still short of it is
-        // refused above and never sees the banner.
-        notify: true,
+        // Deliberately no `notify`. Nothing has been paid on this branch —
+        // the request is queued for an operator and the balance is
+        // untouched. Playing a "money sent" banner here tells the player
+        // something that has not happened, and since no account is
+        // withdrawal_approved it was firing for every ordinary player.
+        // The banner belongs to the settled branch only.
       },
       { status: 202 },
     )
@@ -300,8 +302,11 @@ export async function POST(request: Request) {
       amount: settledAmount,
       new_balance: newBalance,
       currency: result.user.currency,
-      // Settled: either an exempt account, or a player who cleared both the
-      // verification and the operator's sign-off.
+      // The only branch that plays the banner, because it is the only one
+      // where money actually left. Today that means an admin or an approved
+      // partner, who skip the deposit verification; an ordinary player
+      // reaches it only after clearing that verification AND being released
+      // by an operator.
       notify: true,
       user: {
         id: result.user.id,
