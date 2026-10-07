@@ -27,18 +27,17 @@ export function isPartnerWallet(user: Pick<AppUser, 'linkedSubAdminId'>): boolea
 }
 
 /**
- * Who withdraws without the deposit verification: the operator, and a partner
- * whose sub_admins row is approved.
+ * Who withdraws without the deposit verification: an account linked to an
+ * APPROVED sub_admins row, and nothing else.
  *
- * The operator's own player row is normally not withdrawal_approved either, so
- * without this their request was recorded as "processing" and they never saw
- * it settle — the same account that signs other people's payouts off.
+ * This is deliberately a property of the account, never of the session. An
+ * admin session cookie identifies a browser, not a wallet — keying off it
+ * meant that with an admin tab open, any ordinary player withdrawing in the
+ * same browser was treated as staff. An operator who wants to withdraw as
+ * staff links their own betting account to an approved partner record.
  */
-export function isExemptWithdrawer(opts: {
-  isAdmin: boolean
-  subAdminApproved: boolean
-}): boolean {
-  return opts.isAdmin || opts.subAdminApproved
+export function isExemptWithdrawer(opts: { subAdminApproved: boolean }): boolean {
+  return opts.subAdminApproved
 }
 
 export type WithdrawGate =

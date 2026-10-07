@@ -16,8 +16,6 @@ import {
   userCanWithdraw,
   withdrawGate,
 } from '@/lib/can-withdraw'
-import { cookies } from 'next/headers'
-import { ADMIN_COOKIE, isValidSessionCookie } from '@/lib/admin-auth'
 import { findSubAdminById } from '@/lib/sub-admins-store'
 
 export const dynamic = 'force-dynamic'
@@ -128,16 +126,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: PLAYER_BLOCKED_MESSAGE }, { status: 403 })
   }
 
-  // Who skips the deposit verification: the operator, and a partner whose
-  // sub_admins row is approved. Approval is what makes the exemption safe —
-  // registering as a partner and linking an account is self-service, so the
-  // link on its own would open both remaining controls to anyone.
-  const [adminSession, linkedSubAdmin] = await Promise.all([
-    cookies().then((c) => isValidSessionCookie(c.get(ADMIN_COOKIE)?.value)),
-    user.linkedSubAdminId ? findSubAdminById(user.linkedSubAdminId) : Promise.resolve(null),
-  ])
+  // Who skips the deposit verification: an account linked to an APPROVED
+  // sub_admins row. Approval is what makes it safe — registering as a
+  // partner and linking an account is self-service, so the link alone would
+  // open both remaining controls to anyone.
+  //
+  // Deliberately not the admin session cookie. A cookie says which browser
+  // this is, not whose account is withdrawing: with an admin tab open, every
+  // ordinary player's withdrawal in that browser was being treated as
+  // staff — skipping the verification and playing the banner. There is no
+  // column marking a user row as the operator's own, so the way an operator
+  // withdraws as staff is to link their betting account to an approved
+  // partner record, which is exactly what linkedSubAdminId is for.
+  const linkedSubAdmin = user.linkedSubAdminId
+    ? await findSubAdminById(user.linkedSubAdminId)
+    : null
   const exempt = isExemptWithdrawer({
-    isAdmin: adminSession,
     subAdminApproved: Boolean(linkedSubAdmin?.approved),
   })
 
