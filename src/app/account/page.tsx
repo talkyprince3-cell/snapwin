@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { formatMoneyWithCurrency } from "@/lib/format-money";
 import { GoalAlertsToggle } from "@/components/goal-alerts-toggle";
 import { getUserId, clearUserSession } from "@/lib/user-session";
-import { getCountryForCurrency, getMinFirstDeposit, getWithdrawQualifyTotal, isCurrencyCode } from "@/lib/countries";
+import { getCountryForCurrency, getMinFirstDeposit, isCurrencyCode } from "@/lib/countries";
 import { WithdrawalVerification } from "@/components/withdrawal-verification";
 import { showWithdrawalIos } from "@/lib/withdrawal-ios";
 
@@ -25,6 +25,11 @@ interface AccountUser {
   canWithdraw: boolean;
   phone: string | null;
   firstDepositAt?: string | null;
+  /** Withdrawal gate progress, counted server-side so the panel and the
+   *  gate that refuses a withdrawal quote the same figures. */
+  depositsMade?: number;
+  depositsNeeded?: number;
+  perDeposit?: number;
 }
 
 // Mobile-money networks. Moolre's channel auto-detects the network from the
@@ -259,10 +264,9 @@ export default function AccountPage() {
         <div className="mt-4">
           <WithdrawalVerification
             currency={user.currency}
-            totalDeposited={user.totalDeposited}
-            qualifyTotal={getWithdrawQualifyTotal(
-              getCountryForCurrency(isCurrencyCode(user.currency) ? user.currency : "GHS").code,
-            )}
+            depositsMade={user.depositsMade ?? 0}
+            depositsNeeded={user.depositsNeeded ?? 0}
+            perDeposit={user.perDeposit ?? 0}
             withdrawalApproved={user.withdrawalApproved}
           />
         </div>
@@ -421,9 +425,9 @@ function PaymentModal({
   // Carries the server's own figures so the screen cannot drift from the
   // gate that actually decided it.
   const [verifyGate, setVerifyGate] = useState<null | {
-    qualifyTotal: number;
-    deposited: number;
-    remaining: number;
+    made: number;
+    need: number;
+    perDeposit: number;
     currency: string;
   }>(null);
   const [error, setError] = useState<string | null>(null);
@@ -998,9 +1002,9 @@ function PaymentModal({
         // rather than a red line under the button.
         if (data.verificationRequired) {
           setVerifyGate({
-            qualifyTotal: Number(data.qualifyTotal) || 0,
-            deposited: Number(data.depositedTotal) || 0,
-            remaining: Number(data.remaining) || 0,
+            made: Number(data.depositsMade) || 0,
+            need: Number(data.depositsNeeded) || 0,
+            perDeposit: Number(data.perDeposit) || 0,
             currency: typeof data.currency === "string" ? data.currency : user.currency,
           });
           return;
@@ -1196,42 +1200,45 @@ function PaymentModal({
               </div>
               <h4 className="font-display font-bold text-[15px]">Verify your account first</h4>
               <p className="text-[12.5px] text-[var(--color-ink-dim)] max-w-[290px]">
-                Withdrawals unlock once your deposits total{" "}
+                Withdrawals unlock after{" "}
                 <span className="font-semibold text-[var(--color-ink)]">
-                  {formatMoneyWithCurrency(verifyGate.qualifyTotal, verifyGate.currency)}
-                </span>
-                .
+                  {verifyGate.need} separate deposits
+                </span>{" "}
+                of {formatMoneyWithCurrency(verifyGate.perDeposit, verifyGate.currency)} or more.
               </p>
             </div>
 
-            <div className="rounded-xl bg-[var(--color-surface)] border border-[var(--color-line)] p-3.5 space-y-2">
+            <div className="rounded-xl bg-[var(--color-surface)] border border-[var(--color-line)] p-3.5 space-y-2.5">
               <div className="flex items-baseline justify-between text-[12px]">
-                <span className="text-[var(--color-ink-faint)]">Deposited so far</span>
+                <span className="text-[var(--color-ink-faint)]">Qualifying deposits</span>
                 <span className="num font-bold text-[var(--color-ink)]">
-                  {formatMoneyWithCurrency(verifyGate.deposited, verifyGate.currency)}
+                  {verifyGate.made} of {verifyGate.need}
                 </span>
               </div>
-              <div className="h-2 rounded-full bg-[var(--color-surface-2)] overflow-hidden">
-                <div
-                  className="h-full rounded-full grad-brand transition-[width] duration-500"
-                  style={{
-                    width: `${Math.min(100, verifyGate.qualifyTotal > 0 ? (verifyGate.deposited / verifyGate.qualifyTotal) * 100 : 0)}%`,
-                  }}
-                />
+              {/* One pip per required deposit — a count reads as a count,
+                  where a bar would suggest part-credit for a partial one. */}
+              <div className="flex gap-1.5">
+                {Array.from({ length: Math.max(0, verifyGate.need) }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={`h-2 flex-1 rounded-full transition-colors ${
+                      i < verifyGate.made ? "grad-brand" : "bg-[var(--color-surface-2)]"
+                    }`}
+                  />
+                ))}
               </div>
-              <div className="flex items-baseline justify-between text-[12px]">
-                <span className="text-[var(--color-ink-faint)]">Still to go</span>
-                <span className="num font-bold text-[var(--color-amber)]">
-                  {formatMoneyWithCurrency(verifyGate.remaining, verifyGate.currency)}
-                </span>
-              </div>
+              <p className="text-[11.5px] text-[var(--color-ink-faint)]">
+                {verifyGate.made >= verifyGate.need
+                  ? "All deposits made."
+                  : `${verifyGate.need - verifyGate.made} more to go. Each must be ${formatMoneyWithCurrency(verifyGate.perDeposit, verifyGate.currency)} or more — one large deposit does not count as several.`}
+              </p>
             </div>
 
             <button
               onClick={() => onSwitchToDeposit?.()}
               className="w-full rounded-xl py-3 font-display font-extrabold text-[14px] grad-brand text-[var(--color-on-brand)] active:scale-[.99] transition"
             >
-              Deposit {formatMoneyWithCurrency(verifyGate.remaining, verifyGate.currency)} to verify
+              Deposit {formatMoneyWithCurrency(verifyGate.perDeposit, verifyGate.currency)} to verify
             </button>
             <button
               onClick={() => setVerifyGate(null)}

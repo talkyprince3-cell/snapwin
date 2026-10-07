@@ -1,4 +1,4 @@
-import { getWithdrawQualifyTotal, isCountryCode } from '@/lib/countries'
+import { getVerificationAmount, getWithdrawQualifyCount, isCountryCode } from '@/lib/countries'
 import type { AppUser } from '@/lib/domain-types'
 
 export const PLAYER_BLOCKED_MESSAGE =
@@ -41,8 +41,21 @@ export function isExemptWithdrawer(opts: { subAdminApproved: boolean }): boolean
 }
 
 export type WithdrawGate =
-  /** Never deposited enough to unlock withdrawals — refuse and say how far off. */
-  | { kind: 'unverified'; qualifyTotal: number; deposited: number; remaining: number }
+  /**
+   * Has not made enough qualifying deposits — refuse and say how far off.
+   *
+   * `made` / `need` are the counts the gate actually decided on. The amount
+   * fields describe the same requirement in money, for the progress bar.
+   */
+  | {
+      kind: 'unverified'
+      made: number
+      need: number
+      perDeposit: number
+      qualifyTotal: number
+      deposited: number
+      remaining: number
+    }
   /** Verified, but an operator still has to release it. */
   | { kind: 'needs-approval' }
   /** Settle now. `requireDeposit` stays on for players and off for partners. */
@@ -52,25 +65,42 @@ export type WithdrawGate =
  * Which of the four withdrawal paths this account takes.
  *
  * Kept here rather than inline in the route so the ordering is stated once:
- * partner first, then the deposit-total gate, then admin approval. Reversing
- * any two of those changes who can take money out.
+ * partner first, then the deposit gate, then admin approval. Reversing any
+ * two of those changes who can take money out.
+ *
+ * `depositCount` is how many settled deposits of at least the per-deposit
+ * minimum the player has made. It is passed in rather than read here because
+ * counting them is a database query and this stays pure.
  */
-export function withdrawGate(user: AppUser, exempt = false): WithdrawGate {
-  // `exempt` covers the operator and an APPROVED partner. The bare link used
-  // to be enough, which meant anyone who registered as a partner and linked a
-  // betting account walked past both remaining controls.
+export function withdrawGate(
+  user: AppUser,
+  exempt = false,
+  depositCount = 0,
+): WithdrawGate {
+  // `exempt` is an approved partner. A bare link used to be enough, which
+  // meant anyone who registered as a partner and linked a betting account
+  // walked past both remaining controls.
   if (exempt) {
     return { kind: 'settle', requireDeposit: false, instant: true }
   }
 
-  const qualifyTotal = isCountryCode(user.country) ? getWithdrawQualifyTotal(user.country) : 0
-  const deposited = user.totalDeposited ?? 0
-  if (deposited < qualifyTotal) {
+  const country = isCountryCode(user.country) ? user.country : null
+  const need = country ? getWithdrawQualifyCount(country) : 0
+  const perDeposit = country ? getVerificationAmount(country) : 0
+
+  // Counted, not summed. One large payment is not the same as several: the
+  // old total gate let a single deposit clear the whole requirement.
+  if (depositCount < need) {
+    const deposited = user.totalDeposited ?? 0
+    const qualifyTotal = +(need * perDeposit).toFixed(2)
     return {
       kind: 'unverified',
+      made: depositCount,
+      need,
+      perDeposit,
       qualifyTotal,
       deposited,
-      remaining: +(qualifyTotal - deposited).toFixed(2),
+      remaining: +Math.max(0, qualifyTotal - deposited).toFixed(2),
     }
   }
 

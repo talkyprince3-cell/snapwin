@@ -112,6 +112,35 @@ export async function listPaymentsForUser(userId: string): Promise<PaymentRecord
 }
 
 /**
+ * How many settled deposits of at least `minAmount` this player has made.
+ *
+ * The withdrawal gate counts deposits rather than summing them: three
+ * payments of GH₵200 unlock it, one of GH₵600 does not. Only `success` rows
+ * count, so a pending or refused attempt never moves a player along.
+ *
+ * Withdrawals live in the same table and are told apart by metadata.type, as
+ * everywhere else here, so they are filtered out in code rather than with a
+ * JSONB predicate.
+ */
+export async function countQualifyingDeposits(
+  userId: string,
+  minAmount: number,
+): Promise<number> {
+  const { data, error } = await supabaseServer()
+    .from('payments')
+    .select('amount,metadata')
+    .eq('user_id', userId)
+    .eq('status', 'success')
+  if (error) throw new Error(`payments.countQualifying: ${error.message}`)
+
+  return ((data ?? []) as Pick<PaymentRow, 'amount' | 'metadata'>[]).filter((row) => {
+    if ((row.metadata ?? {}).type === 'withdrawal') return false
+    // A hair under, to forgive a rounding cent on the gateway's figure.
+    return Number(row.amount) + 0.01 >= minAmount
+  }).length
+}
+
+/**
  * Admin list — every payment row, newest first. Filter by type client-side
  * (the JSONB->>'type' filter isn't typed in supabase-js without escapes, so we
  * just fetch and filter since this table stays small in the demo deployment).

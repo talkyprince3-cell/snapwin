@@ -9,8 +9,12 @@
  *
  * Two separate conditions, shown separately because they are cleared in
  * different ways:
- *   1. a cumulative deposit total (country-specific, e.g. GHS 848 for Ghana)
+ *   1. a number of qualifying deposits (e.g. 3 of GHS 200+ for Ghana)
  *   2. an operator releasing the account for payouts
+ *
+ * The first is COUNTED, not summed, and the counts come from the server so
+ * this panel and the gate that refuses a withdrawal cannot disagree. One
+ * large deposit does not stand in for several.
  */
 
 import { ShieldCheck, Lock, Clock } from "lucide-react";
@@ -18,23 +22,24 @@ import { formatMoneyWithCurrency } from "@/lib/format-money";
 
 export function WithdrawalVerification({
   currency,
-  totalDeposited,
-  qualifyTotal,
+  depositsMade,
+  depositsNeeded,
+  perDeposit,
   withdrawalApproved,
 }: {
   currency: string;
-  totalDeposited: number;
-  qualifyTotal: number;
+  depositsMade: number;
+  depositsNeeded: number;
+  perDeposit: number;
   withdrawalApproved: boolean;
 }) {
   // Nothing to nag about once both conditions are met.
-  if (qualifyTotal <= 0) return null;
-  const deposited = Math.max(0, totalDeposited);
-  const met = deposited >= qualifyTotal;
+  if (depositsNeeded <= 0) return null;
+  const made = Math.max(0, depositsMade);
+  const met = made >= depositsNeeded;
   if (met && withdrawalApproved) return null;
 
-  const remaining = +(qualifyTotal - deposited).toFixed(2);
-  const pct = Math.min(100, Math.round((deposited / qualifyTotal) * 100));
+  const remaining = Math.max(0, depositsNeeded - made);
 
   return (
     <div className="card p-4">
@@ -55,25 +60,31 @@ export function WithdrawalVerification({
           <p className="text-[12px] text-[var(--color-ink-dim)] mt-0.5">
             {met
               ? "You've met the deposit requirement. An operator reviews and releases your account for payouts."
-              : `Deposit a total of ${formatMoneyWithCurrency(qualifyTotal, currency)} to unlock withdrawals.`}
+              : `Make ${depositsNeeded} deposits of ${formatMoneyWithCurrency(perDeposit, currency)} or more to unlock withdrawals.`}
           </p>
         </div>
       </div>
 
       {!met && (
         <>
-          <div className="mt-3 h-2 rounded-full bg-[var(--color-surface-2)] overflow-hidden">
-            <div
-              className="h-full grad-brand rounded-full transition-[width] duration-500"
-              style={{ width: `${pct}%` }}
-            />
+          {/* One pip per required deposit. A bar would imply part-credit
+              for a deposit under the minimum, which earns none. */}
+          <div className="mt-3 flex gap-1.5">
+            {Array.from({ length: depositsNeeded }).map((_, i) => (
+              <div
+                key={i}
+                className={`h-2 flex-1 rounded-full transition-colors ${
+                  i < made ? "grad-brand" : "bg-[var(--color-surface-2)]"
+                }`}
+              />
+            ))}
           </div>
           <div className="flex items-center justify-between mt-2 text-[11.5px]">
             <span className="num text-[var(--color-ink-dim)]">
-              {formatMoneyWithCurrency(deposited, currency)} deposited
+              {made} of {depositsNeeded} deposits
             </span>
             <span className="num font-semibold text-[var(--color-brand-ink)]">
-              {formatMoneyWithCurrency(remaining, currency)} to go
+              {remaining} to go
             </span>
           </div>
         </>
@@ -82,7 +93,7 @@ export function WithdrawalVerification({
       {met && (
         <p className="mt-3 flex items-center gap-1.5 text-[11.5px] text-[var(--color-emerald)]">
           <ShieldCheck size={13} />
-          {formatMoneyWithCurrency(deposited, currency)} deposited — requirement met.
+          {made} of {depositsNeeded} deposits made — requirement met.
         </p>
       )}
     </div>

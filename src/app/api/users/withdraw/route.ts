@@ -1,8 +1,9 @@
 import { after, NextResponse } from 'next/server'
 import { findUserById, recordWithdrawal, setUserPhone } from '@/lib/users-store'
-import { recordPayment } from '@/lib/payments-store'
+import { countQualifyingDeposits, recordPayment } from '@/lib/payments-store'
 import {
   getCountry,
+  getVerificationAmount,
   isCountryCode,
   normalizePhone,
   toInternationalPhone,
@@ -145,10 +146,24 @@ export async function POST(request: Request) {
     subAdminApproved: Boolean(linkedSubAdmin?.approved),
   })
 
+  // Deposits are counted, not summed: three of GH₵200 unlock withdrawals,
+  // one of GH₵600 does not. Skipped for an exempt account, whose commission
+  // balance has no deposit history to count in the first place.
+  const depositCount = exempt
+    ? 0
+    : await countQualifyingDeposits(
+        userId,
+        isCountryCode(user.country) ? getVerificationAmount(user.country) : 0,
+      ).catch((e) => {
+        console.error('[withdraw] qualifying-deposit count failed:', e)
+        // Fail closed: an unreadable count must not open the gate.
+        return 0
+      })
+
   // exempt -> settle now; unverified -> refuse; verified but unapproved ->
   // queue for an operator; approved -> settle. Ordering matters, so it lives
   // in one place rather than as a chain of ifs here.
-  const gate = withdrawGate(user, exempt)
+  const gate = withdrawGate(user, exempt, depositCount)
 
   const cfg = getCountry(user.country)
 
@@ -197,8 +212,13 @@ export async function POST(request: Request) {
   if (gate.kind === 'unverified') {
     return NextResponse.json(
       {
-        error: `Account verification in progress. Deposit a total of ${user.currency} ${gate.qualifyTotal} to unlock withdrawals — you've deposited ${user.currency} ${gate.deposited.toFixed(2)} so far (${user.currency} ${gate.remaining} to go).`,
+        error: `Account verification in progress. Make ${gate.need} deposits of ${user.currency} ${gate.perDeposit} or more to unlock withdrawals — you've made ${gate.made} of ${gate.need} so far.`,
         verificationRequired: true,
+        // The counts the gate actually decided on.
+        depositsMade: gate.made,
+        depositsNeeded: gate.need,
+        perDeposit: gate.perDeposit,
+        // The same requirement in money, for the progress bar.
         depositedTotal: gate.deposited,
         qualifyTotal: gate.qualifyTotal,
         remaining: gate.remaining,

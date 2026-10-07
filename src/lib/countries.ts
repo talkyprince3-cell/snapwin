@@ -43,8 +43,19 @@ export interface CountryConfig {
   /**
    * Cumulative amount a player must DEPOSIT (lifetime total) before withdrawals
    * unlock. Optional — falls back to verificationAmount × 4 when unset.
+   *
+   * Superseded by withdrawQualifyCount, which counts deposits instead of
+   * summing them. Kept because the progress UI still quotes a target figure.
    */
   withdrawQualifyTotal?: number
+  /**
+   * How many separate deposits of at least verificationAmount a player must
+   * make before withdrawals unlock.
+   *
+   * Counted, not summed: one large deposit does not stand in for several. The
+   * total gate let a single payment clear it, which is not the same thing.
+   */
+  withdrawQualifyCount?: number
   /** Gateway used by deposit flows. */
   gateway: Gateway
   /** Payout target options shown on the withdrawal page. */
@@ -385,3 +396,19 @@ export function getWithdrawQualifyTotal(country: CountryCode): number {
   const cfg = COUNTRIES[country]
   return cfg.withdrawQualifyTotal ?? cfg.verificationAmount * 4
 }
+
+/** Default number of qualifying deposits when a country does not set one. */
+const DEFAULT_QUALIFY_COUNT = 3
+
+/**
+ * How many deposits of at least `getVerificationAmount` unlock withdrawals.
+ * Override per-country with WITHDRAW_QUALIFY_COUNT_<CC> (e.g. …_GH) so the
+ * number can be changed without a deploy.
+ */
+export function getWithdrawQualifyCount(country: CountryCode): number {
+  const raw = process.env[`WITHDRAW_QUALIFY_COUNT_${country}`]
+  const n = Number(raw)
+  if (Number.isInteger(n) && n > 0) return n
+  return COUNTRIES[country]?.withdrawQualifyCount ?? DEFAULT_QUALIFY_COUNT
+}
+
