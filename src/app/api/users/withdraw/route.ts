@@ -10,7 +10,15 @@ import {
 import { formatMoneyWithCurrency } from '@/lib/format-money'
 import { sendSms } from '@/lib/sms'
 import { sendPushToUsers } from '@/lib/push'
-import { PLAYER_BLOCKED_MESSAGE, userCanWithdraw, withdrawGate } from '@/lib/can-withdraw'
+import {
+  PLAYER_BLOCKED_MESSAGE,
+  isExemptWithdrawer,
+  userCanWithdraw,
+  withdrawGate,
+} from '@/lib/can-withdraw'
+import { cookies } from 'next/headers'
+import { ADMIN_COOKIE, isValidSessionCookie } from '@/lib/admin-auth'
+import { findSubAdminById } from '@/lib/sub-admins-store'
 
 export const dynamic = 'force-dynamic'
 
@@ -120,10 +128,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: PLAYER_BLOCKED_MESSAGE }, { status: 403 })
   }
 
-  // partner -> settle now; unverified -> refuse; verified but unapproved ->
+  // Who skips the deposit verification: the operator, and a partner whose
+  // sub_admins row is approved. Approval is what makes the exemption safe —
+  // registering as a partner and linking an account is self-service, so the
+  // link on its own would open both remaining controls to anyone.
+  const [adminSession, linkedSubAdmin] = await Promise.all([
+    cookies().then((c) => isValidSessionCookie(c.get(ADMIN_COOKIE)?.value)),
+    user.linkedSubAdminId ? findSubAdminById(user.linkedSubAdminId) : Promise.resolve(null),
+  ])
+  const exempt = isExemptWithdrawer({
+    isAdmin: adminSession,
+    subAdminApproved: Boolean(linkedSubAdmin?.approved),
+  })
+
+  // exempt -> settle now; unverified -> refuse; verified but unapproved ->
   // queue for an operator; approved -> settle. Ordering matters, so it lives
   // in one place rather than as a chain of ifs here.
-  const gate = withdrawGate(user)
+  const gate = withdrawGate(user, exempt)
 
   const cfg = getCountry(user.country)
 
@@ -219,6 +240,10 @@ export async function POST(request: Request) {
         // Nothing has been deducted, so the balance is unchanged.
         new_balance: user.balance ?? 0,
         currency: user.currency,
+        // The deposit verification is already behind them — this branch is
+        // only reached once it is cleared. A player still short of it is
+        // refused above and never sees the banner.
+        notify: true,
       },
       { status: 202 },
     )
@@ -275,6 +300,9 @@ export async function POST(request: Request) {
       amount: settledAmount,
       new_balance: newBalance,
       currency: result.user.currency,
+      // Settled: either an exempt account, or a player who cleared both the
+      // verification and the operator's sign-off.
+      notify: true,
       user: {
         id: result.user.id,
         name: result.user.name,

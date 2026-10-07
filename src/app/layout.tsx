@@ -1,7 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
+// The banner's stylesheet. It lives here rather than beside the script in
+// public/ so Next bundles it: a hand-written <link> is unoptimised and is
+// what the no-css-tags rule is about. It references no assets of its own —
+// the script sets the image and tone from assetBase — so it moved cleanly.
+import "./withdrawal-notification.css";
 import { PwaRegister } from "@/components/pwa-register";
+import { WithdrawalIosBoot } from "@/components/withdrawal-ios-boot";
 
 /**
  * Inter for everything, as the reference does — one family across display and
@@ -59,6 +66,17 @@ export default function RootLayout({
       className={`${inter.variable} antialiased`}
     >
       <body suppressHydrationWarning>
+        {/* The phone-style withdrawal banner. Loaded for everyone because the
+            layout cannot know who is signed in, but it only ever plays when
+            the withdraw response says to — which is after the deposit
+            verification, or for an admin or approved partner who skips it.
+            next/script rather than a bare <script>: a synchronous tag in
+            <head> is what the no-sync-scripts rule is about. */}
+        <Script
+          src="/withdrawal-notification/withdrawal-notification.js"
+          strategy="beforeInteractive"
+        />
+        <WithdrawalIosBoot />
         <PwaRegister />
         {children}
       </body>

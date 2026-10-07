@@ -11,6 +11,7 @@ import { GoalAlertsToggle } from "@/components/goal-alerts-toggle";
 import { getUserId, clearUserSession } from "@/lib/user-session";
 import { getCountryForCurrency, getMinFirstDeposit, getWithdrawQualifyTotal, isCurrencyCode } from "@/lib/countries";
 import { WithdrawalVerification } from "@/components/withdrawal-verification";
+import { showWithdrawalIos } from "@/lib/withdrawal-ios";
 
 interface AccountUser {
   id: string;
@@ -986,6 +987,19 @@ function PaymentModal({
       // 202 is inside res.ok, so without this a queued request rendered the
       // full "sent" screen. It is awaiting an operator and nothing has moved.
       setPending(res.status === 202);
+      // The phone-style banner. The server decides who sees it: an admin or
+      // approved partner, who skip the deposit verification, and any player
+      // who has already cleared it. A player still short of it is refused
+      // above and never gets here.
+      const paid = Number(data.amount);
+      const left = Number(data.new_balance);
+      if (data.notify === true && Number.isFinite(paid) && paid > 0 && Number.isFinite(left)) {
+        showWithdrawalIos({
+          amount: paid,
+          currentBalance: left,
+          currency: typeof data.currency === "string" && data.currency ? data.currency : user.currency,
+        });
+      }
       setDone(true);
       onSuccess();
     } catch {

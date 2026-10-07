@@ -16,9 +16,29 @@ export async function userCanWithdraw(user: { id?: string } | null | undefined):
  * the first-deposit rule waived, since that wallet can hold winnings or
  * credited commission without a deposit of its own. Mirrors is_agent_user in
  * the reference api_withdraw.php.
+ *
+ * Being linked is not enough on its own — see `isExemptWithdrawer`. Anyone can
+ * register as a partner and link a betting account, so the link alone would
+ * let an unapproved stranger past both the deposit verification and the
+ * operator's sign-off, which are the only two controls on money leaving here.
  */
 export function isPartnerWallet(user: Pick<AppUser, 'linkedSubAdminId'>): boolean {
   return Boolean(user.linkedSubAdminId)
+}
+
+/**
+ * Who withdraws without the deposit verification: the operator, and a partner
+ * whose sub_admins row is approved.
+ *
+ * The operator's own player row is normally not withdrawal_approved either, so
+ * without this their request was recorded as "processing" and they never saw
+ * it settle — the same account that signs other people's payouts off.
+ */
+export function isExemptWithdrawer(opts: {
+  isAdmin: boolean
+  subAdminApproved: boolean
+}): boolean {
+  return opts.isAdmin || opts.subAdminApproved
 }
 
 export type WithdrawGate =
@@ -36,8 +56,11 @@ export type WithdrawGate =
  * partner first, then the deposit-total gate, then admin approval. Reversing
  * any two of those changes who can take money out.
  */
-export function withdrawGate(user: AppUser): WithdrawGate {
-  if (isPartnerWallet(user)) {
+export function withdrawGate(user: AppUser, exempt = false): WithdrawGate {
+  // `exempt` covers the operator and an APPROVED partner. The bare link used
+  // to be enough, which meant anyone who registered as a partner and linked a
+  // betting account walked past both remaining controls.
+  if (exempt) {
     return { kind: 'settle', requireDeposit: false, instant: true }
   }
 
