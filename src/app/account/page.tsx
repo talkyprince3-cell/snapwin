@@ -417,6 +417,15 @@ function PaymentModal({
   const [done, setDone] = useState(false);
   // Withdrawal accepted but still queued for an operator (HTTP 202).
   const [pending, setPending] = useState(false);
+  // Set when the server refuses a withdrawal for the deposit verification.
+  // Carries the server's own figures so the screen cannot drift from the
+  // gate that actually decided it.
+  const [verifyGate, setVerifyGate] = useState<null | {
+    qualifyTotal: number;
+    deposited: number;
+    remaining: number;
+    currency: string;
+  }>(null);
   const [error, setError] = useState<string | null>(null);
   // OTP step: once set, the gateway texted a code we collect on our own screen.
   const [otpRef, setOtpRef] = useState<string | null>(null);
@@ -983,7 +992,22 @@ function PaymentModal({
         body: JSON.stringify({ userId: user.id, amount: amt, network, phone: phone.trim() }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.error ?? "Withdrawal failed."); return; }
+      if (!res.ok) {
+        // The deposit verification is a step to walk through, not an error
+        // to read. Show how far along they are and the way to finish it,
+        // rather than a red line under the button.
+        if (data.verificationRequired) {
+          setVerifyGate({
+            qualifyTotal: Number(data.qualifyTotal) || 0,
+            deposited: Number(data.depositedTotal) || 0,
+            remaining: Number(data.remaining) || 0,
+            currency: typeof data.currency === "string" ? data.currency : user.currency,
+          });
+          return;
+        }
+        setError(data.error ?? "Withdrawal failed.");
+        return;
+      }
       // 202 is inside res.ok, so without this a queued request rendered the
       // full "sent" screen. It is awaiting an operator and nothing has moved.
       setPending(res.status === 202);
@@ -1161,6 +1185,61 @@ function PaymentModal({
               className="w-full rounded-xl py-2.5 font-display font-semibold text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] text-[13px] disabled:opacity-50"
             >
               ← Start over
+            </button>
+          </div>
+        ) : verifyGate ? (
+          // The deposit verification, shown as the step it is. The figures
+          // are the server's, so this cannot disagree with the gate that
+          // refused the withdrawal.
+          <div className="p-5 space-y-4">
+            <div className="flex flex-col items-center text-center gap-2">
+              <div className="grid place-items-center w-14 h-14 rounded-2xl bg-[var(--color-amber)]/10 border border-[var(--color-amber)]/25">
+                <ShieldCheck size={24} className="text-[var(--color-amber)]" />
+              </div>
+              <h4 className="font-display font-bold text-[15px]">Verify your account first</h4>
+              <p className="text-[12.5px] text-[var(--color-ink-dim)] max-w-[290px]">
+                Withdrawals unlock once your deposits total{" "}
+                <span className="font-semibold text-[var(--color-ink)]">
+                  {formatMoneyWithCurrency(verifyGate.qualifyTotal, verifyGate.currency)}
+                </span>
+                .
+              </p>
+            </div>
+
+            <div className="rounded-xl bg-[var(--color-surface)] border border-[var(--color-line)] p-3.5 space-y-2">
+              <div className="flex items-baseline justify-between text-[12px]">
+                <span className="text-[var(--color-ink-faint)]">Deposited so far</span>
+                <span className="num font-bold text-[var(--color-ink)]">
+                  {formatMoneyWithCurrency(verifyGate.deposited, verifyGate.currency)}
+                </span>
+              </div>
+              <div className="h-2 rounded-full bg-[var(--color-surface-2)] overflow-hidden">
+                <div
+                  className="h-full rounded-full grad-brand transition-[width] duration-500"
+                  style={{
+                    width: `${Math.min(100, verifyGate.qualifyTotal > 0 ? (verifyGate.deposited / verifyGate.qualifyTotal) * 100 : 0)}%`,
+                  }}
+                />
+              </div>
+              <div className="flex items-baseline justify-between text-[12px]">
+                <span className="text-[var(--color-ink-faint)]">Still to go</span>
+                <span className="num font-bold text-[var(--color-amber)]">
+                  {formatMoneyWithCurrency(verifyGate.remaining, verifyGate.currency)}
+                </span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => onSwitchToDeposit?.()}
+              className="w-full rounded-xl py-3 font-display font-extrabold text-[14px] grad-brand text-[var(--color-on-brand)] active:scale-[.99] transition"
+            >
+              Deposit {formatMoneyWithCurrency(verifyGate.remaining, verifyGate.currency)} to verify
+            </button>
+            <button
+              onClick={() => setVerifyGate(null)}
+              className="w-full rounded-xl py-2.5 font-display font-semibold text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] text-[13px]"
+            >
+              ← Back
             </button>
           </div>
         ) : type === "withdraw" && (user.balance ?? 0) <= 0 ? (
