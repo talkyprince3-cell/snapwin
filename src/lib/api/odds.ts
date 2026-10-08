@@ -172,11 +172,17 @@ const FINISHED_STATUSES = new Set([
 async function apiFetch<T>(
   path: string,
   apiKey: string,
-  revalidateSeconds: number,
+  /**
+   * Seconds to keep the response in the Data Cache, or 'fresh' to bypass the
+   * cache entirely for this call (used to re-check an answer we don't trust).
+   */
+  revalidateSeconds: number | 'fresh',
 ): Promise<ApiResponse<T> | null> {
   const res = await fetch(`${API_BASE}${path}`, {
     headers: { 'x-apisports-key': apiKey },
-    next: { revalidate: revalidateSeconds },
+    ...(revalidateSeconds === 'fresh'
+      ? { cache: 'no-store' as const }
+      : { next: { revalidate: revalidateSeconds } }),
   })
   if (!res.ok) {
     if (res.status === 401 || res.status === 403) {
@@ -205,11 +211,39 @@ async function apiFetch<T>(
   return json
 }
 
+/**
+ * When each date was last re-checked after coming back empty. Per instance,
+ * which is all this needs to be: it only bounds how often a genuinely empty
+ * date is re-asked, and being wrong costs one upstream call.
+ */
+const lastEmptyRecheck = new Map<string, number>()
+const EMPTY_RECHECK_MS = 60_000
+
 async function fetchFixturesByDate(date: string, apiKey: string): Promise<Fixture[]> {
   // Pre-match fixtures barely change during the day — cache 30 min to spare the
   // (free-tier) request quota.
   const json = await apiFetch<Fixture[]>(`/fixtures?date=${date}`, apiKey, 1800)
-  return json?.response ?? []
+  const list = json?.response ?? []
+  if (list.length > 0) return list
+
+  // An empty answer is not worth 30 minutes of cache. A single bad moment
+  // upstream used to blank the whole board until the entry expired, and the
+  // feed then blamed the provider for having no fixtures when it had
+  // thousands. A cached empty is re-asked without the cache before it is
+  // believed, at most once a minute per date so a date that really is empty
+  // costs one call a minute rather than one per visitor.
+  const now = Date.now()
+  if (now - (lastEmptyRecheck.get(date) ?? 0) < EMPTY_RECHECK_MS) return list
+  lastEmptyRecheck.set(date, now)
+
+  const fresh = await apiFetch<Fixture[]>(`/fixtures?date=${date}`, apiKey, 'fresh')
+  const freshList = fresh?.response ?? []
+  if (freshList.length > 0) {
+    console.warn(
+      `[odds] cached empty fixtures for ${date} overruled — upstream has ${freshList.length}`,
+    )
+  }
+  return freshList
 }
 
 async function fetchLiveFixtures(apiKey: string): Promise<Fixture[]> {

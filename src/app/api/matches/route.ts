@@ -136,7 +136,12 @@ export async function GET(request: Request) {
     const liveOrUpcomingApi = apiMatches.filter((m) => m.minute !== 'FT')
     return NextResponse.json({
       source: customMatches.length > 0 ? 'mixed' : 'odds-api',
-      reason: apiMatches.length === 0 ? 'no upcoming events from provider' : undefined,
+      // Says what is true — the list came out empty — without naming a cause.
+      // This used to read "no upcoming events from provider", which blamed
+      // the feed for an empty board that the league whitelist, the
+      // odds-required filter or a cached empty response could equally have
+      // caused, and sent debugging to the provider's dashboard first.
+      reason: apiMatches.length === 0 ? 'no matches after filtering' : undefined,
       matches: maybeFilter([...customMatches, ...hydrateAll(liveOrUpcomingApi, overrides)]),
       customCount: customMatches.length,
     })
