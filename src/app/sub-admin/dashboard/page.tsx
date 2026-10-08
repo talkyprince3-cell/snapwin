@@ -17,6 +17,7 @@ import { Brand } from '@/components/brand'
 import { formatMoney } from '@/lib/format-money'
 import { COMMISSION_RATE } from '@/lib/domain-types'
 import { SubAdminBettingAccount } from '@/components/sub-admin-betting-account'
+import { SubAdminPayout } from '@/components/sub-admin-payout'
 
 /** "GHS 12.34 · NGN 5,000.00" — single-line summary of a currency map. */
 function formatCurrencyMap(map: Record<string, number> | undefined): string {
@@ -294,6 +295,8 @@ export default function SubAdminDashboardPage() {
             tone="good"
           />
         </section>
+
+        <SubAdminPayout approved={data.subAdmin.approved} />
 
         <SubAdminBettingAccount />
 
