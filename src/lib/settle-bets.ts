@@ -26,6 +26,7 @@ import {
 import { creditBalance } from '@/lib/users-store'
 import { readCustomMatches } from '@/lib/custom-matches-store'
 import { fetchRealResults } from '@/lib/results'
+import { fetchEspnResults, ESPN_ID_PREFIX } from '@/lib/api/espn-fallback'
 import { liveClockLabel } from '@/lib/match-betting'
 import type { BetSelection, Match, PlacedBet } from '@/lib/domain-types'
 
@@ -169,10 +170,20 @@ export async function settlePendingBets(userId?: string): Promise<SettleResult> 
 
   // Plus REAL API-Football fixtures: every distinct non-custom match id riding
   // on a pending leg. This is what makes real games settle on their own.
+  // Fallback-feed legs (`espn-…` ids, served while API-Football was down) are
+  // split out and settled from ESPN's scoreboard instead — their ids mean
+  // nothing to API-Football, and a bare numeric id could even collide with a
+  // different real fixture there.
   const realIds = new Set<string>()
+  const espnIdToDate = new Map<string, string>()
   for (const bet of pending) {
     for (const leg of bet.selections) {
-      if (leg.matchId && !customIds.has(leg.matchId)) realIds.add(leg.matchId)
+      if (!leg.matchId || customIds.has(leg.matchId)) continue
+      if (leg.matchId.startsWith(ESPN_ID_PREFIX)) {
+        espnIdToDate.set(leg.matchId, leg.match?.startTimeISO ?? '')
+      } else {
+        realIds.add(leg.matchId)
+      }
     }
   }
   if (realIds.size > 0) {
@@ -183,6 +194,14 @@ export async function settlePendingBets(userId?: string): Promise<SettleResult> 
       }
     } catch (e) {
       console.error('[settle] fetchRealResults failed (custom still settle):', e)
+    }
+  }
+  if (espnIdToDate.size > 0) {
+    try {
+      const espn = await fetchEspnResults(espnIdToDate)
+      for (const [id, r] of espn) finished.set(id, { home: r.home, away: r.away })
+    } catch (e) {
+      console.error('[settle] fetchEspnResults failed (others still settle):', e)
     }
   }
 

@@ -1,5 +1,6 @@
 import type { Match, MarketBook, OverUnderLine } from '@/lib/domain-types'
 import { deriveMarketBook, mergeMarketBook } from '@/lib/markets'
+import { getFallbackMatches } from '@/lib/api/espn-fallback'
 
 /**
  * Upstream: API-Football v3 (https://www.api-football.com).
@@ -487,6 +488,27 @@ function toMatch(fixture: Fixture, oddsRows: OddsRow[]): Match {
 export async function getMatchesForSport(sport: string): Promise<Match[]> {
   if (sport !== 'football') return []
 
+  // Any failure of the primary feed — most commonly the free tier's daily
+  // request limit — falls back to ESPN's keyless public scoreboard instead of
+  // blanking the board until the quota resets at midnight. Fallback matches
+  // are real fixtures with real bookmaker prices; their ids are `espn-`
+  // prefixed and settle through their own results path.
+  try {
+    const primary = await fetchPrimaryMatches()
+    if (primary.length > 0) return primary
+    // Empty without throwing happens when the quota dies midway: fixtures come
+    // from the 30-min cache but every odds call fails, and the odds-required
+    // filter then drops the lot. A genuinely empty 4-day window is near
+    // impossible, so an empty primary board is treated as an outage too.
+    console.warn('[odds] primary feed empty — serving ESPN fallback')
+    return await getFallbackMatches()
+  } catch (err) {
+    console.error('[odds] primary feed failed — serving ESPN fallback:', err)
+    return getFallbackMatches()
+  }
+}
+
+async function fetchPrimaryMatches(): Promise<Match[]> {
   const apiKey = process.env.API_FOOTBALL_KEY
   if (!apiKey) throw new Error('API_FOOTBALL_KEY missing')
 

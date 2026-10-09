@@ -44,6 +44,11 @@ export async function fetchRealResults(ids: string[]): Promise<Map<string, RealR
 
   const wanted: string[] = []
   for (const id of ids) {
+    // Only bare numeric ids are API-Football fixtures. Anything else (e.g. the
+    // fallback feed's `espn-…` ids) must never reach the batch query — a
+    // prefix stripped or mangled there could match a DIFFERENT real fixture
+    // and settle a bet against the wrong match's score.
+    if (!/^\d+$/.test(id)) continue
     const hit = cache.get(id)
     if (hit && Date.now() - hit.at < TTL_MS) out.set(id, hit.value)
     else wanted.push(id)

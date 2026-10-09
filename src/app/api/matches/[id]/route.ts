@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getMatchesForSport, supportedSports } from '@/lib/api/odds'
+import { getFallbackMatches, ESPN_ID_PREFIX } from '@/lib/api/espn-fallback'
 import { readCustomMatchesForSport } from '@/lib/custom-matches-store'
 import { readMatchOverridesMap, type MatchOverride } from '@/lib/match-overrides-store'
 import { deriveMarketBook } from '@/lib/markets'
@@ -46,6 +47,20 @@ export async function GET(
     overrides = await readMatchOverridesMap()
   } catch {
     overrides = new Map()
+  }
+
+  // Fallback-feed matches resolve straight from ESPN. Going through
+  // getMatchesForSport would lose them the moment the primary feed recovers,
+  // 404ing the match page for anyone holding a slip or link to one.
+  if (id.startsWith(ESPN_ID_PREFIX)) {
+    const fallback = await getFallbackMatches().catch(() => [])
+    const match = fallback.find((m) => m.id === id)
+    if (match) {
+      return NextResponse.json({
+        match: withDerivedMarkets(applyOverride(match, overrides.get(id))),
+      })
+    }
+    return NextResponse.json({ error: 'match not found' }, { status: 404 })
   }
 
   // Try the hinted sport first for speed, then fall through to the rest.
